@@ -1,0 +1,429 @@
+.tela {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(420px, 1fr);
+  height: 100vh;
+  background: var(--fundo);
+}
+
+@media (max-width: 960px) {
+  .tela {
+    grid-template-columns: 1fr;
+  }
+  .tela > section {
+    display: none;
+  }
+}
+
+.lado {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 24px clamp(24px, 4vw, 56px);
+  background: var(--superficie);
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+}
+
+.marcaIcone {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primaria), #a855f7);
+  box-shadow: 0 8px 20px -8px var(--primaria);
+}
+
+.botaoTema {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--texto-suave);
+  cursor: pointer;
+}
+
+.botaoTema:hover {
+  color: var(--texto);
+  background: var(--superficie-hover);
+}
+
+.centro {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.conteudo {
+  width: 100%;
+  max-width: 400px;
+  animation: surgir 0.35s ease-out;
+}
+
+@keyframes surgir {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.rodape {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--texto-fraco);
+}
+
+.rodape span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rodape a {
+  color: var(--texto-suave);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.rodape a:hover {
+  color: var(--primaria);
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.titulos {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.titulos h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.titulos p {
+  margin: 0;
+  color: var(--texto-suave);
+  line-height: 1.5;
+}
+
+.sobretitulo {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primaria);
+}
+
+.iconeTitulo {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  margin-bottom: 6px;
+  border-radius: 14px;
+  color: var(--primaria);
+  background: var(--primaria-suave);
+}
+
+.erro {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--despesa) 30%, transparent);
+  border-radius: var(--raio-sm);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--despesa);
+  background: var(--despesa-suave);
+  animation: tremer 0.4s ease;
+}
+
+@keyframes tremer {
+  20%,
+  60% {
+    transform: translateX(-5px);
+  }
+  40%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+.linhaOpcoes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--primaria);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.link:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.link:disabled {
+  color: var(--texto-fraco);
+  cursor: default;
+}
+
+.botaoPrincipal {
+  width: 100%;
+  height: 44px;
+  margin-top: 4px;
+}
+
+.nota {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--texto-suave);
+  text-align: center;
+}
+
+.voltar {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--texto-suave);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.voltar:hover {
+  color: var(--texto);
+}
+
+/* ===== Cadastro em passos ===== */
+
+.passos {
+  display: flex;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.passos li {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--texto-fraco);
+}
+
+.passos li::before {
+  content: '';
+  height: 4px;
+  border-radius: 99px;
+  background: var(--borda);
+  transition: background 0.3s ease;
+}
+
+.passos li span {
+  display: none;
+}
+
+.passoAtual,
+.passoFeito {
+  color: var(--texto) !important;
+}
+
+.passoAtual::before,
+.passoFeito::before {
+  background: var(--primaria) !important;
+}
+
+.janelaEtapas {
+  overflow: hidden;
+  margin: -6px;
+}
+
+.trilhoEtapas {
+  display: flex;
+  align-items: flex-start;
+  transform: translateX(calc(var(--passo) * -100%));
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.etapa {
+  flex: 0 0 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 6px;
+  transition: opacity 0.3s ease;
+}
+
+.etapa[inert] {
+  opacity: 0;
+}
+
+.perguntaEtapa {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.confere {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: -6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--receita);
+}
+
+.pronto {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.prontoIcone {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  color: #fff;
+  background: linear-gradient(135deg, #22c55e, #14b8a6);
+  box-shadow: 0 10px 24px -10px #22c55e;
+}
+
+.resumo {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--superficie-2);
+}
+
+.resumo div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--borda);
+  font-size: 13px;
+}
+
+.resumo div:last-child {
+  border-bottom: none;
+}
+
+.resumo dt {
+  color: var(--texto-suave);
+}
+
+.resumo dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.acoesEtapa {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+/* ===== Recuperação ===== */
+
+.blocoCodigo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rotuloSolto {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.sucesso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.sucesso h1 {
+  margin: 8px 0 0;
+  font-size: 24px;
+}
+
+.sucesso p {
+  margin: 0;
+  color: var(--texto-suave);
+  line-height: 1.5;
+}
+
+.sucessoIcone {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  color: var(--receita);
+  background: var(--receita-suave);
+  animation: pulsarSucesso 0.6s ease-out;
+}
+
+@keyframes pulsarSucesso {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+}

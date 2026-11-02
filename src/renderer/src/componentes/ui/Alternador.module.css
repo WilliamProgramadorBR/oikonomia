@@ -1,0 +1,41 @@
+.alternador {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--superficie-2);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-sm);
+}
+
+.largo {
+  display: flex;
+}
+
+.largo .opcao {
+  flex: 1;
+}
+
+.opcao {
+  height: 30px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--texto-suave);
+  font-size: 13px;
+  font-weight: 600;
+  transition:
+    background var(--transicao),
+    color var(--transicao),
+    box-shadow var(--transicao);
+}
+
+.opcao:hover:not(.ativa) {
+  color: var(--texto);
+}
+
+.ativa {
+  background: var(--superficie);
+  color: var(--cor-ativa, var(--texto));
+  box-shadow: var(--sombra-sm);
+}

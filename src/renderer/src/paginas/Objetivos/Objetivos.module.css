@@ -1,0 +1,270 @@
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-sm);
+}
+
+.perfil {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-sm);
+  background: var(--superficie-2);
+  color: var(--texto-suave);
+  font-size: 13px;
+  transition: border-color var(--transicao);
+}
+
+.perfil:hover {
+  border-color: var(--primaria);
+}
+
+.perfil strong {
+  color: var(--texto);
+}
+
+.numeros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  flex: 1;
+  font-size: 13px;
+  color: var(--texto-suave);
+}
+
+.numeros strong {
+  color: var(--texto);
+}
+
+/* ===== Cartões de objetivo ===== */
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 16px;
+}
+
+.cartao {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-md);
+  cursor: pointer;
+  animation: surgir 280ms ease-out both;
+  transition:
+    transform var(--transicao),
+    box-shadow var(--transicao),
+    border-color var(--transicao);
+}
+
+.cartao:hover {
+  transform: translateY(-2px);
+}
+
+.cartaoSelecionado {
+  border-color: var(--cor);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--cor) 18%, transparent),
+    var(--sombra-md);
+}
+
+.cartaoTopo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.icone {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  color: var(--cor);
+  background: color-mix(in srgb, var(--cor) 14%, transparent);
+}
+
+.cartaoTitulo {
+  flex: 1;
+  min-width: 0;
+}
+
+.cartaoTitulo strong {
+  display: block;
+  font-weight: 700;
+}
+
+.cartaoTitulo span {
+  font-size: 12px;
+  color: var(--texto-suave);
+}
+
+.valores {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.valores strong {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.valores span {
+  color: var(--texto-suave);
+}
+
+.trilho {
+  height: 8px;
+  border-radius: var(--raio-total);
+  background: var(--superficie-hover);
+  overflow: hidden;
+}
+
+.trilho div {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--cor) 60%, transparent), var(--cor));
+  transition: width 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.percentual {
+  font-size: 12px;
+  color: var(--texto-fraco);
+}
+
+.metricas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 4px 0 0;
+}
+
+.metricas div {
+  padding: 8px 10px;
+  border-radius: var(--raio-sm);
+  background: var(--superficie-2);
+}
+
+.metricas dt {
+  font-size: 11px;
+  color: var(--texto-fraco);
+}
+
+.metricas dd {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.acoes {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2px;
+}
+
+/* ===== Plano ===== */
+
+.plano {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 1180px) {
+  .plano {
+    grid-template-columns: 1fr;
+  }
+}
+
+.passos {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.passo {
+  --cor-passo: var(--primaria);
+  display: flex;
+  gap: 14px;
+}
+
+.passo strong {
+  display: block;
+  font-weight: 650;
+}
+
+.passo p {
+  margin: 2px 0 8px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--texto-suave);
+}
+
+.numero {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cor-passo);
+  background: color-mix(in srgb, var(--cor-passo) 14%, transparent);
+}
+
+.divida {
+  --cor-passo: var(--despesa);
+}
+.reserva,
+.corte {
+  --cor-passo: var(--alerta);
+}
+.aporte,
+.concluido {
+  --cor-passo: var(--receita);
+}
+.prazo,
+.meta {
+  --cor-passo: var(--primaria);
+}
+
+.programado {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}
+
+.confirmacao {
+  display: flex;
+  gap: 4px;
+}

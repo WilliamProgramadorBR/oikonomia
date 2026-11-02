@@ -1,0 +1,118 @@
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.linha {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.pergunta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rotulo {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.dica {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--texto-suave);
+}
+
+/* ===== Perfil ===== */
+
+.opcaoPerfil {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--superficie-2);
+  text-align: left;
+  transition:
+    border-color var(--transicao),
+    box-shadow var(--transicao),
+    background var(--transicao);
+}
+
+.opcaoPerfil strong {
+  font-weight: 650;
+}
+
+.opcaoPerfil span {
+  font-size: 13px;
+  color: var(--texto-suave);
+}
+
+.opcaoPerfil:hover {
+  border-color: var(--borda-forte);
+}
+
+.opcaoPerfilAtiva,
+.opcaoPerfilAtiva:hover {
+  border-color: var(--primaria);
+  background: color-mix(in srgb, var(--primaria) 7%, var(--superficie));
+  box-shadow: 0 0 0 3px var(--primaria-suave);
+}
+
+/* ===== Tipo de objetivo ===== */
+
+.tipos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.tipo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--superficie-2);
+  color: var(--texto-suave);
+  font-size: 12.5px;
+  font-weight: 600;
+  transition:
+    border-color var(--transicao),
+    background var(--transicao),
+    color var(--transicao);
+}
+
+.tipo svg {
+  color: var(--cor);
+}
+
+.tipoAtivo {
+  border-color: var(--cor);
+  color: var(--texto);
+  background: color-mix(in srgb, var(--cor) 10%, var(--superficie));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor) 16%, transparent);
+}
+
+.sugestao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border: 1px dashed color-mix(in srgb, var(--primaria) 50%, transparent);
+  border-radius: var(--raio-sm);
+  background: var(--primaria-suave);
+  color: var(--primaria);
+  font-size: 12.5px;
+  font-weight: 600;
+}

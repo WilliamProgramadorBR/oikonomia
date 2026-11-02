@@ -1,0 +1,284 @@
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ===== Indicadores ===== */
+
+.resumo {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 1100px) {
+  .resumo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.indicador {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-md);
+  animation: surgir 280ms ease-out both;
+}
+
+.indicador span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.indicador strong {
+  font-size: 21px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.indicadorDestaque strong {
+  color: var(--receita);
+}
+
+.trilho {
+  height: 6px;
+  margin-top: 6px;
+  border-radius: var(--raio-total);
+  background: var(--superficie-hover);
+  overflow: hidden;
+}
+
+.barra {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--cor, var(--primaria));
+  transition: width 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== Grade de cartões ===== */
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 24px;
+}
+
+.adicionar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  aspect-ratio: 1.586;
+  border: 2px dashed var(--borda-forte);
+  border-radius: 18px;
+  background: transparent;
+  color: var(--texto-suave);
+  transition:
+    border-color var(--transicao),
+    color var(--transicao),
+    background var(--transicao);
+}
+
+.adicionar:hover {
+  border-color: var(--primaria);
+  color: var(--primaria);
+  background: color-mix(in srgb, var(--primaria) 4%, transparent);
+}
+
+/* ===== Detalhe do cartão selecionado ===== */
+
+.detalhe {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: surgir 280ms ease-out both;
+}
+
+.faixaInfo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-left: 4px solid var(--cor);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-sm);
+}
+
+.infos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 22px;
+  color: var(--texto-suave);
+}
+
+.infos strong {
+  color: var(--texto);
+}
+
+.infoTaxa {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-total);
+  background: var(--superficie-2);
+  color: var(--texto-suave);
+  font-size: 13px;
+  transition: border-color var(--transicao);
+}
+
+.infoTaxa:hover {
+  border-color: var(--borda-forte);
+}
+
+.infoTaxa small {
+  font-size: 11px;
+  color: var(--texto-fraco);
+}
+
+.textoDespesa {
+  color: var(--despesa) !important;
+}
+
+.alertaLimite {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--raio);
+  background: var(--despesa-suave);
+  color: var(--despesa);
+  font-weight: 600;
+}
+
+.colunas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 1180px) {
+  .colunas {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Compras em andamento ===== */
+
+.compras {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.compra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--raio);
+  transition: background var(--transicao);
+}
+
+.compra:hover {
+  background: var(--superficie-hover);
+}
+
+.compraTexto {
+  flex: 1;
+  min-width: 0;
+}
+
+.compraTitulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.compraTitulo strong {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.compraTexto > span {
+  display: block;
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}
+
+.compraTexto .trilho {
+  height: 4px;
+}
+
+.compraRestante {
+  text-align: right;
+}
+
+.compraRestante strong {
+  display: block;
+  font-weight: 650;
+}
+
+.compraRestante span {
+  font-size: 12px;
+  color: var(--texto-suave);
+}
+
+.acao,
+.confirmar {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: var(--raio-sm);
+  background: transparent;
+  color: var(--texto-fraco);
+  transition:
+    background var(--transicao),
+    color var(--transicao),
+    opacity var(--transicao);
+}
+
+.compra .acao {
+  opacity: 0;
+}
+
+.compra:hover .acao,
+.confirmacao .acao {
+  opacity: 1;
+}
+
+.acao:hover {
+  background: var(--despesa-suave);
+  color: var(--despesa);
+}
+
+.confirmacao {
+  display: flex;
+  gap: 2px;
+}
+
+.confirmar {
+  background: var(--despesa);
+  color: #fff;
+}

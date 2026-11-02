@@ -1,0 +1,22 @@
+.texto {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  line-height: 1.55;
+}
+
+.texto p,
+.texto ul {
+  margin: 0;
+}
+
+.texto ul {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 18px;
+}
+
+.texto strong {
+  font-weight: 650;
+}

@@ -1,0 +1,73 @@
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.bloco {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rotulo {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.linha {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.dica {
+  margin-top: -8px;
+  font-size: 12px;
+  color: var(--texto-suave);
+}
+
+.bloco .dica {
+  margin-top: 0;
+}
+
+.formas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.forma {
+  --cor: var(--primaria);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 8px 10px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-total);
+  background: var(--superficie-2);
+  font-size: 13px;
+  font-weight: 600;
+  transition:
+    border-color var(--transicao),
+    box-shadow var(--transicao);
+}
+
+.forma:hover {
+  border-color: var(--borda-forte);
+}
+
+.formaAtiva,
+.formaAtiva:hover {
+  border-color: var(--cor);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor) 18%, transparent);
+}
+
+.miniCartao {
+  width: 24px;
+  height: 16px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--cor) 85%, #fff), var(--cor));
+}

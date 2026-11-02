@@ -1,0 +1,91 @@
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--cor) 80%, #fff), var(--cor));
+  box-shadow: 0 0 0 2px var(--superficie);
+}
+
+.iconeCategoria {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 11px;
+  color: var(--cor);
+  background: color-mix(in srgb, var(--cor) 14%, transparent);
+}
+
+.vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.vazioIcone {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 14px;
+  border-radius: 16px;
+  color: var(--primaria);
+  background: var(--primaria-suave);
+}
+
+.vazioTitulo {
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.vazioDescricao {
+  max-width: 340px;
+  margin-top: 4px;
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+
+.vazioAcao {
+  margin-top: 18px;
+}
+
+.esqueleto {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--superficie-hover) 25%,
+    var(--borda) 50%,
+    var(--superficie-hover) 75%
+  );
+  background-size: 200% 100%;
+  animation: brilhar 1.4s ease-in-out infinite;
+}
+
+@keyframes brilhar {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.etiqueta {
+  --cor: var(--primaria);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: var(--raio-total);
+  font-size: 11px;
+  font-weight: 650;
+  color: var(--cor);
+  background: color-mix(in srgb, var(--cor) 13%, transparent);
+}

@@ -1,0 +1,390 @@
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 1100px) {
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.indicador {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 18px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-md);
+  animation: surgir 280ms ease-out both;
+}
+
+.indicador span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.indicador strong {
+  font-size: 21px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.indicador small {
+  font-size: 11.5px;
+  color: var(--texto-fraco);
+}
+
+.receita {
+  color: var(--receita);
+}
+.despesa {
+  color: var(--despesa);
+}
+
+/* ===== Lista ===== */
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.divida {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border-radius: var(--raio);
+  transition: background var(--transicao);
+}
+
+.divida:hover {
+  background: var(--superficie-hover);
+}
+
+.icone {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  color: var(--cor);
+  background: color-mix(in srgb, var(--cor) 14%, transparent);
+}
+
+.dividaTexto {
+  flex: 1;
+  min-width: 0;
+}
+
+.dividaTitulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dividaTitulo strong {
+  font-weight: 650;
+}
+
+.dividaTexto > span {
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}
+
+.dividaTexto em {
+  font-style: normal;
+}
+
+.acima {
+  color: var(--despesa);
+  font-weight: 600;
+}
+
+.ok {
+  color: var(--texto-fraco);
+}
+
+.trilho {
+  height: 4px;
+  margin-top: 6px;
+  border-radius: var(--raio-total);
+  background: var(--superficie-hover);
+  overflow: hidden;
+}
+
+.trilho div {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--cor);
+}
+
+.coluna {
+  min-width: 108px;
+  text-align: right;
+}
+
+.coluna span {
+  display: block;
+  font-size: 11.5px;
+  color: var(--texto-fraco);
+}
+
+.coluna strong {
+  font-weight: 700;
+}
+
+.acao,
+.confirmar {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: var(--raio-sm);
+  background: transparent;
+  color: var(--texto-fraco);
+  transition:
+    background var(--transicao),
+    color var(--transicao),
+    opacity var(--transicao);
+}
+
+.divida .acao {
+  opacity: 0;
+}
+
+.divida:hover .acao,
+.confirmacao .acao {
+  opacity: 1;
+}
+
+.acao:hover {
+  background: var(--despesa-suave);
+  color: var(--despesa);
+}
+
+.confirmacao {
+  display: flex;
+  gap: 2px;
+}
+
+.confirmar {
+  background: var(--despesa);
+  color: #fff;
+}
+
+.espaco {
+  width: 30px;
+}
+
+/* ===== Estratégia ===== */
+
+.explicacao {
+  margin-bottom: 18px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.extra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.extra > :first-child {
+  width: 260px;
+}
+
+.extra small {
+  padding-bottom: 10px;
+  font-size: 12px;
+  color: var(--texto-suave);
+}
+
+.comparacao {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 1000px) {
+  .comparacao {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cenario {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--superficie-2);
+}
+
+.cenarioRecomendado {
+  border-color: var(--receita);
+  box-shadow: 0 0 0 3px var(--receita-suave);
+}
+
+.cenarioTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cenario small {
+  font-size: 12px;
+  color: var(--texto-suave);
+}
+
+.cenario dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 8px 0 0;
+}
+
+.cenario dt {
+  font-size: 11.5px;
+  color: var(--texto-fraco);
+}
+
+.cenario dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.naoQuita {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--despesa);
+}
+
+.ordem {
+  margin-top: 20px;
+}
+
+.ordemTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.ordem ol {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ordem li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: var(--raio-sm);
+  background: var(--superficie-2);
+}
+
+.posicao {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primaria);
+  background: var(--primaria-suave);
+}
+
+.ordemNome {
+  flex: 1;
+}
+
+/* ===== Trocas ===== */
+
+.trocas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.troca {
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--receita) 25%, var(--borda));
+  border-radius: var(--raio);
+  background: color-mix(in srgb, var(--receita) 5%, var(--superficie));
+}
+
+.troca strong {
+  font-weight: 650;
+}
+
+.troca p {
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--texto-suave);
+}
+
+.trocaIcone {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: var(--receita);
+  background: var(--receita-suave);
+}
+
+.economia {
+  flex-shrink: 0;
+  min-width: 110px;
+  text-align: right;
+}
+
+.economia span {
+  display: block;
+  font-size: 11.5px;
+  color: var(--texto-fraco);
+}
+
+.economia strong {
+  font-size: 17px;
+  color: var(--receita);
+}

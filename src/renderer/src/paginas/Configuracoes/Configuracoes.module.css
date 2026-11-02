@@ -1,0 +1,177 @@
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 980px;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.linha {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .linha {
+    grid-template-columns: 1fr;
+  }
+}
+
+.opcao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--superficie-2);
+}
+
+.opcao strong {
+  display: block;
+  font-weight: 650;
+}
+
+.opcao span {
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.teste {
+  padding: 10px 12px;
+  border-radius: var(--raio-sm);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.testeOk {
+  color: var(--receita);
+  background: var(--receita-suave);
+}
+
+.testeErro {
+  color: var(--despesa);
+  background: var(--despesa-suave);
+}
+
+.notas {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}
+
+.notas strong {
+  color: var(--texto);
+}
+
+.duasColunas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .duasColunas {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bloco {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--texto-suave);
+}
+
+.bloco strong {
+  color: var(--texto);
+}
+
+.sobre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.sobreIcone {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primaria), #a855f7);
+  box-shadow: 0 10px 24px -10px var(--primaria);
+}
+
+.sobreTexto {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 220px;
+  color: var(--texto-suave);
+}
+
+.sobreTexto > strong {
+  font-size: 15px;
+  color: var(--texto);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--primaria);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.cripto {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--raio);
+  color: var(--alerta);
+  background: var(--alerta-suave);
+}
+
+.cripto div {
+  display: flex;
+  flex-direction: column;
+}
+
+.cripto span {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.criptoAtiva {
+  color: var(--receita);
+  background: var(--receita-suave);
+}

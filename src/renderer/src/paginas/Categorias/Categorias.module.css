@@ -1,0 +1,174 @@
+.colunas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+.largo {
+  grid-column: 1 / -1;
+}
+
+.nome small {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.essencial {
+  color: var(--primaria);
+}
+.estilo_vida {
+  color: #ec4899;
+}
+.educacao {
+  color: var(--receita);
+}
+.juros {
+  color: var(--despesa);
+}
+.outros {
+  color: var(--texto-fraco);
+}
+
+@media (max-width: 1100px) {
+  .colunas {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 10px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--superficie-2);
+  font-weight: 550;
+  transition:
+    border-color var(--transicao),
+    background var(--transicao);
+}
+
+.item:hover {
+  border-color: var(--borda-forte);
+  background: var(--superficie);
+}
+
+.nome {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.remover {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--texto-fraco);
+  opacity: 0;
+  transition:
+    opacity var(--transicao),
+    background var(--transicao),
+    color var(--transicao);
+}
+
+.item:hover .remover {
+  opacity: 1;
+}
+
+.remover:hover {
+  background: var(--despesa-suave);
+  color: var(--despesa);
+}
+
+/* ===== Modal ===== */
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.blocoIcones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rotulo {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.naturezas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.natureza {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-total);
+  background: var(--superficie-2);
+  color: var(--texto-suave);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.naturezaAtiva {
+  border-color: var(--primaria);
+  color: var(--primaria);
+  background: var(--primaria-suave);
+}
+
+.icones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 6px;
+}
+
+.icone {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  background: var(--superficie-2);
+  color: var(--texto-suave);
+  transition:
+    border-color var(--transicao),
+    background var(--transicao),
+    color var(--transicao);
+}
+
+.icone:hover {
+  color: var(--texto);
+  border-color: var(--borda-forte);
+}
+
+.iconeAtivo,
+.iconeAtivo:hover {
+  color: var(--cor);
+  border-color: var(--cor);
+  background: color-mix(in srgb, var(--cor) 12%, transparent);
+}

@@ -1,0 +1,187 @@
+/* ===== Tokens de design ===== */
+
+:root,
+:root[data-tema='claro'] {
+  color-scheme: light;
+
+  --fundo: #f3f5fa;
+  --superficie: #ffffff;
+  --superficie-2: #f7f8fc;
+  --superficie-hover: #f1f3f9;
+  --borda: #e6e9f1;
+  --borda-forte: #d5dae6;
+
+  --texto: #0f172a;
+  --texto-suave: #5b6478;
+  --texto-fraco: #959db0;
+
+  --primaria: #6366f1;
+  --primaria-forte: #4f46e5;
+  --primaria-suave: rgba(99, 102, 241, 0.12);
+  --receita: #059669;
+  --receita-suave: rgba(16, 185, 129, 0.12);
+  --despesa: #e11d48;
+  --despesa-suave: rgba(244, 63, 94, 0.11);
+  --alerta: #d97706;
+  --alerta-suave: rgba(245, 158, 11, 0.14);
+
+  --sombra-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.05);
+  --sombra-md: 0 2px 4px rgba(15, 23, 42, 0.03), 0 12px 28px -8px rgba(15, 23, 42, 0.1);
+  --sombra-lg: 0 32px 64px -16px rgba(15, 23, 42, 0.3);
+
+  --lateral-fundo: #0b1020;
+  --lateral-borda: rgba(255, 255, 255, 0.06);
+  --lateral-texto: #9aa4bd;
+  --lateral-texto-forte: #ffffff;
+  --lateral-hover: rgba(255, 255, 255, 0.05);
+  --lateral-ativo: rgba(99, 102, 241, 0.18);
+
+  --raio-sm: 8px;
+  --raio: 12px;
+  --raio-lg: 18px;
+  --raio-total: 999px;
+
+  --fonte: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --transicao: 160ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:root[data-tema='escuro'] {
+  color-scheme: dark;
+
+  --fundo: #090d18;
+  --superficie: #111726;
+  --superficie-2: #0d1220;
+  --superficie-hover: #182035;
+  --borda: #1d2539;
+  --borda-forte: #2a3450;
+
+  --texto: #e7eaf3;
+  --texto-suave: #9099b0;
+  --texto-fraco: #5d6680;
+
+  --primaria: #818cf8;
+  --primaria-forte: #6366f1;
+  --primaria-suave: rgba(129, 140, 248, 0.15);
+  --receita: #34d399;
+  --receita-suave: rgba(52, 211, 153, 0.12);
+  --despesa: #fb7185;
+  --despesa-suave: rgba(251, 113, 133, 0.12);
+  --alerta: #fbbf24;
+  --alerta-suave: rgba(251, 191, 36, 0.13);
+
+  --sombra-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --sombra-md: 0 1px 0 rgba(255, 255, 255, 0.02) inset, 0 12px 28px -10px rgba(0, 0, 0, 0.5);
+  --sombra-lg: 0 32px 64px -16px rgba(0, 0, 0, 0.7);
+
+  --lateral-fundo: #070a14;
+}
+
+/* ===== Base ===== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#raiz {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--fonte);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--texto);
+  background: var(--fundo);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primaria);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--primaria-suave);
+}
+
+/* Barra de rolagem discreta */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--borda-forte);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Números alinhados em colunas */
+.numero {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+@keyframes surgir {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Abertura enquanto o app confere a sessão */
+.abertura {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  color: var(--primaria);
+  background: var(--fundo);
+  animation: abertura-pulso 1.2s ease-in-out infinite;
+}
+
+@keyframes abertura-pulso {
+  50% {
+    opacity: 0.4;
+  }
+}

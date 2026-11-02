@@ -1,0 +1,232 @@
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ===== Fonte dos dados ===== */
+
+.fonte {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-md);
+}
+
+.fonteIcone {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  box-shadow: 0 8px 18px -8px rgba(37, 99, 235, 0.7);
+}
+
+.fonteTexto {
+  flex: 1;
+  min-width: 0;
+}
+
+.fonteTexto strong {
+  display: block;
+  font-weight: 650;
+}
+
+.fonteTexto span {
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}
+
+/* ===== Modalidades ===== */
+
+.modalidades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.modalidade {
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-total);
+  background: var(--superficie);
+  color: var(--texto-suave);
+  font-size: 13px;
+  font-weight: 600;
+  transition:
+    background var(--transicao),
+    color var(--transicao),
+    border-color var(--transicao);
+}
+
+.modalidade:hover {
+  color: var(--texto);
+  border-color: var(--borda-forte);
+}
+
+.modalidadeAtiva,
+.modalidadeAtiva:hover {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(180deg, #6f72f4, #5457e8);
+  box-shadow: 0 6px 16px -6px rgba(79, 70, 229, 0.6);
+}
+
+/* ===== Estatísticas ===== */
+
+.estatisticas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.estatistica {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 18px;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-top: 3px solid var(--cor);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-md);
+  animation: surgir 280ms ease-out both;
+}
+
+.estatistica span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.estatistica strong {
+  font-size: 24px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  color: var(--cor);
+}
+
+.estatistica small {
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}
+
+/* ===== Ranking ===== */
+
+.busca {
+  width: 220px;
+  height: 38px;
+}
+
+.ranking {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.linha {
+  display: grid;
+  grid-template-columns: 34px minmax(160px, 1.2fr) minmax(120px, 2fr) 130px;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: var(--raio);
+  transition: background var(--transicao);
+}
+
+.linha:hover {
+  background: var(--superficie-hover);
+}
+
+.meuBanco {
+  background: var(--primaria-suave);
+}
+
+.posicao {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--superficie-2);
+  border: 1px solid var(--borda);
+  color: var(--texto-suave);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.instituicao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.instituicao strong {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trilho {
+  height: 8px;
+  border-radius: var(--raio-total);
+  background: var(--superficie-hover);
+  overflow: hidden;
+}
+
+.barra {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--cor) 55%, transparent), var(--cor));
+  animation: crescer 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: left;
+}
+
+@keyframes crescer {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.valores {
+  text-align: right;
+}
+
+.valores strong {
+  display: block;
+  font-weight: 700;
+}
+
+.valores span {
+  font-size: 12px;
+  color: var(--texto-fraco);
+}
+
+.aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--raio);
+  background: var(--superficie-2);
+  border: 1px solid var(--borda);
+  color: var(--texto-suave);
+  font-size: 13px;
+}
+
+.aviso svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--primaria);
+}

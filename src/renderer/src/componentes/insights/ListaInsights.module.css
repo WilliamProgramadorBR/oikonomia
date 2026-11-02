@@ -1,0 +1,54 @@
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.insight {
+  --cor: var(--primaria);
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--raio);
+  border: 1px solid color-mix(in srgb, var(--cor) 25%, var(--borda));
+  background: color-mix(in srgb, var(--cor) 6%, var(--superficie));
+}
+
+.insight strong {
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 650;
+}
+
+.insight p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--texto-suave);
+}
+
+.icone {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: var(--cor);
+  background: color-mix(in srgb, var(--cor) 14%, transparent);
+}
+
+.critico {
+  --cor: var(--despesa);
+}
+.atencao {
+  --cor: var(--alerta);
+}
+.dica {
+  --cor: var(--primaria);
+}
+.positivo {
+  --cor: var(--receita);
+}

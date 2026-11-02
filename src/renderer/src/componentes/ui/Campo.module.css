@@ -1,0 +1,112 @@
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.rotulo {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.caixa {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 12px;
+  background: var(--superficie-2);
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-sm);
+  transition:
+    border-color var(--transicao),
+    box-shadow var(--transicao),
+    background var(--transicao);
+}
+
+.caixa:hover {
+  border-color: var(--borda-forte);
+}
+
+.caixa:focus-within {
+  background: var(--superficie);
+  border-color: var(--primaria);
+  box-shadow: 0 0 0 4px var(--primaria-suave);
+}
+
+.entrada {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+/* O destaque de foco fica na caixa inteira (:focus-within), não no input */
+.entrada:focus-visible {
+  outline: none;
+}
+
+.entrada::placeholder {
+  color: var(--texto-fraco);
+}
+
+select.entrada {
+  cursor: pointer;
+}
+
+.icone,
+.prefixo {
+  color: var(--texto-fraco);
+  flex-shrink: 0;
+}
+
+.prefixo {
+  font-weight: 600;
+}
+
+/* Campo de valor grande, usado no topo do formulário de lançamento */
+.moedaDestaque {
+  height: 64px;
+  padding: 0 18px;
+  border-radius: var(--raio);
+}
+
+.moedaDestaque .entrada {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.moedaDestaque .prefixo {
+  font-size: 18px;
+}
+
+.cores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cor {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 currentColor;
+  transition:
+    transform var(--transicao),
+    box-shadow var(--transicao);
+}
+
+.cor:hover {
+  transform: scale(1.1);
+}
+
+.corAtiva {
+  box-shadow:
+    0 0 0 3px var(--superficie),
+    0 0 0 5px currentColor;
+}

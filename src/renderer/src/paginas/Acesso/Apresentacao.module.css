@@ -1,0 +1,411 @@
+/* Painel da apresentação: sempre escuro e vibrante, nos dois temas. */
+.painel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  padding: 48px 0 32px;
+  color: #fff;
+  background:
+    radial-gradient(90% 60% at 10% 0%, rgba(129, 140, 248, 0.55), transparent 60%),
+    radial-gradient(80% 60% at 100% 100%, rgba(168, 85, 247, 0.45), transparent 60%),
+    linear-gradient(160deg, #1e1b4b 0%, #312e81 45%, #3b0764 100%);
+}
+
+/* Grade sutil ao fundo */
+.painel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(70% 60% at 50% 45%, #000 30%, transparent 100%);
+  pointer-events: none;
+}
+
+.orbe1,
+.orbe2 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  animation: flutuar 14s ease-in-out infinite alternate;
+}
+
+.orbe1 {
+  top: 12%;
+  right: -60px;
+  width: 260px;
+  height: 260px;
+  background: rgba(236, 72, 153, 0.35);
+}
+
+.orbe2 {
+  bottom: 8%;
+  left: -80px;
+  width: 300px;
+  height: 300px;
+  background: rgba(14, 165, 233, 0.28);
+  animation-delay: -7s;
+}
+
+@keyframes flutuar {
+  to {
+    transform: translate(30px, -40px) scale(1.1);
+  }
+}
+
+.trilhoSlides {
+  position: relative;
+  display: flex;
+  transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.slide {
+  flex: 0 0 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 clamp(28px, 6vw, 72px);
+  text-align: center;
+}
+
+.slide h2 {
+  margin: 34px 0 10px;
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.slide p {
+  max-width: 420px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.ilustracao {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 240px;
+}
+
+.vidro {
+  width: min(360px, 100%);
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+  text-align: left;
+}
+
+/* Slide 1: medidor */
+.vidro:has(.medidor) {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.medidor {
+  position: relative;
+  flex-shrink: 0;
+  width: 112px;
+  height: 112px;
+}
+
+.medidor svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.medidor > div {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.medidor strong {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.medidor span {
+  font-size: 12px;
+  color: #86efac;
+  font-weight: 650;
+}
+
+.trilho,
+.arco {
+  fill: none;
+  stroke-width: 11;
+}
+
+.trilho {
+  stroke: rgba(255, 255, 255, 0.12);
+}
+
+.arco {
+  stroke: #4ade80;
+  stroke-linecap: round;
+}
+
+.linhasInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.linhasInfo b {
+  display: block;
+  font-size: 15px;
+  color: #fff;
+}
+
+/* Slide 2: barras */
+.legenda {
+  font-size: 12px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.barras {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  height: 150px;
+  margin-top: 14px;
+}
+
+.colunaBarra {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  height: 100%;
+}
+
+.colunaBarra span {
+  width: 100%;
+  border-radius: 8px 8px 4px 4px;
+  background: linear-gradient(180deg, rgba(196, 181, 253, 0.9), rgba(129, 140, 248, 0.5));
+}
+
+.colunaBarra .barraAtual {
+  background: linear-gradient(180deg, #4ade80, rgba(74, 222, 128, 0.45));
+}
+
+.colunaBarra small {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Slide 3: objetivos */
+.objetivos {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.objetivo {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.iconeObjetivo {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.objetivoTopo {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 7px;
+  font-size: 13.5px;
+}
+
+.objetivoTopo small {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.progresso {
+  height: 8px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.progresso span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #38bdf8, #a78bfa);
+}
+
+/* Slide 4: chat */
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 13.5px;
+}
+
+.balaoUsuario {
+  align-self: flex-end;
+  padding: 9px 13px;
+  border-radius: 14px 4px 14px 14px;
+  background: #6366f1;
+}
+
+.balaoBot {
+  display: flex;
+  gap: 8px;
+  padding: 10px 13px;
+  border-radius: 4px 14px 14px 14px;
+  background: rgba(255, 255, 255, 0.12);
+  line-height: 1.5;
+}
+
+.balaoBot svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: #c4b5fd;
+}
+
+/* Slide 5: segurança */
+.seguranca {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.escudo {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 24px;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.14);
+  box-shadow: 0 0 0 10px rgba(74, 222, 128, 0.06);
+}
+
+.selos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.selos span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  border-radius: 99px;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Controles */
+.controles {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 36px;
+}
+
+.controles > button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  cursor: pointer;
+  transition: background var(--transicao);
+}
+
+.controles > button:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.pontos {
+  display: flex;
+  gap: 8px;
+}
+
+.ponto {
+  position: relative;
+  overflow: hidden;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.pontoAtivo {
+  width: 34px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.tempo {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  transform-origin: left;
+  animation: encher 6s linear forwards;
+}
+
+.pontoAtivo:not(:has(.tempo)) {
+  background: #fff;
+}
+
+@keyframes encher {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trilhoSlides,
+  .orbe1,
+  .orbe2,
+  .tempo {
+    transition: none;
+    animation: none;
+  }
+}
