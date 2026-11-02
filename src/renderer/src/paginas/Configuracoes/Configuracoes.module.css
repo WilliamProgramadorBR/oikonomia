@@ -175,3 +175,20 @@
   color: var(--receita);
   background: var(--receita-suave);
 }
+
+.atualizacao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin-top: 6px;
+  font-size: 12.5px;
+}
+
+.atualizacao button {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}

@@ -2,6 +2,7 @@ import { join } from 'node:path'
 import { app, BrowserWindow, dialog } from 'electron'
 import { criarContainer, type Container } from '@backend/principal/container'
 import { registrarHandlersIpc } from '@backend/apresentacao/ipc/registrarHandlersIpc'
+import { iniciarAtualizador } from './atualizador'
 import { criarJanelaPrincipal } from './janela'
 
 let container: Container | null = null
@@ -27,6 +28,7 @@ app.whenReady().then(async () => {
     return
   }
   registrarHandlersIpc(container)
+  iniciarAtualizador(() => container?.armazenamento.persistir(true))
 
   // Completa as previsões das contas recorrentes (ex.: o mês virou desde a última abertura).
   await container.recorrenciaControlador

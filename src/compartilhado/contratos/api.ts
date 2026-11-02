@@ -1,5 +1,6 @@
 import type { AnaliseDTO, FiltroAnalise } from '../dtos/analise'
 import type { SituacaoSistemaDTO } from '../dtos/sistema'
+import type { EstadoAtualizacaoDTO } from '../dtos/atualizacao'
 import type {
   AlterarSenhaEntrada,
   CadastrarUsuarioEntrada,
@@ -69,6 +70,12 @@ import type { Resposta } from './resposta'
 export interface ApiFinanceiro {
   sistema: {
     situacao(): Promise<Resposta<SituacaoSistemaDTO>>
+  }
+  atualizacao: {
+    obter(): Promise<Resposta<EstadoAtualizacaoDTO>>
+    verificar(): Promise<Resposta<EstadoAtualizacaoDTO>>
+    instalar(): Promise<Resposta<EstadoAtualizacaoDTO>>
+    aoMudar(ouvinte: (estado: EstadoAtualizacaoDTO) => void): () => void // devolve a função para parar de ouvir
   }
   autenticacao: {
     estado(): Promise<Resposta<EstadoAutenticacaoDTO>>

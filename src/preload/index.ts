@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 import type { ApiFinanceiro } from '@compartilhado/contratos/api'
 import { CANAIS } from '@compartilhado/contratos/canais'
 
@@ -6,6 +6,16 @@ import { CANAIS } from '@compartilhado/contratos/canais'
 const api: ApiFinanceiro = {
   sistema: {
     situacao: () => ipcRenderer.invoke(CANAIS.sistema.situacao)
+  },
+  atualizacao: {
+    obter: () => ipcRenderer.invoke(CANAIS.atualizacao.obter),
+    verificar: () => ipcRenderer.invoke(CANAIS.atualizacao.verificar),
+    instalar: () => ipcRenderer.invoke(CANAIS.atualizacao.instalar),
+    aoMudar: (ouvinte) => {
+      const tratar = (_evento: IpcRendererEvent, estado: Parameters<typeof ouvinte>[0]) => ouvinte(estado)
+      ipcRenderer.on(CANAIS.atualizacao.mudou, tratar)
+      return () => ipcRenderer.removeListener(CANAIS.atualizacao.mudou, tratar)
+    }
   },
   autenticacao: {
     estado: () => ipcRenderer.invoke(CANAIS.autenticacao.estado),

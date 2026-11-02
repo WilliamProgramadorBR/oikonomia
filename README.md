@@ -48,6 +48,33 @@ Usamos o SQLite embutido no Node (`node:sqlite`), então não há módulo nativo
 - Sem certificado de assinatura, o Windows mostra o aviso do SmartScreen ("Mais informações →
   Executar assim mesmo"). Para distribuir para outras pessoas, assine o executável.
 
+## Atualização automática
+
+O processo principal (`src/main/atualizador.ts`, com `electron-updater`) consulta as
+[Releases deste repositório](https://github.com/WilliamProgramadorBR/oikonomia/releases) 10 s depois
+de abrir e a cada 4 h. Quando há versão nova, ele baixa em segundo plano (só a diferença, graças ao
+`.blockmap`), confere o SHA-512 e mostra o aviso **"Versão X pronta · Reiniciar agora"**. Se a pessoa
+não reiniciar, a versão nova é instalada quando o app for fechado. O banco cifrado é gravado antes.
+Em desenvolvimento a atualização fica desligada. Em Configurações → Sobre dá para ver o estado e
+verificar na hora.
+
+### Publicar uma versão nova
+
+1. Suba a versão em `package.json` (ex.: `1.0.1`) e faça o commit.
+2. Gere e publique:
+   - **automático**: `GH_TOKEN=$(gh auth token) npm run publicar:win` (cria a Release com tudo);
+   - **manual**: `npm run dist:win` e depois
+     `gh release create v1.0.1 dist/Projeto-Financeiro-Setup-1.0.1.exe dist/Projeto-Financeiro-Setup-1.0.1.exe.blockmap dist/latest.yml`.
+3. A Release precisa ter os **três arquivos**: o instalador, o `.blockmap` e o `latest.yml`. Sem o
+   `latest.yml` os apps instalados não enxergam a versão nova.
+
+No macOS a atualização automática exige o app assinado e notarizado pela Apple.
+
+## Licença
+
+[MIT](LICENSE) © 2026 William Oliveira Dos Santos. Use, estude, modifique e distribua à vontade,
+mantendo o aviso de copyright.
+
 ## Previsto x confirmado (contas recorrentes)
 
 - Todo lançamento tem um **status**: `prevista` (estimada, gerada por conta recorrente),

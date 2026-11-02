@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ExternalLink, KeyRound, Landmark, LockKeyhole, PlugZap, ShieldAlert, ShieldCheck, SlidersHorizontal, Sparkles, Trash2, Wallet } from 'lucide-react'
+import { ExternalLink, KeyRound, Landmark, LockKeyhole, PlugZap, RefreshCw, ShieldAlert, ShieldCheck, SlidersHorizontal, Sparkles, Trash2, Wallet } from 'lucide-react'
 import { AUTORIA } from '@compartilhado/constantes/autoria'
+import type { EstadoAtualizacaoDTO, FaseAtualizacao } from '@compartilhado/dtos/atualizacao'
 import type { TesteIADTO } from '@compartilhado/dtos/ia'
 import { ContaSeguranca } from '../../componentes/acesso/ContaSeguranca'
 import { useAcoesGlobais } from '../../componentes/layout/Layout'
@@ -11,7 +12,9 @@ import { Cartao } from '../../componentes/ui/Cartao'
 import { Esqueleto, Etiqueta } from '../../componentes/ui/Elementos'
 import { useConfiguracaoIA, usePerfil } from '../../hooks/consultas'
 import { useAcao } from '../../hooks/useAcao'
+import { useAtualizacao } from '../../hooks/useAtualizacao'
 import { useConsulta } from '../../hooks/useConsulta'
+import { atualizacaoServico } from '../../servicos/atualizacaoServico'
 import { sistemaServico } from '../../servicos/sistemaServico'
 import { iaServico } from '../../servicos/iaServico'
 import { taxaServico } from '../../servicos/taxaServico'
@@ -19,10 +22,20 @@ import { classes } from '../../utilitarios/classes'
 import { ESTILOS, PRIORIDADES_PERFIL } from '../../utilitarios/objetivos'
 import estilos from './Configuracoes.module.css'
 
+const TEXTO_ATUALIZACAO: Record<FaseAtualizacao, (e: EstadoAtualizacaoDTO) => string> = {
+  inativo: (e) => e.mensagem ?? 'Atualização automática desativada.',
+  verificando: () => 'Procurando atualizações...',
+  atualizado: () => 'Você está na versão mais recente.',
+  baixando: (e) => `Baixando a versão ${e.versaoNova} (${e.progresso ?? 0}%)...`,
+  pronta: (e) => `Versão ${e.versaoNova} baixada: será instalada ao fechar o app.`,
+  erro: (e) => e.mensagem ?? 'Não foi possível verificar atualizações.'
+}
+
 export function Configuracoes() {
   const { dados: configuracao } = useConfiguracaoIA()
   const { dados: perfil } = usePerfil()
   const { dados: sistema } = useConsulta(() => sistemaServico.situacao(), [])
+  const atualizacao = useAtualizacao()
   const { editarPerfil } = useAcoesGlobais()
   const executar = useAcao()
 
@@ -185,6 +198,21 @@ export function Configuracoes() {
             <a href={AUTORIA.site} target="_blank" rel="noreferrer" className={estilos.link}>
               {AUTORIA.site.replace(/^https:\/\//, '').replace(/\/$/, '')} <ExternalLink size={12} />
             </a>
+            {atualizacao && (
+              <div className={estilos.atualizacao}>
+                <span>{TEXTO_ATUALIZACAO[atualizacao.fase](atualizacao)}</span>
+                {['atualizado', 'erro'].includes(atualizacao.fase) && (
+                  <button type="button" className={estilos.link} onClick={() => atualizacaoServico.verificar()}>
+                    <RefreshCw size={12} /> Verificar agora
+                  </button>
+                )}
+                {atualizacao.fase === 'pronta' && (
+                  <button type="button" className={estilos.link} onClick={() => atualizacaoServico.instalar()}>
+                    <RefreshCw size={12} /> Reiniciar e atualizar
+                  </button>
+                )}
+              </div>
+            )}
           </div>
           {sistema &&
             (sistema.dadosCifrados ? (

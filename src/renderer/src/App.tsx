@@ -1,5 +1,6 @@
 import { HashRouter, Route, Routes } from 'react-router'
 import { Wallet } from 'lucide-react'
+import { AvisoAtualizacao } from './componentes/layout/AvisoAtualizacao'
 import { Layout } from './componentes/layout/Layout'
 import { ProvedorAutenticacao, useAutenticacao } from './contextos/AutenticacaoContexto'
 import { ProvedorDados } from './contextos/DadosContexto'
@@ -31,6 +32,7 @@ export function App() {
         <ProvedorAutenticacao>
           <PortaoAcesso />
         </ProvedorAutenticacao>
+        <AvisoAtualizacao />
       </ProvedorNotificacoes>
     </ProvedorTema>
   )

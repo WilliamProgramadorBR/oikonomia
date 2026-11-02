@@ -10,6 +10,13 @@ files:
 asar: true
 compression: maximum
 
+# Atualização automática: o app instalado consulta as Releases deste repositório (latest.yml).
+publish:
+  provider: github
+  owner: WilliamProgramadorBR
+  repo: oikonomia
+  releaseType: release
+
 win:
   target:
     - target: nsis

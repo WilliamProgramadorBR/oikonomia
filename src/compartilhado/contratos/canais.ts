@@ -3,6 +3,12 @@ export const CANAIS = {
   sistema: {
     situacao: 'sistema:situacao'
   },
+  atualizacao: {
+    obter: 'atualizacao:obter',
+    verificar: 'atualizacao:verificar',
+    instalar: 'atualizacao:instalar',
+    mudou: 'atualizacao:mudou' // evento do main para a tela
+  },
   autenticacao: {
     estado: 'autenticacao:estado',
     cadastrar: 'autenticacao:cadastrar',
