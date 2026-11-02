@@ -75,6 +75,18 @@ No macOS a atualização automática exige o app assinado e notarizado pela Appl
 [MIT](LICENSE) © 2026 William Oliveira Dos Santos. Use, estude, modifique e distribua à vontade,
 mantendo o aviso de copyright.
 
+## Para quem é o lançamento
+
+Todo gasto ou ganho (avulso, conta recorrente, compra no cartão ou nota fiscal) pode ser:
+
+- **Todos (casa)**: vale para a família inteira, como aluguel, luz e mercado do mês;
+- **um membro**: é de uma pessoa só, como faculdade ou uma assinatura de IA.
+
+A escolha é livre em cada formulário (campo "Para quem"). Na visão **Família** entra tudo. Na visão
+de uma **pessoa** aparece só o que é dela, para enxergar os gastos individuais. Nos gráficos e nas
+análises, o que é da casa vira uma fatia própria, "Todos (casa)", e não conta como gasto de ninguém
+em "quem concentra os gastos". O contracheque continua sendo sempre de alguém.
+
 ## Previsto x confirmado (contas recorrentes)
 
 - Todo lançamento tem um **status**: `prevista` (estimada, gerada por conta recorrente),

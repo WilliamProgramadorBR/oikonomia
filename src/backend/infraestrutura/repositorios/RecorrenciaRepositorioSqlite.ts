@@ -11,7 +11,7 @@ interface LinhaRecorrencia {
   valor_centavos: number
   dia_do_mes: number
   categoria_id: string
-  pessoa_id: string
+  pessoa_id: string | null
   cartao_id: string | null
   inicio: string
   fim: string | null

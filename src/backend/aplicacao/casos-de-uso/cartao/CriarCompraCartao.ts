@@ -24,13 +24,14 @@ export class CriarCompraCartao {
   ) {}
 
   async executar(entrada: CriarCompraCartaoEntrada): Promise<CompraCartaoDTO> {
-    const [cartao, pessoa, categoria] = await Promise.all([
+    const [cartao, categoria] = await Promise.all([
       this.cartaoRepositorio.buscarPorId(entrada.cartaoId),
-      this.pessoaRepositorio.buscarPorId(entrada.pessoaId),
       this.categoriaRepositorio.buscarPorId(entrada.categoriaId)
     ])
     if (!cartao) throw new ErroNaoEncontrado('Cartão', entrada.cartaoId)
-    if (!pessoa) throw new ErroNaoEncontrado('Pessoa', entrada.pessoaId)
+    if (entrada.pessoaId && !(await this.pessoaRepositorio.buscarPorId(entrada.pessoaId))) {
+      throw new ErroNaoEncontrado('Pessoa', entrada.pessoaId)
+    }
     if (!categoria) throw new ErroNaoEncontrado('Categoria', entrada.categoriaId)
     if (categoria.tipo !== 'despesa') {
       throw new ErroDominio('Compras no cartão precisam de uma categoria de despesa.')
@@ -44,7 +45,7 @@ export class CriarCompraCartao {
       taxaMensal: entrada.taxaMensal,
       dataCompra: new Date(`${entrada.dataCompra}T00:00:00Z`),
       categoriaId: categoria.id,
-      pessoaId: pessoa.id,
+      pessoaId: entrada.pessoaId ?? null,
       estabelecimento: entrada.estabelecimento ?? null
     })
 

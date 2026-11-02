@@ -1,3 +1,4 @@
+import { CASA } from '@compartilhado/constantes/casa'
 import type { FatiaGasto, FiltroPainel, PainelDTO } from '@compartilhado/dtos/painel'
 import { hojeISO, intervaloDoMes, ultimosMeses } from '@compartilhado/utilitarios/mes'
 import type { TipoTransacao, Transacao } from '../../../dominio/entidades/Transacao'
@@ -101,8 +102,8 @@ export class ObterPainel {
       ),
       despesasPorPessoa: agruparDespesas(
         doMes,
-        (t) => t.pessoaId,
-        (id) => pessoaPorId.get(id) ?? desconhecido
+        (t) => t.pessoaId ?? CASA.id,
+        (id) => (id === CASA.id ? CASA : (pessoaPorId.get(id) ?? desconhecido))
       ),
       ultimasTransacoes: doMes
         .filter((t) => t.status === 'confirmada' && dataDe(t) <= hojeISO())

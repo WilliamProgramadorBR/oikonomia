@@ -16,8 +16,17 @@ export function gerarInsightsAnalise(
   const insights: InsightDTO[] = []
 
   // ===== Família: quem concentra os gastos =====
-  if (a.porPessoa.length >= 2) {
-    const [maior] = a.porPessoa
+  const individuais = a.porPessoa.filter((p) => p.pessoaId !== null)
+  const casa = a.porPessoa.find((p) => p.pessoaId === null)
+  if (casa && casa.participacao >= 0.3) {
+    insights.push({
+      tipo: 'dica',
+      titulo: `${percentual(casa.participacao)} dos gastos são da casa`,
+      texto: `${moeda(casa.mediaMensal)} por mês vão para despesas de todos (${casa.topCategorias.map((c) => c.nome.toLowerCase()).join(', ')}). É a base fixa da família: reduzir aqui alivia o orçamento de todo mundo.`
+    })
+  }
+  if (individuais.length >= 2) {
+    const [maior] = individuais
     const nome = primeiroNome(maior.nome)
     const parteEssencial = maior.total > 0 ? maior.porNatureza.essencial / maior.total : 0
     const porMes = (total: number) => moeda(Math.round(total / a.periodo.meses))
@@ -41,8 +50,8 @@ export function gerarInsightsAnalise(
     if (pessoa.variacaoUltimoMes !== null && pessoa.variacaoUltimoMes >= VARIACAO_PESSOA_RELEVANTE) {
       insights.push({
         tipo: 'atencao',
-        titulo: `Gastos de ${primeiroNome(pessoa.nome)} subiram`,
-        texto: `Em ${nomeMes(a.periodo.fim)}, os gastos de ${primeiroNome(pessoa.nome)} ficaram ${percentual(pessoa.variacaoUltimoMes)} acima da média dos meses anteriores.`
+        titulo: pessoa.pessoaId ? `Gastos de ${primeiroNome(pessoa.nome)} subiram` : 'Gastos da casa subiram',
+        texto: `Em ${nomeMes(a.periodo.fim)}, os gastos ${pessoa.pessoaId ? `de ${primeiroNome(pessoa.nome)}` : 'da casa'} ficaram ${percentual(pessoa.variacaoUltimoMes)} acima da média dos meses anteriores.`
       })
     }
   }

@@ -1,11 +1,12 @@
 import type { CSSProperties, ReactNode } from 'react'
-import type { LucideIcon } from 'lucide-react'
+import { House, type LucideIcon } from 'lucide-react'
 import { iconeDe } from '../../utilitarios/icones'
 import estilos from './Elementos.module.css'
 
 // Pequenos componentes visuais reutilizados em várias telas.
 
-export function Avatar({ nome, cor, tamanho = 32 }: { nome: string; cor: string; tamanho?: number }) {
+// `casa`: lançamentos de todos os membros, mostrados com o ícone de casa no lugar das iniciais.
+export function Avatar({ nome, cor, tamanho = 32, casa = false }: { nome: string; cor: string; tamanho?: number; casa?: boolean }) {
   const iniciais = nome
     .split(/\s+/)
     .slice(0, 2)
@@ -18,7 +19,7 @@ export function Avatar({ nome, cor, tamanho = 32 }: { nome: string; cor: string;
       style={{ '--cor': cor, width: tamanho, height: tamanho, fontSize: tamanho * 0.38 } as CSSProperties}
       title={nome}
     >
-      {iniciais}
+      {casa ? <House size={tamanho * 0.55} strokeWidth={2.2} /> : iniciais}
     </span>
   )
 }

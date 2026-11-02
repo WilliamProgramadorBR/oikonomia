@@ -10,7 +10,7 @@ export interface RecorrenciaDTO {
   estimativaCentavos: number // valor usado nas próximas previsões (aprende com o histórico)
   diaDoMes: number
   categoriaId: string
-  pessoaId: string
+  pessoaId: string | null // null = da casa (todos os membros)
   cartaoId: string | null // null = boleto/débito/Pix
   inicio: string // AAAA-MM
   fim: string | null // AAAA-MM; null = sem data para acabar
@@ -26,7 +26,7 @@ export interface CriarRecorrenciaEntrada {
   valorCentavos: number
   diaDoMes: number
   categoriaId: string
-  pessoaId: string
+  pessoaId: string | null // null = da casa (todos os membros)
   cartaoId: string | null
   inicio: string
   objetivoId?: string | null // aporte programado para um objetivo

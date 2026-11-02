@@ -11,7 +11,7 @@ export interface PropsRecorrencia {
   valorCentavos: number // fixo, ou estimativa inicial quando variável
   diaDoMes: number
   categoriaId: string
-  pessoaId: string
+  pessoaId: string | null // null = da casa (todos os membros)
   cartaoId: string | null // cobrada no cartão de crédito
   inicio: string // AAAA-MM
   fim: string | null // AAAA-MM (inclusivo)
@@ -43,7 +43,6 @@ export class Recorrencia {
       throw new ErroDominio('O dia do mês deve estar entre 1 e 31.')
     }
     if (!dados.categoriaId) throw new ErroDominio('Informe a categoria.')
-    if (!dados.pessoaId) throw new ErroDominio('Informe a pessoa.')
     if (dados.cartaoId && dados.tipo !== 'despesa') {
       throw new ErroDominio('Só despesas podem ser cobradas no cartão.')
     }
@@ -98,7 +97,7 @@ export class Recorrencia {
   get categoriaId(): string {
     return this.props.categoriaId
   }
-  get pessoaId(): string {
+  get pessoaId(): string | null {
     return this.props.pessoaId
   }
   get cartaoId(): string | null {

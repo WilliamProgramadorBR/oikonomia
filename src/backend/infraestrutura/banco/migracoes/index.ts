@@ -7,6 +7,7 @@ import { migracao004 } from './004_recorrencias_e_previsoes'
 import { migracao005 } from './005_objetivos'
 import { migracao006 } from './006_dividas'
 import { migracao007 } from './007_usuarios_e_acesso'
+import { migracao008 } from './008_lancamentos_da_casa'
 
 export interface Migracao {
   versao: number
@@ -15,7 +16,7 @@ export interface Migracao {
 }
 
 // Para criar uma nova migração: crie o arquivo 00X_nome.ts e adicione-o aqui, em ordem.
-const MIGRACOES: Migracao[] = [migracao001, migracao002, migracao003, migracao004, migracao005, migracao006, migracao007]
+const MIGRACOES: Migracao[] = [migracao001, migracao002, migracao003, migracao004, migracao005, migracao006, migracao007, migracao008]
 
 export function executarMigracoes(banco: BancoDeDados): void {
   banco.exec(`

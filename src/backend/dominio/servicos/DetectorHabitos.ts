@@ -4,7 +4,7 @@
 export interface GastoAvulso {
   descricao: string
   categoriaId: string
-  pessoaId: string
+  pessoaId: string | null
   valorCentavos: number
   data: string // AAAA-MM-DD
 }
@@ -13,7 +13,7 @@ export interface Habito {
   assinatura: string
   descricao: string
   categoriaId: string
-  pessoaId: string
+  pessoaId: string | null
   valorMedio: number // média mensal
   diaTipico: number // mediana do dia do mês
   mesesComOcorrencia: number

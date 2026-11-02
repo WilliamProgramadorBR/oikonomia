@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import { CASA } from '@compartilhado/constantes/casa'
 import type { CategoriaDTO } from '@compartilhado/dtos/categoria'
 import type { PessoaDTO } from '@compartilhado/dtos/pessoa'
 import { classes } from '../../utilitarios/classes'
@@ -26,6 +27,45 @@ export function SeletorCategoria({ categorias, valor, aoAlterar }: PropsSeletorC
           >
             <IconeCategoria icone={categoria.icone} cor={categoria.cor} tamanho={28} />
             <span>{categoria.nome}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+interface PropsSeletorDestino {
+  pessoas: PessoaDTO[]
+  valor: string | null // null = todos (da casa)
+  aoAlterar: (id: string | null) => void
+}
+
+// Para quem é o lançamento: a casa toda (ex.: aluguel) ou um membro (ex.: faculdade, assinatura).
+export function SeletorDestino({ pessoas, valor, aoAlterar }: PropsSeletorDestino) {
+  return (
+    <div className={estilos.bloco}>
+      <span className={estilos.rotuloBloco}>Para quem</span>
+      <div className={estilos.pessoas}>
+        <button
+          type="button"
+          className={classes(estilos.opcaoPessoa, valor === null && estilos.opcaoAtiva)}
+          style={{ '--cor': CASA.cor } as CSSProperties}
+          onClick={() => aoAlterar(null)}
+          title="Vale para todos os membros da família"
+        >
+          <Avatar nome={CASA.nome} cor={CASA.cor} tamanho={24} casa />
+          Todos (casa)
+        </button>
+        {pessoas.map((pessoa) => (
+          <button
+            key={pessoa.id}
+            type="button"
+            className={classes(estilos.opcaoPessoa, pessoa.id === valor && estilos.opcaoAtiva)}
+            style={{ '--cor': pessoa.cor } as CSSProperties}
+            onClick={() => aoAlterar(pessoa.id)}
+          >
+            <Avatar nome={pessoa.nome} cor={pessoa.cor} tamanho={24} />
+            {pessoa.nome}
           </button>
         ))}
       </div>

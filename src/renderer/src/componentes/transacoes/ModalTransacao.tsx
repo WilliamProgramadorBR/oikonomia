@@ -12,7 +12,7 @@ import { Botao } from '../ui/Botao'
 import { Campo, CampoMoeda, CampoSelecao } from '../ui/Campo'
 import { EstadoVazio } from '../ui/Elementos'
 import { Modal } from '../ui/Modal'
-import { SeletorCategoria, SeletorPessoa } from './Seletores'
+import { SeletorCategoria, SeletorDestino } from './Seletores'
 import estilos from './Transacoes.module.css'
 
 interface PropsModalTransacao {
@@ -39,7 +39,7 @@ export function ModalTransacao({ aberto, aoFechar, aoUsarCartao, aoUsarRecorrent
   const [valorCentavos, setValorCentavos] = useState(0)
   const [descricao, setDescricao] = useState('')
   const [categoriaId, setCategoriaId] = useState('')
-  const [pessoaEscolhida, setPessoaEscolhida] = useState('')
+  const [pessoaEscolhida, setPessoaEscolhida] = useState<string | null | undefined>(undefined)
   const [data, setData] = useState(hojeISO())
   const [estabelecimento, setEstabelecimento] = useState('')
   const [objetivoId, setObjetivoId] = useState('')
@@ -54,11 +54,12 @@ export function ModalTransacao({ aberto, aoFechar, aoUsarCartao, aoUsarRecorrent
     setCategoriaId('')
     setEstabelecimento('')
     setObjetivoId('')
-    setPessoaEscolhida('')
+    setPessoaEscolhida(undefined)
     setData(hojeISO())
   }, [aberto])
 
-  const pessoaId = pessoaEscolhida || pessoaDaVisao || pessoas?.[0]?.id || ''
+  // Na visão da família o padrão é "todos"; na visão de uma pessoa, ela mesma.
+  const pessoaId = pessoaEscolhida !== undefined ? pessoaEscolhida : (pessoaDaVisao ?? null)
 
   function trocarTipo(novo: TipoTransacaoDTO) {
     setTipo(novo)
@@ -186,7 +187,7 @@ export function ModalTransacao({ aberto, aoFechar, aoUsarCartao, aoUsarRecorrent
           </CampoSelecao>
         )}
 
-        <SeletorPessoa pessoas={pessoas ?? []} valor={pessoaId} aoAlterar={setPessoaEscolhida} />
+        <SeletorDestino pessoas={pessoas ?? []} valor={pessoaId} aoAlterar={setPessoaEscolhida} />
 
         <div className={estilos.linha}>
           <Campo rotulo="Data" type="date" value={data} onChange={(e) => setData(e.target.value)} />

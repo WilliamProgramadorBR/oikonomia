@@ -1,3 +1,4 @@
+import { CASA } from '@compartilhado/constantes/casa'
 import type { CSSProperties } from 'react'
 import type { FatiaGasto } from '@compartilhado/dtos/painel'
 import { formatarCentavos, formatarPercentual } from '../../utilitarios/moeda'
@@ -14,7 +15,7 @@ export function BarrasRanking({ fatias, comAvatar }: { fatias: FatiaGasto[]; com
       {fatias.map((fatia) => (
         <li key={fatia.id} style={{ '--cor': fatia.cor } as CSSProperties}>
           <div className={estilos.rankingTopo}>
-            {comAvatar && <Avatar nome={fatia.nome} cor={fatia.cor} tamanho={24} />}
+            {comAvatar && <Avatar nome={fatia.nome} cor={fatia.cor} tamanho={24} casa={fatia.id === CASA.id} />}
             <span className={estilos.legendaNome}>{fatia.nome}</span>
             <span className={estilos.legendaPercentual}>{formatarPercentual(fatia.total / total)}</span>
             <strong className="numero">{formatarCentavos(fatia.total)}</strong>

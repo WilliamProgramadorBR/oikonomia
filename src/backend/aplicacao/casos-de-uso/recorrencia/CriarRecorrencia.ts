@@ -19,11 +19,10 @@ export class CriarRecorrencia {
   ) {}
 
   async executar(entrada: CriarRecorrenciaEntrada): Promise<RecorrenciaDTO> {
-    const [pessoa, categoria] = await Promise.all([
-      this.pessoaRepositorio.buscarPorId(entrada.pessoaId),
-      this.categoriaRepositorio.buscarPorId(entrada.categoriaId)
-    ])
-    if (!pessoa) throw new ErroNaoEncontrado('Pessoa', entrada.pessoaId)
+    if (entrada.pessoaId && !(await this.pessoaRepositorio.buscarPorId(entrada.pessoaId))) {
+      throw new ErroNaoEncontrado('Pessoa', entrada.pessoaId)
+    }
+    const categoria = await this.categoriaRepositorio.buscarPorId(entrada.categoriaId)
     if (!categoria) throw new ErroNaoEncontrado('Categoria', entrada.categoriaId)
     if (categoria.tipo !== entrada.tipo) {
       throw new ErroDominio(`A categoria "${categoria.nome}" não é do tipo ${entrada.tipo}.`)

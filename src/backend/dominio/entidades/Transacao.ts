@@ -26,7 +26,7 @@ export interface PropsTransacao {
   tipo: TipoTransacao
   status: StatusTransacao
   data: Date
-  pessoaId: string
+  pessoaId: string | null // null = da casa (todos os membros)
   categoriaId: string
   estabelecimento: string | null
   cartaoId: string | null
@@ -65,7 +65,6 @@ export class Transacao {
     validarValor(dados.valorCentavos)
     if (!TIPOS_TRANSACAO.includes(dados.tipo)) throw new ErroDominio('Tipo de lançamento inválido.')
     validarData(dados.data)
-    if (!dados.pessoaId) throw new ErroDominio('Informe a pessoa do lançamento.')
     if (!dados.categoriaId) throw new ErroDominio('Informe a categoria do lançamento.')
     if (dados.cartaoId && dados.tipo !== 'despesa') {
       throw new ErroDominio('Só despesas podem ser cobradas no cartão.')
@@ -134,7 +133,7 @@ export class Transacao {
   get data(): Date {
     return this.props.data
   }
-  get pessoaId(): string {
+  get pessoaId(): string | null {
     return this.props.pessoaId
   }
   get categoriaId(): string {

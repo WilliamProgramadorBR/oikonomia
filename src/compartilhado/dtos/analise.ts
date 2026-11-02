@@ -15,7 +15,7 @@ export interface FatiaSimples {
 }
 
 export interface GastoPessoaDTO {
-  pessoaId: string
+  pessoaId: string | null // null = da casa
   nome: string
   cor: string
   total: number
@@ -58,7 +58,7 @@ export interface TendenciaDTO {
 export interface HabitoDTO {
   descricao: string
   categoriaId: string
-  pessoaId: string
+  pessoaId: string | null
   valorMedio: number
   diaTipico: number
   mesesComOcorrencia: number

@@ -14,7 +14,7 @@ export interface TransacaoDTO {
   tipo: TipoTransacaoDTO
   status: StatusTransacaoDTO
   data: string // ISO (AAAA-MM-DD)
-  pessoaId: string
+  pessoaId: string | null // null = da casa (todos os membros)
   categoriaId: string
   estabelecimento: string | null
   cartaoId: string | null // cobrada em cartão de crédito (parcela ou conta recorrente)
@@ -29,7 +29,7 @@ export interface CriarTransacaoEntrada {
   valorCentavos: number
   tipo: TipoTransacaoDTO
   data: string
-  pessoaId: string
+  pessoaId: string | null // null = da casa (todos os membros)
   categoriaId: string
   estabelecimento?: string
   objetivoId?: string | null

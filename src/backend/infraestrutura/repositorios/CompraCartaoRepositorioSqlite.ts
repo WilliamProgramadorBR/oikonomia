@@ -14,7 +14,7 @@ interface LinhaCompra {
   taxa_mensal: number
   data_compra: string
   categoria_id: string
-  pessoa_id: string
+  pessoa_id: string | null
   estabelecimento: string | null
   criado_em: string
 }

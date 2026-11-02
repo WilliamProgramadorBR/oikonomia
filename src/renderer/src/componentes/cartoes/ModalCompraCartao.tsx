@@ -13,7 +13,7 @@ import { cartaoServico } from '../../servicos/cartaoServico'
 import { classes } from '../../utilitarios/classes'
 import { dataCurta, nomeDoMes } from '../../utilitarios/datas'
 import { formatarCentavos, formatarTaxa } from '../../utilitarios/moeda'
-import { SeletorCategoria, SeletorPessoa } from '../transacoes/Seletores'
+import { SeletorCategoria, SeletorDestino } from '../transacoes/Seletores'
 import { Alternador } from '../ui/Alternador'
 import { Botao } from '../ui/Botao'
 import { Campo, CampoMoeda, CampoSelecao } from '../ui/Campo'
@@ -44,7 +44,7 @@ export function ModalCompraCartao({ aberto, aoFechar, cartaoInicial }: PropsModa
   const [comJuros, setComJuros] = useState(false)
   const [taxaTexto, setTaxaTexto] = useState('')
   const [categoriaId, setCategoriaId] = useState('')
-  const [pessoaEscolhida, setPessoaEscolhida] = useState('')
+  const [pessoaEscolhida, setPessoaEscolhida] = useState<string | null | undefined>(undefined)
   const [dataCompra, setDataCompra] = useState(hojeISO())
   const [estabelecimento, setEstabelecimento] = useState('')
   const [salvando, setSalvando] = useState(false)
@@ -58,7 +58,7 @@ export function ModalCompraCartao({ aberto, aoFechar, cartaoInicial }: PropsModa
     setComJuros(false)
     setTaxaTexto('')
     setCategoriaId('')
-    setPessoaEscolhida('')
+    setPessoaEscolhida(undefined)
     setDataCompra(hojeISO())
     setEstabelecimento('')
   }, [aberto, cartaoInicial])
@@ -66,7 +66,8 @@ export function ModalCompraCartao({ aberto, aoFechar, cartaoInicial }: PropsModa
   const resumo = resumos?.find((r) => r.cartao.id === cartaoId) ?? resumos?.[0]
   const cartao = resumo?.cartao
   const taxaSugerida = cartao?.taxaContratoMensal ?? cartao?.taxaParceladoMercado ?? null
-  const pessoaId = pessoaEscolhida || cartao?.pessoaId || ''
+  // Padrão: o titular do cartão; pode ser trocado por outra pessoa ou por "todos".
+  const pessoaId = pessoaEscolhida !== undefined ? pessoaEscolhida : (cartao?.pessoaId ?? null)
 
   // Prévia: mesma matemática que o backend usa para gerar as parcelas.
   const taxa = comJuros && parcelas > 1 ? paraNumero(taxaTexto || String(taxaSugerida ?? 0)) : 0
@@ -264,7 +265,7 @@ export function ModalCompraCartao({ aberto, aoFechar, cartaoInicial }: PropsModa
           aoAlterar={setCategoriaId}
         />
 
-        <SeletorPessoa pessoas={pessoas ?? []} valor={pessoaId} aoAlterar={setPessoaEscolhida} />
+        <SeletorDestino pessoas={pessoas ?? []} valor={pessoaId} aoAlterar={setPessoaEscolhida} />
 
         <div className={estilos.linha}>
           <Campo

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Check, CreditCard, Repeat, Trash2, X } from 'lucide-react'
 import type { CategoriaDTO } from '@compartilhado/dtos/categoria'
+import { CASA } from '@compartilhado/constantes/casa'
 import type { PessoaDTO } from '@compartilhado/dtos/pessoa'
 import type { TransacaoDTO } from '@compartilhado/dtos/transacao'
 import { useAcao } from '../../hooks/useAcao'
@@ -38,7 +39,8 @@ export function ListaTransacoes({
     <LinhaTransacao
       key={t.id}
       transacao={t}
-      pessoa={pessoaPorId.get(t.pessoaId)}
+      pessoa={t.pessoaId ? pessoaPorId.get(t.pessoaId) : undefined}
+      daCasa={t.pessoaId === null}
       categoria={categoriaPorId.get(t.categoriaId)}
       mostrarData={!agruparPorDia}
       mostrarPessoa={mostrarPessoa}
@@ -75,6 +77,7 @@ export function ListaTransacoes({
 interface PropsLinha {
   transacao: TransacaoDTO
   pessoa?: PessoaDTO
+  daCasa: boolean
   categoria?: CategoriaDTO
   mostrarData: boolean
   mostrarPessoa: boolean
@@ -84,6 +87,7 @@ interface PropsLinha {
 function LinhaTransacao({
   transacao: t,
   pessoa,
+  daCasa,
   categoria,
   mostrarData,
   mostrarPessoa,
@@ -129,6 +133,7 @@ function LinhaTransacao({
         <span>{detalhes.join(' · ')}</span>
       </div>
       {mostrarPessoa && pessoa && <Avatar nome={pessoa.nome} cor={pessoa.cor} tamanho={26} />}
+      {mostrarPessoa && daCasa && <Avatar nome={CASA.nome} cor={CASA.cor} tamanho={26} casa />}
       {prevista && (
         <Botao variante="secundario" tamanho="p" onClick={() => confirmar(t)}>
           Confirmar

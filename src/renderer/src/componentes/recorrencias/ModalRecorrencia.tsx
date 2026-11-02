@@ -9,7 +9,7 @@ import { useAcao } from '../../hooks/useAcao'
 import { recorrenciaServico } from '../../servicos/recorrenciaServico'
 import { classes } from '../../utilitarios/classes'
 import { nomeDoMes } from '../../utilitarios/datas'
-import { SeletorCategoria, SeletorPessoa } from '../transacoes/Seletores'
+import { SeletorCategoria, SeletorDestino } from '../transacoes/Seletores'
 import { Alternador } from '../ui/Alternador'
 import { Botao } from '../ui/Botao'
 import { Campo, CampoMoeda, CampoSelecao } from '../ui/Campo'
@@ -38,7 +38,7 @@ export function ModalRecorrencia({ aberto, aoFechar, inicial }: PropsModalRecorr
   const [diaDoMes, setDiaDoMes] = useState('')
   const [cartaoId, setCartaoId] = useState<string | null>(null)
   const [categoriaId, setCategoriaId] = useState('')
-  const [pessoaEscolhida, setPessoaEscolhida] = useState('')
+  const [pessoaEscolhida, setPessoaEscolhida] = useState<string | null | undefined>(undefined)
   const [inicio, setInicio] = useState(mesAtual())
   const [salvando, setSalvando] = useState(false)
 
@@ -51,11 +51,11 @@ export function ModalRecorrencia({ aberto, aoFechar, inicial }: PropsModalRecorr
     setDiaDoMes(inicial?.diaDoMes ? String(inicial.diaDoMes) : '')
     setCartaoId(inicial?.cartaoId ?? null)
     setCategoriaId(inicial?.categoriaId ?? '')
-    setPessoaEscolhida(inicial?.pessoaId ?? '')
+    setPessoaEscolhida(inicial?.pessoaId)
     setInicio(inicial?.inicio ?? mesAtual())
   }, [aberto, inicial])
 
-  const pessoaId = pessoaEscolhida || pessoaDaVisao || pessoas?.[0]?.id || ''
+  const pessoaId = pessoaEscolhida !== undefined ? pessoaEscolhida : (pessoaDaVisao ?? null)
 
   function trocarTipo(novo: TipoTransacaoDTO) {
     setTipo(novo)
@@ -199,7 +199,7 @@ export function ModalRecorrencia({ aberto, aoFechar, inicial }: PropsModalRecorr
           aoAlterar={setCategoriaId}
         />
 
-        <SeletorPessoa pessoas={pessoas ?? []} valor={pessoaId} aoAlterar={setPessoaEscolhida} />
+        <SeletorDestino pessoas={pessoas ?? []} valor={pessoaId} aoAlterar={setPessoaEscolhida} />
 
         <CampoSelecao rotulo="A partir de" value={inicio} onChange={(e) => setInicio(e.target.value)}>
           {MESES_INICIO.map((k) => {

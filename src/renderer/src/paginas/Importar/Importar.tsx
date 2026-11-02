@@ -3,7 +3,7 @@ import jsQR from 'jsqr'
 import { CalendarDays, FileText, FileUp, Link2, PencilLine, QrCode, Receipt, ScanLine, Store } from 'lucide-react'
 import type { ContrachequeLidoDTO, NotaFiscalLidaDTO } from '@compartilhado/dtos/importacao'
 import { hojeISO, mesAtual } from '@compartilhado/utilitarios/mes'
-import { SeletorCategoria, SeletorPessoa } from '../../componentes/transacoes/Seletores'
+import { SeletorCategoria, SeletorDestino, SeletorPessoa } from '../../componentes/transacoes/Seletores'
 import { Alternador } from '../../componentes/ui/Alternador'
 import { Botao } from '../../componentes/ui/Botao'
 import { Campo, CampoMoeda, CampoSelecao } from '../../componentes/ui/Campo'
@@ -213,7 +213,7 @@ interface FormularioNota {
   data: string
   valorCentavos: number
   categoriaId: string
-  pessoaId: string
+  pessoaId: string | null // null = todos (da casa)
   forma: 'conta' | 'cartao'
   cartaoId: string
   parcelas: number
@@ -243,7 +243,7 @@ function ImportarNota() {
         data: lida.data ?? hojeISO(),
         valorCentavos: lida.totalCentavos ?? 0,
         categoriaId: lida.categoriaSugeridaId ?? '',
-        pessoaId: pessoas?.[0]?.id ?? '',
+        pessoaId: null,
         forma: 'conta',
         cartaoId: cartoes?.[0]?.id ?? '',
         parcelas: 1
@@ -352,7 +352,7 @@ function ImportarNota() {
             valor={formulario.categoriaId}
             aoAlterar={(categoriaId) => alterar({ categoriaId })}
           />
-          <SeletorPessoa pessoas={pessoas ?? []} valor={formulario.pessoaId} aoAlterar={(pessoaId) => alterar({ pessoaId })} />
+          <SeletorDestino pessoas={pessoas ?? []} valor={formulario.pessoaId} aoAlterar={(pessoaId) => alterar({ pessoaId })} />
 
           <div className={estilos.pagamento}>
             <span className={estilos.rotulo}>Como pagou</span>
@@ -390,7 +390,7 @@ function ImportarNota() {
             </Botao>
             <Botao
               carregando={salvando}
-              disabled={formulario.valorCentavos <= 0 || !formulario.categoriaId || !formulario.pessoaId || !formulario.descricao.trim()}
+              disabled={formulario.valorCentavos <= 0 || !formulario.categoriaId || !formulario.descricao.trim()}
               onClick={lancar}
             >
               Lançar compra

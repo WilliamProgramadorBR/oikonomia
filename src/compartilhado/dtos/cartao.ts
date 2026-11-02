@@ -40,7 +40,7 @@ export interface CompraCartaoDTO {
   primeiraFatura: string // AAAA-MM
   parcelasPagas: number // parcelas com vencimento já passado
   categoriaId: string
-  pessoaId: string
+  pessoaId: string | null // null = da casa (todos os membros)
   estabelecimento: string | null
 }
 
@@ -52,7 +52,7 @@ export interface CriarCompraCartaoEntrada {
   taxaMensal: number
   dataCompra: string
   categoriaId: string
-  pessoaId: string
+  pessoaId: string | null // null = da casa (todos os membros)
   estabelecimento?: string
 }
 

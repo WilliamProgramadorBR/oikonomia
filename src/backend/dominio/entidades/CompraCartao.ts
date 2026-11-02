@@ -11,7 +11,7 @@ export interface PropsCompraCartao {
   taxaMensal: number // percentual ao mês; 0 = sem juros
   dataCompra: Date
   categoriaId: string
-  pessoaId: string
+  pessoaId: string | null // null = da casa (todos os membros)
   estabelecimento: string | null
   criadoEm: Date
 }
@@ -41,7 +41,6 @@ export class CompraCartao {
     }
     if (Number.isNaN(dados.dataCompra.getTime())) throw new ErroDominio('Data inválida.')
     if (!dados.categoriaId) throw new ErroDominio('Informe a categoria da compra.')
-    if (!dados.pessoaId) throw new ErroDominio('Informe quem fez a compra.')
 
     return new CompraCartao({
       ...dados,
@@ -82,7 +81,7 @@ export class CompraCartao {
   get categoriaId(): string {
     return this.props.categoriaId
   }
-  get pessoaId(): string {
+  get pessoaId(): string | null {
     return this.props.pessoaId
   }
   get estabelecimento(): string | null {

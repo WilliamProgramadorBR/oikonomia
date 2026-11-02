@@ -16,7 +16,7 @@ interface LinhaTransacao {
   tipo: TipoTransacao
   status: StatusTransacao
   data: string
-  pessoa_id: string
+  pessoa_id: string | null
   categoria_id: string
   estabelecimento: string | null
   cartao_id: string | null

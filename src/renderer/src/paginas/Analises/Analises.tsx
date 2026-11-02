@@ -98,7 +98,7 @@ export function Analises() {
           <h2 className={estilos.secao}>Quem gasta o quê</h2>
           <div className={estilos.pessoas}>
             {analise.porPessoa.map((p) => (
-              <CartaoPessoa key={p.pessoaId} pessoa={p} />
+              <CartaoPessoa key={p.pessoaId ?? 'casa'} pessoa={p} />
             ))}
           </div>
         </section>
@@ -146,7 +146,7 @@ function CartaoPessoa({ pessoa: p }: { pessoa: GastoPessoaDTO }) {
   return (
     <article className={estilos.pessoa} style={{ '--cor': p.cor } as CSSProperties}>
       <header className={estilos.pessoaTopo}>
-        <Avatar nome={p.nome} cor={p.cor} tamanho={40} />
+        <Avatar nome={p.nome} cor={p.cor} tamanho={40} casa={p.pessoaId === null} />
         <div>
           <strong>{p.nome}</strong>
           <span>{formatarCentavos(p.mediaMensal)}/mês</span>

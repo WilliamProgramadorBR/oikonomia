@@ -1,3 +1,4 @@
+import { CASA } from '@compartilhado/constantes/casa'
 import type {
   AnaliseDTO,
   FatiaSimples,
@@ -113,9 +114,9 @@ export class ObterAnalise {
     // ===== Quem gasta o quê (só na visão da família) =====
     const porPessoa: GastoPessoaDTO[] = pessoaId
       ? []
-      : [...agrupar(despesas, (t) => t.pessoaId)]
+      : [...agrupar(despesas, (t) => t.pessoaId ?? CASA.id)]
           .map(([id, lista]) => {
-            const pessoa = pessoas.find((p) => p.id === id)
+            const pessoa = id === CASA.id ? CASA : pessoas.find((p) => p.id === id)
             const mensal = totaisPorMes(lista)
             const anteriores = mensal.slice(0, -1)
             const mediaAnteriores = media(anteriores)
@@ -123,7 +124,7 @@ export class ObterAnalise {
             for (const t of lista) porNatureza[naturezaDe(t)] += t.valorCentavos
 
             return {
-              pessoaId: id,
+              pessoaId: id === CASA.id ? null : id,
               nome: pessoa?.nome ?? 'Desconhecido',
               cor: pessoa?.cor ?? '#94a3b8',
               total: soma(lista),
