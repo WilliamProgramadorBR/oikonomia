@@ -50,8 +50,13 @@ export function iniciarAtualizador(antesDeInstalar: () => void): void {
   autoUpdater.on('download-progress', (p) => mudar({ fase: 'baixando', progresso: Math.round(p.percent) }))
   autoUpdater.on('update-downloaded', (info) => mudar({ fase: 'pronta', versaoNova: info.version, progresso: 100 }))
   autoUpdater.on('error', (erro) => {
-    // Sem internet ou GitHub fora do ar não é problema: tenta de novo na próxima rodada.
     console.warn('[atualização]', erro.message)
+    // Repositório ainda sem Release publicada: não é falha, só não há o que baixar.
+    if (/no published versions|unable to find latest version|404/i.test(erro.message)) {
+      mudar({ fase: 'atualizado', progresso: null, mensagem: null })
+      return
+    }
+    // Sem internet ou GitHub fora do ar não é problema: tenta de novo na próxima rodada.
     mudar({ fase: 'erro', progresso: null, mensagem: 'Não foi possível verificar atualizações agora.' })
   })
 
