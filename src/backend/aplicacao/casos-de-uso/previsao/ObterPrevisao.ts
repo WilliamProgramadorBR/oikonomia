@@ -3,6 +3,7 @@ import { deslocarMes, intervaloDoMes, mesAtual } from '@compartilhado/utilitario
 import type { Transacao } from '../../../dominio/entidades/Transacao'
 import type { IRecorrenciaRepositorio } from '../../../dominio/repositorios/IRecorrenciaRepositorio'
 import type { ITransacaoRepositorio } from '../../../dominio/repositorios/ITransacaoRepositorio'
+import { moeda } from '../../servicos/formatacao'
 
 const MESES_PREVISTOS = 6
 const MESES_DE_HISTORICO = 3 // base para estimar imprevistos
@@ -47,11 +48,25 @@ export class ObterPrevisao {
     )
     const inicio = [historico[0], meses[0]].sort()[0]
 
-    const transacoes = await this.transacaoRepositorio.listar({
+    const todas = await this.transacaoRepositorio.listar({
       pessoaId: pessoaId ?? undefined,
       inicio: intervaloDoMes(inicio).inicio,
-      fim: intervaloDoMes(meses[meses.length - 1]).fim
+      fim: intervaloDoMes(meses[meses.length - 1]).fim,
+      incluirIgnoradas: true // só para os avisos de meses ajustados
     })
+    const transacoes = todas.filter((t) => t.status !== 'ignorada')
+    const valorNormal = new Map(recorrencias.map((r) => [r.id, r.valorCentavos]))
+    const avisosDoMes = (mes: string) =>
+      todas
+        .filter((t) => t.ajuste && mesDe(t) === mes)
+        .map((t) => {
+          const normal = t.recorrencia ? valorNormal.get(t.recorrencia.recorrenciaId) : undefined
+          if (t.status === 'ignorada') return `${t.descricao}: sem lançamento este mês (${t.ajuste}).`
+          if (normal !== undefined && normal !== t.valorCentavos) {
+            return `${t.descricao}: ${moeda(t.valorCentavos)} em vez de ${moeda(normal)} (${t.ajuste}).`
+          }
+          return `${t.descricao}: ${moeda(t.valorCentavos)} (${t.ajuste}).`
+        })
 
     const porMes = new Map<string, Transacao[]>()
     for (const t of transacoes) porMes.set(mesDe(t), [...(porMes.get(mesDe(t)) ?? []), t])
@@ -96,7 +111,8 @@ export class ObterPrevisao {
           avulsasLancadas -
           reservaImprevistos -
           guardado,
-        valoresEstimados: soma(doMes.filter((t) => t.status === 'prevista')) + reservaImprevistos
+        valoresEstimados: soma(doMes.filter((t) => t.status === 'prevista')) + reservaImprevistos,
+        avisos: avisosDoMes(mes)
       }
     })
 

@@ -13,6 +13,12 @@ import type {
   ResultadoContrachequeDTO
 } from '@compartilhado/dtos/importacao'
 import type {
+  InterpretacaoLancamentosDTO,
+  PropostaLancamentoDTO,
+  ResultadoLancamentosDTO
+} from '@compartilhado/dtos/lancamentosTexto'
+import type { ConfirmarLancamentos, InterpretarLancamentos } from '../../../aplicacao/casos-de-uso/ia/LancamentosPorTexto'
+import type {
   ConversarComAssistente,
   ObterConfiguracaoIA,
   SalvarConfiguracaoIA,
@@ -29,7 +35,9 @@ export class IAControlador {
     private readonly obterConfiguracaoIA: ObterConfiguracaoIA,
     private readonly salvarConfiguracaoIA: SalvarConfiguracaoIA,
     private readonly testarIA: TestarIA,
-    private readonly conversarComAssistente: ConversarComAssistente
+    private readonly conversarComAssistente: ConversarComAssistente,
+    private readonly interpretarLancamentosUC: InterpretarLancamentos,
+    private readonly confirmarLancamentosUC: ConfirmarLancamentos
   ) {}
 
   obterConfiguracao(): Promise<ConfiguracaoIADTO> {
@@ -46,6 +54,14 @@ export class IAControlador {
 
   conversar(mensagens: MensagemChatDTO[]): Promise<RespostaAssistenteDTO> {
     return this.conversarComAssistente.executar(mensagens)
+  }
+
+  interpretarLancamentos(texto: string): Promise<InterpretacaoLancamentosDTO> {
+    return this.interpretarLancamentosUC.executar(texto)
+  }
+
+  confirmarLancamentos(propostas: PropostaLancamentoDTO[]): Promise<ResultadoLancamentosDTO> {
+    return this.confirmarLancamentosUC.executar(propostas)
   }
 }
 

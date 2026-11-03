@@ -71,7 +71,14 @@ export const CANAIS = {
     obterConfiguracao: 'ia:obter-configuracao',
     salvarConfiguracao: 'ia:salvar-configuracao',
     testar: 'ia:testar',
-    conversar: 'ia:conversar'
+    conversar: 'ia:conversar',
+    interpretarLancamentos: 'ia:interpretar-lancamentos',
+    confirmarLancamentos: 'ia:confirmar-lancamentos'
+  },
+  ajustes: {
+    ajustarPrevista: 'ajustes:ajustar-prevista',
+    simularFerias: 'ajustes:simular-ferias',
+    aplicarFerias: 'ajustes:aplicar-ferias'
   },
   importacao: {
     lerContracheque: 'importacao:ler-contracheque',

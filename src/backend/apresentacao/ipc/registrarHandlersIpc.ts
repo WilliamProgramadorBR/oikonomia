@@ -18,6 +18,8 @@ import type { AtualizarPessoaEntrada, CriarPessoaEntrada } from '@compartilhado/
 import type { ModalidadeCredito } from '@compartilhado/dtos/taxa'
 import type { FiltroAnalise } from '@compartilhado/dtos/analise'
 import type { MensagemChatDTO, SalvarConfiguracaoIAEntrada } from '@compartilhado/dtos/ia'
+import type { AjustarPrevistaEntrada, AplicarFeriasEntrada, FeriasEntrada } from '@compartilhado/dtos/ajustes'
+import type { PropostaLancamentoDTO } from '@compartilhado/dtos/lancamentosTexto'
 import type { ArquivoEntrada, ConfirmarContrachequeEntrada } from '@compartilhado/dtos/importacao'
 import type { CriarDividaEntrada, SimularCreditoEntrada } from '@compartilhado/dtos/divida'
 import type {
@@ -84,6 +86,7 @@ export function registrarHandlersIpc({
   perfilControlador,
   dividaControlador,
   iaControlador,
+  ajustesControlador,
   importacaoControlador
 }: Container): void {
   const tratar = criarTratador(sessao, () => {
@@ -164,6 +167,11 @@ export function registrarHandlersIpc({
   tratar(CANAIS.ia.salvarConfiguracao, (entrada: SalvarConfiguracaoIAEntrada) => iaControlador.salvarConfiguracao(entrada))
   tratar(CANAIS.ia.testar, () => iaControlador.testar())
   tratar(CANAIS.ia.conversar, (mensagens: MensagemChatDTO[]) => iaControlador.conversar(mensagens))
+  tratar(CANAIS.ia.interpretarLancamentos, (texto: string) => iaControlador.interpretarLancamentos(texto))
+  tratar(CANAIS.ia.confirmarLancamentos, (propostas: PropostaLancamentoDTO[]) => iaControlador.confirmarLancamentos(propostas))
+  tratar(CANAIS.ajustes.ajustarPrevista, (entrada: AjustarPrevistaEntrada) => ajustesControlador.ajustarPrevista(entrada))
+  tratar(CANAIS.ajustes.simularFerias, (entrada: FeriasEntrada) => ajustesControlador.simularFerias(entrada))
+  tratar(CANAIS.ajustes.aplicarFerias, (entrada: AplicarFeriasEntrada) => ajustesControlador.aplicarFerias(entrada))
 
   tratar(CANAIS.importacao.lerContracheque, (arquivo: ArquivoEntrada) => importacaoControlador.lerContracheque(arquivo))
   tratar(CANAIS.importacao.confirmarContracheque, (entrada: ConfirmarContrachequeEntrada) =>

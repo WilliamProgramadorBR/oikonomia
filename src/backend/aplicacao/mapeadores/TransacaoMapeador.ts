@@ -19,6 +19,7 @@ export const TransacaoMapeador = {
         : null,
       recorrenciaId: transacao.recorrencia?.recorrenciaId ?? null,
       objetivoId: transacao.objetivoId,
+      ajuste: transacao.ajuste,
       criadoEm: transacao.criadoEm.toISOString()
     }
   }

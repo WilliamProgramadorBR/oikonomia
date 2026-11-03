@@ -124,6 +124,11 @@ function LinhaTransacao({
               {prevista ? 'previsto' : 'recorrente'}
             </span>
           )}
+          {t.ajuste && (
+            <span className={classes(estilos.seloParcela, estilos.seloAjuste)} title="Valor fora do normal neste mês">
+              {t.ajuste}
+            </span>
+          )}
           {t.cartaoId && !t.parcela && (
             <span className={estilos.seloParcela} title="Cobrada no cartão de crédito">
               <CreditCard size={11} />

@@ -7,9 +7,10 @@ import type { Transacao } from '../../dominio/entidades/Transacao'
 // Regras compartilhadas pelos casos de uso de recorrência.
 
 // Valores confirmados das ocorrências, da competência mais recente para a mais antiga.
+// Meses ajustados (férias, licença...) ficam de fora: não representam o valor normal.
 export function valoresConfirmados(ocorrencias: Transacao[]): number[] {
   return ocorrencias
-    .filter((t) => t.status === 'confirmada' && t.recorrencia)
+    .filter((t) => t.status === 'confirmada' && t.recorrencia && !t.ajuste)
     .sort((a, b) => b.recorrencia!.competencia.localeCompare(a.recorrencia!.competencia))
     .map((t) => t.valorCentavos)
 }

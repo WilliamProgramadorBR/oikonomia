@@ -1,3 +1,5 @@
+import type { InterpretacaoLancamentosDTO } from './lancamentosTexto'
+
 export interface ConfiguracaoIADTO {
   chaveConfigurada: boolean // a chave nunca volta para a tela
   modelo: string
@@ -25,4 +27,5 @@ export interface RespostaAssistenteDTO {
   texto: string // markdown simples (negrito, listas)
   fonte: 'ia' | 'nativo'
   motivoFallback: string | null
+  propostas?: InterpretacaoLancamentosDTO // quando a mensagem pede para lançar algo: revisar e confirmar
 }

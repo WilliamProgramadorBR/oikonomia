@@ -21,6 +21,7 @@ export interface TransacaoDTO {
   parcela: { numero: number; total: number } | null
   recorrenciaId: string | null
   objetivoId: string | null // aporte para um objetivo (só tipo 'guardado')
+  ajuste: string | null // motivo de um valor fora do normal (ex.: "Férias")
   criadoEm: string // ISO completo
 }
 

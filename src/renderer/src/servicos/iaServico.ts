@@ -12,6 +12,11 @@ import type {
   NotaFiscalLidaDTO,
   ResultadoContrachequeDTO
 } from '@compartilhado/dtos/importacao'
+import type {
+  InterpretacaoLancamentosDTO,
+  PropostaLancamentoDTO,
+  ResultadoLancamentosDTO
+} from '@compartilhado/dtos/lancamentosTexto'
 import { api, desembrulhar } from './api'
 
 export const iaServico = {
@@ -26,6 +31,12 @@ export const iaServico = {
   },
   conversar(mensagens: MensagemChatDTO[]): Promise<RespostaAssistenteDTO> {
     return desembrulhar(api.ia.conversar(mensagens))
+  },
+  interpretarLancamentos(texto: string): Promise<InterpretacaoLancamentosDTO> {
+    return desembrulhar(api.ia.interpretarLancamentos(texto))
+  },
+  confirmarLancamentos(propostas: PropostaLancamentoDTO[]): Promise<ResultadoLancamentosDTO> {
+    return desembrulhar(api.ia.confirmarLancamentos(propostas))
   }
 }
 

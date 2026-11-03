@@ -27,6 +27,7 @@ interface LinhaTransacao {
   recorrencia_competencia: string | null
   objetivo_id: string | null
   criado_em: string
+  ajuste: string | null
 }
 
 export class TransacaoRepositorioSqlite implements ITransacaoRepositorio {
@@ -43,11 +44,11 @@ export class TransacaoRepositorioSqlite implements ITransacaoRepositorio {
         `INSERT INTO transacoes
            (id, descricao, valor_centavos, tipo, status, data, pessoa_id, categoria_id, estabelecimento,
             cartao_id, compra_id, parcela_numero, parcela_total, recorrencia_id, recorrencia_competencia,
-            objetivo_id, criado_em)
+            objetivo_id, ajuste, criado_em)
          VALUES
            (@id, @descricao, @valor_centavos, @tipo, @status, @data, @pessoa_id, @categoria_id, @estabelecimento,
             @cartao_id, @compra_id, @parcela_numero, @parcela_total, @recorrencia_id, @recorrencia_competencia,
-            @objetivo_id, @criado_em)
+            @objetivo_id, @ajuste, @criado_em)
          ON CONFLICT(id) DO UPDATE SET
            descricao = excluded.descricao,
            valor_centavos = excluded.valor_centavos,
@@ -58,7 +59,8 @@ export class TransacaoRepositorioSqlite implements ITransacaoRepositorio {
            categoria_id = excluded.categoria_id,
            estabelecimento = excluded.estabelecimento,
            cartao_id = excluded.cartao_id,
-           objetivo_id = excluded.objetivo_id`
+           objetivo_id = excluded.objetivo_id,
+           ajuste = excluded.ajuste`
       )
       .run({ ...this.paraLinha(transacao) })
   }
@@ -142,6 +144,7 @@ export class TransacaoRepositorioSqlite implements ITransacaoRepositorio {
       recorrencia_id: transacao.recorrencia?.recorrenciaId ?? null,
       recorrencia_competencia: transacao.recorrencia?.competencia ?? null,
       objetivo_id: transacao.objetivoId,
+      ajuste: transacao.ajuste,
       criado_em: transacao.criadoEm.toISOString()
     }
   }
@@ -170,6 +173,7 @@ export class TransacaoRepositorioSqlite implements ITransacaoRepositorio {
           ? { recorrenciaId: linha.recorrencia_id, competencia: linha.recorrencia_competencia }
           : null,
       objetivoId: linha.objetivo_id,
+      ajuste: linha.ajuste,
       criadoEm: new Date(linha.criado_em)
     })
   }

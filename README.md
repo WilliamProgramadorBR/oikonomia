@@ -87,6 +87,37 @@ de uma **pessoa** aparece só o que é dela, para enxergar os gastos individuais
 análises, o que é da casa vira uma fatia própria, "Todos (casa)", e não conta como gasto de ninguém
 em "quem concentra os gastos". O contracheque continua sendo sempre de alguém.
 
+## Salário que muda: férias e meses fora do normal
+
+- **Ajustar um mês**: ao abrir uma conta prevista, escolha **"Vai ser diferente"** e informe o valor
+  daquele mês e o motivo (licença, mês sem plantão...), ou marque **"Não vai acontecer neste mês"**.
+  Só aquele mês muda. A sincronização não sobrescreve o ajuste, e meses atípicos não entram na média
+  das contas variáveis.
+- **Férias (CLT)**: em Contas recorrentes, no salário, clique no ícone de palmeira. Informe o primeiro
+  dia, os dias de descanso (30/20/15/10) e se vai vender 10 dias. O app calcula
+  (`dominio/servicos/FeriasClt.ts`):
+  - o **pagamento das férias** (dias + 1/3, e o abono + 1/3 se vender), lançado 2 dias antes do início;
+  - o **holerite seguinte** só com os dias trabalhados (zerado se as férias pegam o mês inteiro);
+  - quanto **guardar do adiantamento** para atravessar o mês magro.
+  Os valores partem do salário líquido cadastrado (estimativa); confirme pelo recibo de férias.
+- A **Previsão** mostra os "Meses fora do normal" com cada ajuste já considerado.
+
+## Lançar escrevendo (assistente)
+
+No **Assistente IA**, escreva como falaria: *"paguei 230 de internet ontem, Bruno pagou 64 de uber,
+comprei um fone de 450 em 3x no cartão; academia 120 todo dia 5"*. O app identifica cada lançamento
+(gasto, ganho ou guardado; uma vez, todo mês ou no cartão; categoria, para quem, data, parcelas) e
+mostra um **carrossel para revisar e editar** cada um. Nada é gravado antes de **Confirmar**, e a
+gravação usa as mesmas regras dos formulários.
+
+- Com a chave do Gemini, a IA interpreta; sem ela (ou se falhar), o interpretador do próprio app
+  (`aplicacao/servicos/InterpretadorLancamentos.ts`) cobre as frases do dia a dia.
+- Toda proposta passa por um saneamento: a categoria precisa existir e ser do tipo certo, a pessoa e o
+  cartão precisam existir, o valor precisa ser positivo, e cada suposição aparece no cartão ("sem data:
+  usei hoje").
+- Contas essenciais (aluguel, luz, mercado) vão para **Todos (casa)**; gastos pessoais, para quem
+  escreveu, salvo se outro nome for citado.
+
 ## Previsto x confirmado (contas recorrentes)
 
 - Todo lançamento tem um **status**: `prevista` (estimada, gerada por conta recorrente),

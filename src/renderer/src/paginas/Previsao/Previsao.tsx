@@ -95,6 +95,25 @@ export function Previsao() {
         </p>
       )}
 
+      {previsao.meses.some((m) => m.avisos.length > 0) && (
+        <Cartao titulo="Meses fora do normal" subtitulo="Ajustes já considerados na projeção">
+          <ul className={estilos.avisos}>
+            {previsao.meses
+              .filter((m) => m.avisos.length > 0)
+              .map((m) => (
+                <li key={m.mes}>
+                  <strong>{nomeDoMes(m.mes)}</strong>
+                  <ul>
+                    {m.avisos.map((aviso) => (
+                      <li key={aviso}>{aviso}</li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+          </ul>
+        </Cartao>
+      )}
+
       <Cartao
         titulo="Próximos 6 meses"
         subtitulo="Para onde a renda de cada mês já está indo"

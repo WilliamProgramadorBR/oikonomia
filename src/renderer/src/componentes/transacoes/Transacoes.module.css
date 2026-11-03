@@ -301,3 +301,14 @@
   background: var(--despesa);
   color: #fff;
 }
+
+.seloAjuste {
+  color: #b45309;
+  background: rgba(245, 158, 11, 0.14);
+}
+
+.dicaAjuste {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}

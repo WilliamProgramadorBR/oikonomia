@@ -61,6 +61,9 @@ import {
   LerNotaFiscal
 } from '../aplicacao/casos-de-uso/importacao/Importacao'
 import { IAControlador, ImportacaoControlador } from '../apresentacao/ipc/controladores/IAControlador'
+import { AjustesControlador } from '../apresentacao/ipc/controladores/AjustesControlador'
+import { AjustarPrevista, AplicarFerias, SimularFerias } from '../aplicacao/casos-de-uso/recorrencia/AjustesDeRenda'
+import { ConfirmarLancamentos, InterpretarLancamentos } from '../aplicacao/casos-de-uso/ia/LancamentosPorTexto'
 import { GeminiProvedor } from '../infraestrutura/ia/GeminiProvedor'
 import { ConfiguracaoIARepositorioSeguro } from '../infraestrutura/ia/ConfiguracaoIARepositorioSeguro'
 import { SefazNfceConsulta } from '../infraestrutura/externos/SefazNfceConsulta'
@@ -253,6 +256,26 @@ export function criarContainer(caminhoBanco: string, { desenvolvimento = false, 
     new SalvarPerfil(perfilRepositorio)
   )
 
+  // Lançamentos por texto: "eu" é o membro da família ligado a quem está conectado.
+  const interpretarLancamentos = new InterpretarLancamentos(
+    provedorIA,
+    categoriaRepositorio,
+    pessoaRepositorio,
+    cartaoRepositorio,
+    async () => (sessao.usuarioId ? ((await acesso.usuarios.buscarPorId(sessao.usuarioId))?.pessoaId ?? null) : null)
+  )
+  const confirmarLancamentos = new ConfirmarLancamentos(
+    new CriarTransacao(transacaoRepositorio, pessoaRepositorio, categoriaRepositorio),
+    criarRecorrencia,
+    new CriarCompraCartao(compraRepositorio, cartaoRepositorio, pessoaRepositorio, categoriaRepositorio)
+  )
+  const simularFerias = new SimularFerias(recorrenciaRepositorio, transacaoRepositorio)
+  const ajustesControlador = new AjustesControlador(
+    new AjustarPrevista(transacaoRepositorio),
+    simularFerias,
+    new AplicarFerias(simularFerias, recorrenciaRepositorio, transacaoRepositorio)
+  )
+
   const obterConfiguracaoIA = new ObterConfiguracaoIA(configuracaoIA)
   const iaControlador = new IAControlador(
     obterConfiguracaoIA,
@@ -260,8 +283,11 @@ export function criarContainer(caminhoBanco: string, { desenvolvimento = false, 
     new TestarIA(provedorIA),
     new ConversarComAssistente(
       provedorIA,
-      new MontadorContexto(pessoaRepositorio, obterSaude, obterPrevisao, listarObjetivos, obterPlanoDividas, obterAnalise)
-    )
+      new MontadorContexto(pessoaRepositorio, obterSaude, obterPrevisao, listarObjetivos, obterPlanoDividas, obterAnalise),
+      interpretarLancamentos
+    ),
+    interpretarLancamentos,
+    confirmarLancamentos
   )
   // Acesso: troque EnvioEmailPendente por um provedor real para a recuperação de senha funcionar.
   const sessao = new SessaoAtual()
@@ -317,6 +343,7 @@ export function criarContainer(caminhoBanco: string, { desenvolvimento = false, 
     perfilControlador,
     dividaControlador,
     iaControlador,
+    ajustesControlador,
     importacaoControlador
   }
 }

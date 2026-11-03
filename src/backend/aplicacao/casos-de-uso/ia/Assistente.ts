@@ -1,3 +1,5 @@
+import { pareceLancamento } from '../../servicos/InterpretadorLancamentos'
+import type { InterpretarLancamentos } from './LancamentosPorTexto'
 import type {
   ConfiguracaoIADTO,
   MensagemChatDTO,
@@ -67,11 +69,26 @@ export class TestarIA {
 export class ConversarComAssistente {
   constructor(
     private readonly ia: IProvedorIA,
-    private readonly montador: MontadorContexto
+    private readonly montador: MontadorContexto,
+    private readonly interpretarLancamentos: InterpretarLancamentos
   ) {}
 
   async executar(mensagens: MensagemChatDTO[]): Promise<RespostaAssistenteDTO> {
     const pergunta = mensagens.filter((m) => m.papel === 'usuario').at(-1)?.texto ?? ''
+
+    // "Paguei 120 de luz ontem": em vez de responder, propõe os lançamentos para revisão.
+    if (pareceLancamento(pergunta)) {
+      const propostas = await this.interpretarLancamentos.executar(pergunta)
+      if (propostas.propostas.length > 0) {
+        const n = propostas.propostas.length
+        return {
+          texto: `Entendi ${n === 1 ? '1 lançamento' : `${n} lançamentos`}. Confira cada um abaixo, ajuste o que precisar e confirme para gravar.`,
+          fonte: propostas.fonte,
+          motivoFallback: propostas.motivoFallback,
+          propostas
+        }
+      }
+    }
     const contexto = await this.montador.montar()
     const nativa = (motivo: string): RespostaAssistenteDTO => ({
       texto: responderNativamente(pergunta, contexto),

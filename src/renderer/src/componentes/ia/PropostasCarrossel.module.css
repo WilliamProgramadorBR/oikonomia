@@ -1,0 +1,231 @@
+.carrossel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(560px, 100%);
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.contador {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
+}
+
+.totais {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.janela {
+  overflow: hidden;
+  margin: -6px;
+  padding: 6px;
+  transition: height 0.3s ease;
+}
+
+.trilho {
+  display: flex;
+  align-items: flex-start;
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.cartao {
+  flex: 0 0 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--borda);
+  border-top: 4px solid var(--cor-tipo);
+  border-radius: var(--raio-lg);
+  background: var(--superficie);
+  box-shadow: var(--sombra-sm);
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.cartao[inert] {
+  opacity: 0.4;
+}
+
+.fora {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+
+.cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.incluir {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border: 1px solid var(--borda);
+  border-radius: 99px;
+  background: transparent;
+  color: var(--texto-suave);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.incluir:hover {
+  color: var(--texto);
+  background: var(--superficie-hover);
+}
+
+.linha {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+  gap: 10px;
+}
+
+.marcadorVariavel {
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+
+.suposicoes {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--raio-sm);
+  list-style: none;
+  font-size: 12.5px;
+  color: #b45309;
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.suposicoes li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.suposicoes svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.trecho {
+  margin: 0;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--texto-fraco);
+}
+
+.navegacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.navegacao > button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--borda);
+  border-radius: 50%;
+  background: var(--superficie);
+  color: var(--texto);
+  cursor: pointer;
+}
+
+.navegacao > button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pontos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.ponto {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: none;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--cor-tipo) 35%, transparent);
+  cursor: pointer;
+  transition: width 0.25s ease, background 0.25s ease;
+}
+
+.pontoAtual {
+  width: 26px;
+  background: var(--cor-tipo);
+}
+
+.pontoFora {
+  background: var(--borda-forte);
+}
+
+.naoEntendido {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}
+
+.rodape {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.fonte {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--texto-fraco);
+}
+
+.concluido {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--raio);
+  color: var(--receita);
+  background: var(--receita-suave);
+}
+
+.concluido div {
+  display: flex;
+  flex-direction: column;
+}
+
+.concluido span {
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}

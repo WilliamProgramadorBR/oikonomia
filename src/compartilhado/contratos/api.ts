@@ -1,4 +1,16 @@
 import type { AnaliseDTO, FiltroAnalise } from '../dtos/analise'
+import type {
+  AjustarPrevistaEntrada,
+  AplicarFeriasEntrada,
+  FeriasEntrada,
+  PlanoFeriasDTO,
+  ResultadoAjusteDTO
+} from '../dtos/ajustes'
+import type {
+  InterpretacaoLancamentosDTO,
+  PropostaLancamentoDTO,
+  ResultadoLancamentosDTO
+} from '../dtos/lancamentosTexto'
 import type { SituacaoSistemaDTO } from '../dtos/sistema'
 import type { EstadoAtualizacaoDTO } from '../dtos/atualizacao'
 import type {
@@ -140,6 +152,13 @@ export interface ApiFinanceiro {
     salvarConfiguracao(entrada: SalvarConfiguracaoIAEntrada): Promise<Resposta<ConfiguracaoIADTO>>
     testar(): Promise<Resposta<TesteIADTO>>
     conversar(mensagens: MensagemChatDTO[]): Promise<Resposta<RespostaAssistenteDTO>>
+    interpretarLancamentos(texto: string): Promise<Resposta<InterpretacaoLancamentosDTO>>
+    confirmarLancamentos(propostas: PropostaLancamentoDTO[]): Promise<Resposta<ResultadoLancamentosDTO>>
+  }
+  ajustes: {
+    ajustarPrevista(entrada: AjustarPrevistaEntrada): Promise<Resposta<TransacaoDTO>>
+    simularFerias(entrada: FeriasEntrada): Promise<Resposta<PlanoFeriasDTO>>
+    aplicarFerias(entrada: AplicarFeriasEntrada): Promise<Resposta<ResultadoAjusteDTO>>
   }
   importacao: {
     lerContracheque(arquivo: ArquivoEntrada): Promise<Resposta<ContrachequeLidoDTO>>

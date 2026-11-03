@@ -33,6 +33,7 @@ export interface PropsTransacao {
   parcela: Parcela | null
   recorrencia: OcorrenciaRecorrencia | null
   objetivoId: string | null // aporte para um objetivo
+  ajuste: string | null // motivo de um valor fora do normal (ex.: "Férias"); a sincronização não mexe
   criadoEm: Date
 }
 
@@ -41,7 +42,7 @@ export type DadosNovaTransacao = Pick<
   'descricao' | 'valorCentavos' | 'tipo' | 'data' | 'pessoaId' | 'categoriaId'
 > &
   Partial<
-    Pick<PropsTransacao, 'estabelecimento' | 'cartaoId' | 'parcela' | 'recorrencia' | 'status' | 'objetivoId'>
+    Pick<PropsTransacao, 'estabelecimento' | 'cartaoId' | 'parcela' | 'recorrencia' | 'status' | 'objetivoId' | 'ajuste'>
   >
 
 const validarValor = (valorCentavos: number) => {
@@ -72,9 +73,6 @@ export class Transacao {
     if (dados.objetivoId && dados.tipo !== 'guardado') {
       throw new ErroDominio('Só valores guardados podem ir para um objetivo.')
     }
-    if (dados.status === 'prevista' && !dados.recorrencia) {
-      throw new ErroDominio('Só contas recorrentes geram lançamentos previstos.')
-    }
 
     return new Transacao({
       ...dados,
@@ -85,6 +83,7 @@ export class Transacao {
       parcela: dados.parcela ?? null,
       recorrencia: dados.recorrencia ?? null,
       objetivoId: dados.objetivoId ?? null,
+      ajuste: dados.ajuste?.trim() || null,
       id: crypto.randomUUID(),
       criadoEm: new Date()
     })
@@ -103,18 +102,31 @@ export class Transacao {
     this.props = { ...this.props, valorCentavos, data, status: 'confirmada' }
   }
 
-  // Pula esta ocorrência da recorrência (ex.: não houve a conta neste mês).
-  ignorar(): void {
+  // Pula esta ocorrência da recorrência (ex.: não houve a conta neste mês; sem salário nas férias).
+  ignorar(motivo?: string): void {
     if (!this.props.recorrencia) throw new ErroDominio('Só ocorrências de contas recorrentes podem ser ignoradas.')
-    this.props = { ...this.props, status: 'ignorada' }
+    this.props = { ...this.props, status: 'ignorada', ajuste: motivo?.trim() || this.props.ajuste }
+  }
+
+  // Valor diferente do normal só neste mês, já sabido antes de acontecer (ex.: holerite das férias).
+  ajustarPrevisao(valorCentavos: number, motivo: string): void {
+    if (this.props.status !== 'prevista') throw new ErroDominio('Só lançamentos ainda previstos podem ser ajustados.')
+    validarValor(valorCentavos)
+    const ajuste = motivo.trim()
+    if (!ajuste) throw new ErroDominio('Informe o motivo do ajuste.')
+    this.props = { ...this.props, valorCentavos, ajuste }
   }
 
   // Nova estimativa para uma ocorrência ainda prevista (o app aprendeu com o histórico).
+  // Ocorrências ajustadas à mão ficam como o usuário definiu.
   reestimar(valorCentavos: number, data: Date): void {
-    if (this.props.status !== 'prevista') return
+    if (this.props.status !== 'prevista' || this.props.ajuste) return
     this.props = { ...this.props, valorCentavos, data }
   }
 
+  get ajuste(): string | null {
+    return this.props.ajuste
+  }
   get id(): string {
     return this.props.id
   }

@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { Banknote, Check, CreditCard, Plus, Repeat, X } from 'lucide-react'
+import { Banknote, Check, CreditCard, Palmtree, Plus, Repeat, X } from 'lucide-react'
 import type { CartaoDTO } from '@compartilhado/dtos/cartao'
 import type { CategoriaDTO } from '@compartilhado/dtos/categoria'
 import type { RecorrenciaDTO } from '@compartilhado/dtos/recorrencia'
 import type { TipoTransacaoDTO } from '@compartilhado/dtos/transacao'
 import { deslocarMes, mesAtual } from '@compartilhado/utilitarios/mes'
 import { useAcoesGlobais } from '../../componentes/layout/Layout'
+import { ModalFerias } from '../../componentes/recorrencias/ModalFerias'
 import { Botao } from '../../componentes/ui/Botao'
 import { Cartao } from '../../componentes/ui/Cartao'
 import { EstadoVazio, Esqueleto, Etiqueta, IconeCategoria } from '../../componentes/ui/Elementos'
@@ -137,6 +138,7 @@ interface PropsLinha {
 function LinhaRecorrencia({ recorrencia: r, categoria, cartao }: PropsLinha) {
   const executar = useAcao()
   const [encerrando, setEncerrando] = useState(false)
+  const [ferias, setFerias] = useState(false)
   const encerrada = !ativa(r)
   const proximoMes = deslocarMes(mesAtual(), 1)
 
@@ -181,6 +183,12 @@ function LinhaRecorrencia({ recorrencia: r, categoria, cartao }: PropsLinha) {
         <span>{r.valorVariavel ? 'estimativa/mês' : 'por mês'}</span>
       </div>
 
+      {!encerrada && r.tipo === 'receita' && (
+        <button className={estilos.acao} title="Férias (CLT): ajustar o pagamento e os próximos salários" onClick={() => setFerias(true)}>
+          <Palmtree size={15} />
+        </button>
+      )}
+      {ferias && <ModalFerias recorrencia={r} aoFechar={() => setFerias(false)} />}
       {!encerrada &&
         (encerrando ? (
           <span className={estilos.confirmacao}>

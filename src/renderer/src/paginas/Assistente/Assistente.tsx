@@ -3,15 +3,18 @@ import { useNavigate } from 'react-router'
 import { Bot, KeyRound, SendHorizontal, Sparkles, Trash2 } from 'lucide-react'
 import type { MensagemChatDTO, RespostaAssistenteDTO } from '@compartilhado/dtos/ia'
 import { Botao } from '../../componentes/ui/Botao'
+import { PropostasCarrossel } from '../../componentes/ia/PropostasCarrossel'
 import { TextoFormatado } from '../../componentes/ui/TextoFormatado'
 import { useConfiguracaoIA } from '../../hooks/consultas'
 import { iaServico } from '../../servicos/iaServico'
 import { classes } from '../../utilitarios/classes'
 import estilos from './Assistente.module.css'
 
-type Mensagem = MensagemChatDTO & Partial<Pick<RespostaAssistenteDTO, 'fonte' | 'motivoFallback'>>
+type Mensagem = MensagemChatDTO & Partial<Pick<RespostaAssistenteDTO, 'fonte' | 'motivoFallback' | 'propostas'>>
 
 const SUGESTOES = [
+  'Gastei 85 no mercado hoje e paguei 120 de luz ontem',
+  'Aluguel 1.500 todo dia 10 para a casa',
   'Quanto posso parcelar no mês que vem?',
   'Como está o orçamento do próximo mês?',
   'Qual a melhor forma de quitar as dívidas?',
@@ -92,7 +95,10 @@ export function Assistente() {
               <Sparkles size={26} />
             </span>
             <h2>Pergunte sobre as finanças da família</h2>
-            <p>O assistente conhece o orçamento, a previsão, as dívidas, os objetivos e os gastos de cada um.</p>
+            <p>
+              O assistente conhece o orçamento, a previsão, as dívidas, os objetivos e os gastos de cada um. Também lança
+              gastos, ganhos e contas do jeito que você escreve: você revisa antes de gravar.
+            </p>
             <div className={estilos.sugestoes}>
               {SUGESTOES.map((s) => (
                 <button key={s} type="button" className={estilos.sugestao} onClick={() => enviar(s)}>
@@ -115,6 +121,7 @@ export function Assistente() {
               </span>
               <div className={estilos.balao}>
                 <TextoFormatado texto={m.texto} />
+                {m.propostas && m.propostas.propostas.length > 0 && <PropostasCarrossel interpretacao={m.propostas} />}
                 <span className={classes(estilos.fonte, m.fonte === 'ia' && estilos.fonteIA)}>
                   {m.fonte === 'ia' ? (
                     <>
@@ -149,7 +156,7 @@ export function Assistente() {
         <input
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
-          placeholder="Ex.: dá para trocar o carro este ano?"
+          placeholder="Pergunte algo ou lance: “paguei 120 de luz ontem e 85 no mercado”"
           autoFocus
         />
         <Botao type="submit" icone={SendHorizontal} disabled={!texto.trim()} carregando={pensando}>

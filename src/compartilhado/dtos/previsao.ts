@@ -11,6 +11,7 @@ export interface MesPrevisto {
   guardado: number
   saldoProjetado: number // receitas − todas as despesas − reserva − guardado
   valoresEstimados: number // quanto do total ainda é estimativa (previstas + reserva)
+  avisos: string[] // meses fora do normal (ex.: salário menor por causa das férias)
 }
 
 export interface PrevisaoDTO {
