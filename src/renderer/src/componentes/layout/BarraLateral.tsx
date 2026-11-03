@@ -2,6 +2,7 @@ import { NavLink } from 'react-router'
 import {
   Activity,
   ArrowLeftRight,
+  Banknote,
   Calculator,
   CalendarClock,
   ChartLine,
@@ -39,6 +40,7 @@ const GRUPOS: { titulo: string; itens: ItemMenu[] }[] = [
     itens: [
       { rota: '/', rotulo: 'Painel', icone: LayoutDashboard },
       { rota: '/lancamentos', rotulo: 'Lançamentos', icone: ArrowLeftRight },
+      { rota: '/contas', rotulo: 'Contas e saldos', icone: Banknote },
       { rota: '/recorrentes', rotulo: 'Contas recorrentes', icone: Repeat },
       { rota: '/cartoes', rotulo: 'Cartões', icone: CreditCard },
       { rota: '/previsao', rotulo: 'Previsão', icone: CalendarClock }

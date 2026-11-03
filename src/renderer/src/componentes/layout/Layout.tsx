@@ -15,6 +15,7 @@ import estilos from './Layout.module.css'
 const CABECALHOS: Record<string, { titulo: string; subtitulo: string }> = {
   '/': { titulo: 'Painel', subtitulo: 'Como estão as finanças neste mês' },
   '/lancamentos': { titulo: 'Lançamentos', subtitulo: 'Tudo o que entrou, saiu e foi guardado' },
+  '/contas': { titulo: 'Contas e saldos', subtitulo: 'Quanto dinheiro tem em cada conta, conferido com o banco' },
   '/recorrentes': { titulo: 'Contas recorrentes', subtitulo: 'O que se repete todo mês' },
   '/previsao': { titulo: 'Previsão', subtitulo: 'O que os próximos meses já comprometem' },
   '/cartoes': { titulo: 'Cartões', subtitulo: 'Faturas, parcelas e limites' },

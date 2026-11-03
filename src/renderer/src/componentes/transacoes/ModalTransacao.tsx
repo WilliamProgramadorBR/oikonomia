@@ -4,9 +4,10 @@ import { CreditCard, Repeat, Store, Users } from 'lucide-react'
 import type { TipoTransacaoDTO } from '@compartilhado/dtos/transacao'
 import { hojeISO } from '@compartilhado/utilitarios/mes'
 import { useVisao } from '../../contextos/VisaoContexto'
-import { useCategorias, useObjetivos, usePessoas } from '../../hooks/consultas'
+import { useCategorias, useContas, useObjetivos, usePessoas } from '../../hooks/consultas'
 import { useAcao } from '../../hooks/useAcao'
 import { transacaoServico } from '../../servicos/transacaoServico'
+import { contaPadrao } from '../../utilitarios/contas'
 import { Alternador } from '../ui/Alternador'
 import { Botao } from '../ui/Botao'
 import { Campo, CampoMoeda, CampoSelecao } from '../ui/Campo'
@@ -43,6 +44,8 @@ export function ModalTransacao({ aberto, aoFechar, aoUsarCartao, aoUsarRecorrent
   const [data, setData] = useState(hojeISO())
   const [estabelecimento, setEstabelecimento] = useState('')
   const [objetivoId, setObjetivoId] = useState('')
+  const [contaEscolhida, setContaEscolhida] = useState<string | null | undefined>(undefined)
+  const { dados: contas } = useContas()
   const [salvando, setSalvando] = useState(false)
   const { dados: objetivos } = useObjetivos()
 
@@ -55,11 +58,15 @@ export function ModalTransacao({ aberto, aoFechar, aoUsarCartao, aoUsarRecorrent
     setEstabelecimento('')
     setObjetivoId('')
     setPessoaEscolhida(undefined)
+    setContaEscolhida(undefined)
     setData(hojeISO())
   }, [aberto])
 
   // Na visão da família o padrão é "todos"; na visão de uma pessoa, ela mesma.
   const pessoaId = pessoaEscolhida !== undefined ? pessoaEscolhida : (pessoaDaVisao ?? null)
+  // Conta do débito/Pix: sugere a única conta da pessoa (ou da casa); pode trocar ou deixar sem.
+  const contasAtivas = (contas ?? []).filter((c) => c.ativa)
+  const contaId = contaEscolhida !== undefined ? contaEscolhida : contaPadrao(contasAtivas, pessoaId)
 
   function trocarTipo(novo: TipoTransacaoDTO) {
     setTipo(novo)
@@ -79,7 +86,8 @@ export function ModalTransacao({ aberto, aoFechar, aoUsarCartao, aoUsarRecorrent
           pessoaId,
           data,
           estabelecimento: tipo === 'despesa' ? estabelecimento : undefined,
-          objetivoId: tipo === 'guardado' && objetivoId ? objetivoId : null
+          objetivoId: tipo === 'guardado' && objetivoId ? objetivoId : null,
+          contaId
         }),
       SUCESSO[tipo]
     )
@@ -188,6 +196,21 @@ export function ModalTransacao({ aberto, aoFechar, aoUsarCartao, aoUsarRecorrent
         )}
 
         <SeletorDestino pessoas={pessoas ?? []} valor={pessoaId} aoAlterar={setPessoaEscolhida} />
+
+        {contasAtivas.length > 0 && (
+          <CampoSelecao
+            rotulo={tipo === 'receita' ? 'Entrou em qual conta?' : 'Saiu de qual conta? (débito, Pix, boleto)'}
+            value={contaId ?? ''}
+            onChange={(e) => setContaEscolhida(e.target.value || null)}
+          >
+            <option value="">Não informar</option>
+            {contasAtivas.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nome}
+              </option>
+            ))}
+          </CampoSelecao>
+        )}
 
         <div className={estilos.linha}>
           <Campo rotulo="Data" type="date" value={data} onChange={(e) => setData(e.target.value)} />

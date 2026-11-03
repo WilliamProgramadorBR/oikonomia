@@ -11,11 +11,12 @@ export class ConfirmarTransacao {
     private readonly sincronizar: SincronizarRecorrencias
   ) {}
 
-  async executar({ id, valorCentavos, data }: ConfirmarTransacaoEntrada): Promise<TransacaoDTO> {
+  async executar({ id, valorCentavos, data, contaId }: ConfirmarTransacaoEntrada): Promise<TransacaoDTO> {
     const transacao = await this.repositorio.buscarPorId(id)
     if (!transacao) throw new ErroNaoEncontrado('Lançamento', id)
 
     transacao.confirmar(valorCentavos, new Date(`${data}T00:00:00Z`))
+    if (contaId !== undefined && !transacao.cartaoId) transacao.vincularConta(contaId)
     await this.repositorio.salvar(transacao)
     if (transacao.recorrencia) await this.sincronizar.executar()
 

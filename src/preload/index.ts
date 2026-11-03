@@ -83,6 +83,14 @@ const api: ApiFinanceiro = {
     interpretarLancamentos: (texto) => ipcRenderer.invoke(CANAIS.ia.interpretarLancamentos, texto),
     confirmarLancamentos: (propostas) => ipcRenderer.invoke(CANAIS.ia.confirmarLancamentos, propostas)
   },
+  contas: {
+    listar: () => ipcRenderer.invoke(CANAIS.contas.listar),
+    criar: (entrada) => ipcRenderer.invoke(CANAIS.contas.criar, entrada),
+    conferir: (entrada) => ipcRenderer.invoke(CANAIS.contas.conferir, entrada),
+    arquivar: (id) => ipcRenderer.invoke(CANAIS.contas.arquivar, id),
+    lerExtrato: (entrada) => ipcRenderer.invoke(CANAIS.contas.lerExtrato, entrada),
+    importarExtrato: (entrada) => ipcRenderer.invoke(CANAIS.contas.importarExtrato, entrada)
+  },
   ajustes: {
     ajustarPrevista: (entrada) => ipcRenderer.invoke(CANAIS.ajustes.ajustarPrevista, entrada),
     simularFerias: (entrada) => ipcRenderer.invoke(CANAIS.ajustes.simularFerias, entrada),

@@ -13,6 +13,7 @@ import { Assistente } from './paginas/Assistente/Assistente'
 import { Cartoes } from './paginas/Cartoes/Cartoes'
 import { Categorias } from './paginas/Categorias/Categorias'
 import { Configuracoes } from './paginas/Configuracoes/Configuracoes'
+import { Contas } from './paginas/Contas/Contas'
 import { Credito } from './paginas/Credito/Credito'
 import { Dividas } from './paginas/Dividas/Dividas'
 import { Familia } from './paginas/Familia/Familia'
@@ -62,6 +63,7 @@ function Aplicativo() {
             <Routes>
               <Route path="/" element={<Painel />} />
               <Route path="/lancamentos" element={<Lancamentos />} />
+              <Route path="/contas" element={<Contas />} />
               <Route path="/recorrentes" element={<Recorrentes />} />
               <Route path="/previsao" element={<Previsao />} />
               <Route path="/cartoes" element={<Cartoes />} />

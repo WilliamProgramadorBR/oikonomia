@@ -62,6 +62,9 @@ import {
 } from '../aplicacao/casos-de-uso/importacao/Importacao'
 import { IAControlador, ImportacaoControlador } from '../apresentacao/ipc/controladores/IAControlador'
 import { AjustesControlador } from '../apresentacao/ipc/controladores/AjustesControlador'
+import { ContaControlador } from '../apresentacao/ipc/controladores/ContaControlador'
+import { ArquivarConta, ConferirSaldo, CriarConta, ImportarExtrato, LerExtrato, ListarContas } from '../aplicacao/casos-de-uso/conta/Contas'
+import { ContaRepositorioSqlite } from '../infraestrutura/repositorios/ContaRepositorioSqlite'
 import { AjustarPrevista, AplicarFerias, SimularFerias } from '../aplicacao/casos-de-uso/recorrencia/AjustesDeRenda'
 import { ConfirmarLancamentos, InterpretarLancamentos } from '../aplicacao/casos-de-uso/ia/LancamentosPorTexto'
 import { GeminiProvedor } from '../infraestrutura/ia/GeminiProvedor'
@@ -125,6 +128,7 @@ export function criarContainer(caminhoBanco: string, { desenvolvimento = false, 
   const recorrenciaRepositorio = new RecorrenciaRepositorioSqlite(banco)
   const objetivoRepositorio = new ObjetivoRepositorioSqlite(banco)
   const perfilRepositorio = new PerfilRepositorioSqlite(banco)
+  const contaRepositorio = new ContaRepositorioSqlite(banco)
   const provedorTaxas = new BancoCentralProvedorTaxas()
 
   const sincronizarRecorrencias = new SincronizarRecorrencias(
@@ -148,7 +152,7 @@ export function criarContainer(caminhoBanco: string, { desenvolvimento = false, 
   )
 
   const transacaoControlador = new TransacaoControlador(
-    new CriarTransacao(transacaoRepositorio, pessoaRepositorio, categoriaRepositorio),
+    new CriarTransacao(transacaoRepositorio, pessoaRepositorio, categoriaRepositorio, contaRepositorio),
     new ListarTransacoes(transacaoRepositorio),
     new ConfirmarTransacao(transacaoRepositorio, sincronizarRecorrencias),
     new RemoverTransacao(transacaoRepositorio)
@@ -269,6 +273,19 @@ export function criarContainer(caminhoBanco: string, { desenvolvimento = false, 
     criarRecorrencia,
     new CriarCompraCartao(compraRepositorio, cartaoRepositorio, pessoaRepositorio, categoriaRepositorio)
   )
+  const contaControlador = new ContaControlador(
+    new ListarContas(contaRepositorio),
+    new CriarConta(contaRepositorio, pessoaRepositorio),
+    new ConferirSaldo(contaRepositorio),
+    new ArquivarConta(contaRepositorio),
+    new LerExtrato(contaRepositorio, transacaoRepositorio, categoriaRepositorio, pessoaRepositorio),
+    new ImportarExtrato(
+      contaRepositorio,
+      transacaoRepositorio,
+      new CriarTransacao(transacaoRepositorio, pessoaRepositorio, categoriaRepositorio, contaRepositorio),
+      sincronizarRecorrencias
+    )
+  )
   const simularFerias = new SimularFerias(recorrenciaRepositorio, transacaoRepositorio)
   const ajustesControlador = new AjustesControlador(
     new AjustarPrevista(transacaoRepositorio),
@@ -344,6 +361,7 @@ export function criarContainer(caminhoBanco: string, { desenvolvimento = false, 
     dividaControlador,
     iaControlador,
     ajustesControlador,
+    contaControlador,
     importacaoControlador
   }
 }

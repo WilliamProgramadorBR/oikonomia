@@ -34,6 +34,8 @@ export interface PropsTransacao {
   recorrencia: OcorrenciaRecorrencia | null
   objetivoId: string | null // aporte para um objetivo
   ajuste: string | null // motivo de um valor fora do normal (ex.: "Férias"); a sincronização não mexe
+  contaId: string | null // conta de onde saiu/entrou o dinheiro (débito, Pix, boleto)
+  idExtrato: string | null // linha do extrato bancário que originou ou confirmou o lançamento
   criadoEm: Date
 }
 
@@ -42,7 +44,7 @@ export type DadosNovaTransacao = Pick<
   'descricao' | 'valorCentavos' | 'tipo' | 'data' | 'pessoaId' | 'categoriaId'
 > &
   Partial<
-    Pick<PropsTransacao, 'estabelecimento' | 'cartaoId' | 'parcela' | 'recorrencia' | 'status' | 'objetivoId' | 'ajuste'>
+    Pick<PropsTransacao, 'estabelecimento' | 'cartaoId' | 'parcela' | 'recorrencia' | 'status' | 'objetivoId' | 'ajuste' | 'contaId' | 'idExtrato'>
   >
 
 const validarValor = (valorCentavos: number) => {
@@ -70,6 +72,7 @@ export class Transacao {
     if (dados.cartaoId && dados.tipo !== 'despesa') {
       throw new ErroDominio('Só despesas podem ser cobradas no cartão.')
     }
+    if (dados.contaId && dados.cartaoId) throw new ErroDominio('Um lançamento é no cartão ou numa conta, não nos dois.')
     if (dados.objetivoId && dados.tipo !== 'guardado') {
       throw new ErroDominio('Só valores guardados podem ir para um objetivo.')
     }
@@ -84,6 +87,8 @@ export class Transacao {
       recorrencia: dados.recorrencia ?? null,
       objetivoId: dados.objetivoId ?? null,
       ajuste: dados.ajuste?.trim() || null,
+      contaId: dados.contaId ?? null,
+      idExtrato: dados.idExtrato ?? null,
       id: crypto.randomUUID(),
       criadoEm: new Date()
     })
@@ -124,6 +129,18 @@ export class Transacao {
     this.props = { ...this.props, valorCentavos, data }
   }
 
+  // Liga o lançamento à conta (e à linha do extrato, quando veio de uma importação).
+  vincularConta(contaId: string | null, idExtrato: string | null = this.props.idExtrato): void {
+    if (contaId && this.props.cartaoId) throw new ErroDominio('Lançamentos no cartão não ficam numa conta.')
+    this.props = { ...this.props, contaId, idExtrato }
+  }
+
+  get contaId(): string | null {
+    return this.props.contaId
+  }
+  get idExtrato(): string | null {
+    return this.props.idExtrato
+  }
   get ajuste(): string | null {
     return this.props.ajuste
   }

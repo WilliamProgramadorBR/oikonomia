@@ -3,6 +3,7 @@ import type { FiltroTransacoes } from '@compartilhado/dtos/transacao'
 import { useVisao } from '../contextos/VisaoContexto'
 import { analiseServico } from '../servicos/analiseServico'
 import { cartaoServico } from '../servicos/cartaoServico'
+import { contaServico } from '../servicos/contaServico'
 import { categoriaServico } from '../servicos/categoriaServico'
 import { dividaServico } from '../servicos/dividaServico'
 import { iaServico } from '../servicos/iaServico'
@@ -32,6 +33,10 @@ export function useTransacoes(filtro: FiltroTransacoes) {
 export function usePainel() {
   const { pessoaId, mes } = useVisao()
   return useConsulta(() => painelServico.obter({ pessoaId, mes }), [pessoaId, mes])
+}
+
+export function useContas() {
+  return useConsulta(() => contaServico.listar(), [])
 }
 
 export function useCartoes() {

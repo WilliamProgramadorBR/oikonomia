@@ -118,6 +118,26 @@ gravação usa as mesmas regras dos formulários.
 - Contas essenciais (aluguel, luz, mercado) vão para **Todos (casa)**; gastos pessoais, para quem
   escreveu, salvo se outro nome for citado.
 
+## Contas e saldos (com importação de extrato)
+
+- **Contas**: corrente, poupança, carteira ou investimento, de uma pessoa ou da casa. Você informa
+  o saldo de hoje e o app calcula o saldo atual: último saldo conferido + lançamentos confirmados
+  da conta depois dele. No novo lançamento, o campo "Saiu de qual conta?" sugere a conta da pessoa.
+- **Conferir saldo**: digite o saldo que o app do banco mostra. O app aponta a diferença e esse
+  valor passa a ser a referência. Contas sem conferência há mais de 15 dias aparecem em destaque.
+- **Importar extrato (OFX ou CSV)**: em cada conta, "Importar extrato". Os leitores
+  (`dominio/servicos/ExtratoBancario.ts`) aceitam OFX 1.x/2.x (inclusive Windows-1252) e CSV com
+  "," ou ";", vírgula decimal, colunas de crédito e débito e cabeçalho fora da primeira linha. A
+  reconciliação (`aplicacao/servicos/ReconciliacaoExtrato.ts`) decide cada linha:
+  - **confirma contas previstas** com o valor real (inclusive aportes programados);
+  - **reconhece o que já foi lançado** à mão e só o liga à conta;
+  - deixa de fora **pagamento de fatura** (as compras já estão no cartão) e **transferências entre
+    contas da família ou resgates**, para não contar em dobro;
+  - **nunca importa a mesma linha duas vezes** (id do extrato único por conta);
+  - limpa as descrições ("COMPRA NO DEBITO PADARIA DO ZE" → "Padaria do Ze") e sugere a categoria.
+  O saldo final do extrato vira o saldo da conta. Tudo continua local e cifrado: nada vai para
+  bancos ou terceiros.
+
 ## Previsto x confirmado (contas recorrentes)
 
 - Todo lançamento tem um **status**: `prevista` (estimada, gerada por conta recorrente),

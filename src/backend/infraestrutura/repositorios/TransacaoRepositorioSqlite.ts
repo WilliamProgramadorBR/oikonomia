@@ -28,6 +28,8 @@ interface LinhaTransacao {
   objetivo_id: string | null
   criado_em: string
   ajuste: string | null
+  conta_id: string | null
+  id_extrato: string | null
 }
 
 export class TransacaoRepositorioSqlite implements ITransacaoRepositorio {
@@ -44,11 +46,11 @@ export class TransacaoRepositorioSqlite implements ITransacaoRepositorio {
         `INSERT INTO transacoes
            (id, descricao, valor_centavos, tipo, status, data, pessoa_id, categoria_id, estabelecimento,
             cartao_id, compra_id, parcela_numero, parcela_total, recorrencia_id, recorrencia_competencia,
-            objetivo_id, ajuste, criado_em)
+            objetivo_id, ajuste, conta_id, id_extrato, criado_em)
          VALUES
            (@id, @descricao, @valor_centavos, @tipo, @status, @data, @pessoa_id, @categoria_id, @estabelecimento,
             @cartao_id, @compra_id, @parcela_numero, @parcela_total, @recorrencia_id, @recorrencia_competencia,
-            @objetivo_id, @ajuste, @criado_em)
+            @objetivo_id, @ajuste, @conta_id, @id_extrato, @criado_em)
          ON CONFLICT(id) DO UPDATE SET
            descricao = excluded.descricao,
            valor_centavos = excluded.valor_centavos,
@@ -60,7 +62,9 @@ export class TransacaoRepositorioSqlite implements ITransacaoRepositorio {
            estabelecimento = excluded.estabelecimento,
            cartao_id = excluded.cartao_id,
            objetivo_id = excluded.objetivo_id,
-           ajuste = excluded.ajuste`
+           ajuste = excluded.ajuste,
+           conta_id = excluded.conta_id,
+           id_extrato = excluded.id_extrato`
       )
       .run({ ...this.paraLinha(transacao) })
   }
@@ -80,6 +84,10 @@ export class TransacaoRepositorioSqlite implements ITransacaoRepositorio {
     if (filtro.fim) {
       condicoes.push('data <= @fim')
       parametros.fim = filtro.fim
+    }
+    if (filtro.contaId) {
+      condicoes.push('conta_id = @contaId')
+      parametros.contaId = filtro.contaId
     }
     if (filtro.recorrenciaId) {
       condicoes.push('recorrencia_id = @recorrenciaId')
@@ -145,6 +153,8 @@ export class TransacaoRepositorioSqlite implements ITransacaoRepositorio {
       recorrencia_competencia: transacao.recorrencia?.competencia ?? null,
       objetivo_id: transacao.objetivoId,
       ajuste: transacao.ajuste,
+      conta_id: transacao.contaId,
+      id_extrato: transacao.idExtrato,
       criado_em: transacao.criadoEm.toISOString()
     }
   }
@@ -174,6 +184,8 @@ export class TransacaoRepositorioSqlite implements ITransacaoRepositorio {
           : null,
       objetivoId: linha.objetivo_id,
       ajuste: linha.ajuste,
+      contaId: linha.conta_id,
+      idExtrato: linha.id_extrato,
       criadoEm: new Date(linha.criado_em)
     })
   }

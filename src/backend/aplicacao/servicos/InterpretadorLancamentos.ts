@@ -37,21 +37,36 @@ const PALAVRAS_CATEGORIA: [RegExp, string][] = [
   [/\b(mercado|supermercado|feira|hortifruti|acougue|padaria|atacadao)\b/, 'cat-mercado'],
   [/\b(restaurante|lanche|ifood|almoco|jantar|pizza|hamburguer|cafe|delivery|comida)\b/, 'cat-alimentacao'],
   [/\b(uber|99|gasolina|combustivel|onibus|metro|estacionamento|pedagio|oficina|carro|moto)\b/, 'cat-transporte'],
-  [/\b(farmacia|remedio|medico|consulta|exame|dentista|plano de saude|academia)\b/, 'cat-saude'],
+  [/\b(farmacia|drogaria|droga raia|drogasil|pague menos|panvel|remedio|medico|consulta|exame|laboratorio|dentista|plano de saude|academia)\b/, 'cat-saude'],
   [/\b(faculdade|curso|escola|mensalidade|livro|material escolar|pos)\b/, 'cat-educacao'],
   [/\b(netflix|spotify|chatgpt|gemini|claude|assinatura|streaming|youtube premium|amazon prime|disney)\b/, 'cat-assinaturas'],
   [/\b(cinema|show|viagem|bar|passeio|jogo|lazer|festa)\b/, 'cat-lazer'],
   [/\b(roupa|tenis|sapato|eletronico|fones?|headset|notebook|computador|tv|televisao|videogame|celular novo|presente|shopping|compra)\b/, 'cat-compras'],
   [/\b(pet|racao|veterinario|banho e tosa)\b/, 'cat-pets'],
-  [/\b(juros|tarifa|anuidade|multa|iof)\b/, 'cat-juros'],
-  [/\b(salario|holerite|pagamento do trabalho)\b/, 'cat-salario'],
+  [/\b(juros|tarifa|anuidade|multa|iof|pacote de servicos|cesta de servicos)\b/, 'cat-juros'],
+  [/\b(salario|holerite|pagamento do trabalho|folha de pagamento|credito de salario|pagto salario)\b/, 'cat-salario'],
   [/\b(freela|freelance|bico|servico extra)\b/, 'cat-freelance'],
-  [/\b(rendimento|dividendo|juros recebidos|cashback)\b/, 'cat-investimentos'],
-  [/\b(reserva|emergencia)\b/, 'cat-reserva'],
-  [/\b(investi|investimento|tesouro|cdb|acoes|apliquei)\b/, 'cat-investimentos-guardado']
+  [/\b(rendimento|rendimentos|dividendo|juros recebidos|cashback|remuneracao)\b/, 'cat-investimentos'],
+  [/\b(reserva|emergencia|poupanca)\b/, 'cat-reserva'],
+  [/\b(investi|investimento|tesouro|cdb|lci|lca|acoes|apliquei|aplicacao)\b/, 'cat-investimentos-guardado']
 ]
 
 const PADRAO_POR_TIPO = { despesa: 'cat-outros-despesa', receita: 'cat-outros-receita', guardado: 'cat-reserva' } as const
+
+// Categoria pelas palavras do texto, entre as do tipo; null quando não há pista.
+// Usada pelo interpretador de frases e pela importação de extrato.
+export function categoriaPorTexto(texto: string, tipo: 'receita' | 'despesa' | 'guardado', categorias: Categoria[]): string | null {
+  const t = normalizar(texto)
+  return (
+    PALAVRAS_CATEGORIA.find(([re, id]) => re.test(t) && categorias.some((c) => c.id === id && c.tipo === tipo))?.[1] ??
+    categorias.find((c) => c.tipo === tipo && t.includes(normalizar(c.nome)))?.id ??
+    null
+  )
+}
+
+export function categoriaPadrao(tipo: 'receita' | 'despesa' | 'guardado', categorias: Categoria[]): string | null {
+  return (categorias.find((c) => c.id === PADRAO_POR_TIPO[tipo]) ?? categorias.find((c) => c.tipo === tipo))?.id ?? null
+}
 
 // "1.500,00", "1500", "R$ 85,90", "85 reais" → centavos.
 function extrairValor(texto: string): number | null {
@@ -140,10 +155,7 @@ export function interpretarSemIA(texto: string, ctx: ContextoInterpretacao): { p
     const diaDoMes = Number(t.match(/\bdia\s+(\d{1,2})\b/)?.[1] ?? 0)
     const { data, suposicao } = extrairData(trecho, ctx.hoje)
 
-    const categoriaId =
-      PALAVRAS_CATEGORIA.find(([re, id]) => re.test(t) && ctx.categorias.some((c) => c.id === id && c.tipo === tipo))?.[1] ??
-      ctx.categorias.find((c) => c.tipo === tipo && t.includes(normalizar(c.nome)))?.id ??
-      null
+    const categoriaId = categoriaPorTexto(t, tipo, ctx.categorias)
 
     const pessoaCitada = ctx.pessoas.find((p) => new RegExp(`\\b${normalizar(p.nome).split(' ')[0]}\\b`).test(t))
     const pessoaId = pessoaCitada ? pessoaCitada.id : CASA.test(t) ? null : undefined

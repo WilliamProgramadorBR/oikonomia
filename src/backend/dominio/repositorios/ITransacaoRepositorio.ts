@@ -6,6 +6,7 @@ export interface FiltroListagemTransacoes {
   fim?: string // AAAA-MM-DD, inclusivo
   somenteCartao?: boolean // apenas cobranças em cartão (parcelas e contas recorrentes)
   recorrenciaId?: string
+  contaId?: string
   somenteObjetivos?: boolean // apenas aportes vinculados a objetivos
   incluirIgnoradas?: boolean // padrão: ignoradas ficam de fora
 }

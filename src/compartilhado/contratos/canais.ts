@@ -75,6 +75,14 @@ export const CANAIS = {
     interpretarLancamentos: 'ia:interpretar-lancamentos',
     confirmarLancamentos: 'ia:confirmar-lancamentos'
   },
+  contas: {
+    listar: 'contas:listar',
+    criar: 'contas:criar',
+    conferir: 'contas:conferir',
+    arquivar: 'contas:arquivar',
+    lerExtrato: 'contas:ler-extrato',
+    importarExtrato: 'contas:importar-extrato'
+  },
   ajustes: {
     ajustarPrevista: 'ajustes:ajustar-prevista',
     simularFerias: 'ajustes:simular-ferias',

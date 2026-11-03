@@ -2,6 +2,7 @@ import type { CriarTransacaoEntrada, TransacaoDTO } from '@compartilhado/dtos/tr
 import { Transacao } from '../../../dominio/entidades/Transacao'
 import { ErroDominio, ErroNaoEncontrado } from '../../../dominio/erros/ErroDominio'
 import type { ICategoriaRepositorio } from '../../../dominio/repositorios/ICategoriaRepositorio'
+import type { IContaRepositorio } from '../../../dominio/repositorios/IContaRepositorio'
 import type { IPessoaRepositorio } from '../../../dominio/repositorios/IPessoaRepositorio'
 import type { ITransacaoRepositorio } from '../../../dominio/repositorios/ITransacaoRepositorio'
 import { TransacaoMapeador } from '../../mapeadores/TransacaoMapeador'
@@ -10,12 +11,16 @@ export class CriarTransacao {
   constructor(
     private readonly transacaoRepositorio: ITransacaoRepositorio,
     private readonly pessoaRepositorio: IPessoaRepositorio,
-    private readonly categoriaRepositorio: ICategoriaRepositorio
+    private readonly categoriaRepositorio: ICategoriaRepositorio,
+    private readonly contaRepositorio?: IContaRepositorio
   ) {}
 
   async executar(entrada: CriarTransacaoEntrada): Promise<TransacaoDTO> {
     if (entrada.pessoaId && !(await this.pessoaRepositorio.buscarPorId(entrada.pessoaId))) {
       throw new ErroNaoEncontrado('Pessoa', entrada.pessoaId)
+    }
+    if (entrada.contaId && this.contaRepositorio && !(await this.contaRepositorio.buscarPorId(entrada.contaId))) {
+      throw new ErroNaoEncontrado('Conta', entrada.contaId)
     }
     const categoria = await this.categoriaRepositorio.buscarPorId(entrada.categoriaId)
     if (!categoria) throw new ErroNaoEncontrado('Categoria', entrada.categoriaId)
@@ -31,7 +36,8 @@ export class CriarTransacao {
       pessoaId: entrada.pessoaId ?? null,
       categoriaId: categoria.id,
       estabelecimento: entrada.estabelecimento ?? null,
-      objetivoId: entrada.objetivoId ?? null
+      objetivoId: entrada.objetivoId ?? null,
+      contaId: entrada.contaId ?? null
     })
 
     await this.transacaoRepositorio.salvar(transacao)

@@ -1,5 +1,15 @@
 import type { AnaliseDTO, FiltroAnalise } from '../dtos/analise'
 import type {
+  ConferirSaldoEntrada,
+  ContaDTO,
+  CriarContaEntrada,
+  ImportarExtratoEntrada,
+  LerExtratoEntrada,
+  PreviaImportacaoDTO,
+  ResultadoConferenciaDTO,
+  ResultadoImportacaoDTO
+} from '../dtos/conta'
+import type {
   AjustarPrevistaEntrada,
   AplicarFeriasEntrada,
   FeriasEntrada,
@@ -154,6 +164,14 @@ export interface ApiFinanceiro {
     conversar(mensagens: MensagemChatDTO[]): Promise<Resposta<RespostaAssistenteDTO>>
     interpretarLancamentos(texto: string): Promise<Resposta<InterpretacaoLancamentosDTO>>
     confirmarLancamentos(propostas: PropostaLancamentoDTO[]): Promise<Resposta<ResultadoLancamentosDTO>>
+  }
+  contas: {
+    listar(): Promise<Resposta<ContaDTO[]>>
+    criar(entrada: CriarContaEntrada): Promise<Resposta<void>>
+    conferir(entrada: ConferirSaldoEntrada): Promise<Resposta<ResultadoConferenciaDTO>>
+    arquivar(id: string): Promise<Resposta<void>>
+    lerExtrato(entrada: LerExtratoEntrada): Promise<Resposta<PreviaImportacaoDTO>>
+    importarExtrato(entrada: ImportarExtratoEntrada): Promise<Resposta<ResultadoImportacaoDTO>>
   }
   ajustes: {
     ajustarPrevista(entrada: AjustarPrevistaEntrada): Promise<Resposta<TransacaoDTO>>

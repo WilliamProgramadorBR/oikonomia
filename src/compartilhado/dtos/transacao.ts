@@ -22,6 +22,7 @@ export interface TransacaoDTO {
   recorrenciaId: string | null
   objetivoId: string | null // aporte para um objetivo (só tipo 'guardado')
   ajuste: string | null // motivo de um valor fora do normal (ex.: "Férias")
+  contaId: string | null // conta de onde saiu/entrou o dinheiro
   criadoEm: string // ISO completo
 }
 
@@ -34,12 +35,14 @@ export interface CriarTransacaoEntrada {
   categoriaId: string
   estabelecimento?: string
   objetivoId?: string | null
+  contaId?: string | null // conta do débito/Pix (atualiza o saldo dela)
 }
 
 export interface ConfirmarTransacaoEntrada {
   id: string
   valorCentavos: number // valor real
   data: string
+  contaId?: string | null // conta de onde saiu/entrou (ausente = mantém)
 }
 
 export interface FiltroTransacoes {

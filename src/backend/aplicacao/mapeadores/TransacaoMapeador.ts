@@ -20,6 +20,7 @@ export const TransacaoMapeador = {
       recorrenciaId: transacao.recorrencia?.recorrenciaId ?? null,
       objetivoId: transacao.objetivoId,
       ajuste: transacao.ajuste,
+      contaId: transacao.contaId,
       criadoEm: transacao.criadoEm.toISOString()
     }
   }

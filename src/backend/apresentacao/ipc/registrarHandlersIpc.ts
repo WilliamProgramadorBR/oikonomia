@@ -20,6 +20,7 @@ import type { FiltroAnalise } from '@compartilhado/dtos/analise'
 import type { MensagemChatDTO, SalvarConfiguracaoIAEntrada } from '@compartilhado/dtos/ia'
 import type { AjustarPrevistaEntrada, AplicarFeriasEntrada, FeriasEntrada } from '@compartilhado/dtos/ajustes'
 import type { PropostaLancamentoDTO } from '@compartilhado/dtos/lancamentosTexto'
+import type { ConferirSaldoEntrada, CriarContaEntrada, ImportarExtratoEntrada, LerExtratoEntrada } from '@compartilhado/dtos/conta'
 import type { ArquivoEntrada, ConfirmarContrachequeEntrada } from '@compartilhado/dtos/importacao'
 import type { CriarDividaEntrada, SimularCreditoEntrada } from '@compartilhado/dtos/divida'
 import type {
@@ -87,6 +88,7 @@ export function registrarHandlersIpc({
   dividaControlador,
   iaControlador,
   ajustesControlador,
+  contaControlador,
   importacaoControlador
 }: Container): void {
   const tratar = criarTratador(sessao, () => {
@@ -169,6 +171,12 @@ export function registrarHandlersIpc({
   tratar(CANAIS.ia.conversar, (mensagens: MensagemChatDTO[]) => iaControlador.conversar(mensagens))
   tratar(CANAIS.ia.interpretarLancamentos, (texto: string) => iaControlador.interpretarLancamentos(texto))
   tratar(CANAIS.ia.confirmarLancamentos, (propostas: PropostaLancamentoDTO[]) => iaControlador.confirmarLancamentos(propostas))
+  tratar(CANAIS.contas.listar, () => contaControlador.listar())
+  tratar(CANAIS.contas.criar, (entrada: CriarContaEntrada) => contaControlador.criar(entrada))
+  tratar(CANAIS.contas.conferir, (entrada: ConferirSaldoEntrada) => contaControlador.conferir(entrada))
+  tratar(CANAIS.contas.arquivar, (id: string) => contaControlador.arquivar(id))
+  tratar(CANAIS.contas.lerExtrato, (entrada: LerExtratoEntrada) => contaControlador.lerExtrato(entrada))
+  tratar(CANAIS.contas.importarExtrato, (entrada: ImportarExtratoEntrada) => contaControlador.importarExtrato(entrada))
   tratar(CANAIS.ajustes.ajustarPrevista, (entrada: AjustarPrevistaEntrada) => ajustesControlador.ajustarPrevista(entrada))
   tratar(CANAIS.ajustes.simularFerias, (entrada: FeriasEntrada) => ajustesControlador.simularFerias(entrada))
   tratar(CANAIS.ajustes.aplicarFerias, (entrada: AplicarFeriasEntrada) => ajustesControlador.aplicarFerias(entrada))
