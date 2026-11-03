@@ -106,7 +106,7 @@ export function CartaoOpenFinance() {
           </div>
 
           {estado.conexoes.length === 0 ? (
-            <p className={estilos.vazio}>Nenhum banco conectado ainda. A janela da Pluggy abre separada, e a autorização é feita no navegador.</p>
+            <p className={estilos.vazio}>Nenhum banco conectado ainda. A janela da Pluggy abre separada, e a autorização é feita no site do banco, numa janela segura com o endereço no título.</p>
           ) : (
             estado.conexoes.map((c) => <Conexao key={c.itemId} conexao={c} aoReautorizar={() => conectar(c.itemId)} />)
           )}

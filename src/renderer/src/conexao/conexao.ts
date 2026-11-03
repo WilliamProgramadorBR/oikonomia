@@ -24,8 +24,8 @@ if (!connectToken) {
     countries: ['BR'] as never,
     language: 'pt',
     theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
-    // Login/consentimento do banco no navegador do sistema, nunca dentro do app.
-    forceOauthInBrowser: true,
+    // Login/consentimento do banco num pop-up isolado (sem ponte com o app), que o widget acompanha até concluir.
+    forceOauthInBrowser: false,
     allowFullscreen: true,
     onSuccess: ({ item }) => ponte.concluir(item.id),
     onError: ({ message }) => console.warn('[pluggy]', message), // o widget mostra o erro; a pessoa fecha quando quiser

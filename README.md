@@ -169,8 +169,8 @@ isso, a importação de extrato (OFX/CSV) continua funcionando.
   restrita a `*.pluggy.ai`, sem permissões de dispositivo. A ponte dela só devolve "concluiu (itemId)",
   "cancelou" ou "erro" (`src/main/conexaoBancaria.ts`, `src/preload/conexaoBancaria.ts`). A API do app
   não existe nessa janela.
-- **Senha do banco**: o login e o consentimento do Open Finance abrem no navegador do sistema
-  (`forceOauthInBrowser`); o app nunca vê a senha.
+- **Senha do banco**: o login e o consentimento acontecem no site do banco, num pop-up isolado (sem
+  ponte com o app, sandbox, só `https`) com o endereço real no título; o app nunca vê a senha.
 - **Minimização de dados**: só os produtos `ACCOUNTS` e `TRANSACTIONS`; transações pendentes ficam de
   fora; cartões de crédito não são importados (as compras ficam em Cartões, para não contar em dobro).
 - **Sem webhooks**: eles exigiriam um servidor público. No lugar, o app consulta a situação de cada
