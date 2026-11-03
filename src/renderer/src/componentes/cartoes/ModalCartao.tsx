@@ -5,6 +5,7 @@ import { usePessoas, useTaxas } from '../../hooks/consultas'
 import { useAcao } from '../../hooks/useAcao'
 import { cartaoServico } from '../../servicos/cartaoServico'
 import { PALETA } from '../../utilitarios/cores'
+import { marcaDe } from '../../utilitarios/bancos'
 import { nomeInstituicao } from '../../utilitarios/instituicoes'
 import { formatarTaxa } from '../../utilitarios/moeda'
 import { SeletorPessoa } from '../transacoes/Seletores'
@@ -50,6 +51,7 @@ export function ModalCartao({ aberto, aoFechar }: { aberto: boolean; aoFechar: (
   const pessoaId = pessoaEscolhida || pessoaDaVisao || pessoas?.[0]?.id || ''
   const titular = pessoas?.find((p) => p.id === pessoaId)
   const taxaMercado = taxas?.taxas.find((t) => t.cnpj8 === cnpj8)
+  const marca = marcaDe(instituicao, cnpj8)
 
   async function salvar(evento: FormEvent) {
     evento.preventDefault()
@@ -64,7 +66,7 @@ export function ModalCartao({ aberto, aoFechar }: { aberto: boolean; aoFechar: (
           diaFechamento: Number(diaFechamento),
           diaVencimento: Number(diaVencimento),
           pessoaId,
-          cor,
+          cor: marca?.fundo[0] ?? cor,
           taxaContratoMensal: taxaContrato.trim() ? paraNumero(taxaContrato) : null
         }),
       'Cartão cadastrado'
@@ -91,7 +93,7 @@ export function ModalCartao({ aberto, aoFechar }: { aberto: boolean; aoFechar: (
     >
       <form id="formulario-cartao" className={estilos.formulario} onSubmit={salvar}>
         <div className={estilos.previaCartao}>
-          <CartaoVisual apelido={apelido} instituicao={instituicao} cor={cor} titular={titular?.nome} />
+          <CartaoVisual apelido={apelido} instituicao={instituicao} cnpj8={cnpj8} cor={cor} titular={titular?.nome} />
         </div>
 
         <Campo
@@ -141,7 +143,11 @@ export function ModalCartao({ aberto, aoFechar }: { aberto: boolean; aoFechar: (
           aoAlterar={setPessoaEscolhida}
         />
 
-        <SeletorCor rotulo="Cor do cartão" cores={PALETA} valor={cor} aoAlterar={setCor} />
+        {marca ? (
+          <p className={estilos.dica}>Visual do {marca.nome} aplicado ao cartão.</p>
+        ) : (
+          <SeletorCor rotulo="Cor do cartão" cores={PALETA} valor={cor} aoAlterar={setCor} />
+        )}
 
         <div>
           <Campo

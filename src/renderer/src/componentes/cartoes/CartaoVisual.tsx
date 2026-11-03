@@ -1,12 +1,14 @@
 import type { CSSProperties } from 'react'
 import { Wifi } from 'lucide-react'
 import { classes } from '../../utilitarios/classes'
+import { marcaDe } from '../../utilitarios/bancos'
 import { nomeInstituicao } from '../../utilitarios/instituicoes'
 import estilos from './Cartoes.module.css'
 
 interface PropsCartaoVisual {
   apelido: string
   instituicao: string
+  cnpj8?: string | null
   cor: string
   titular?: string
   rotuloValor?: string
@@ -20,6 +22,7 @@ interface PropsCartaoVisual {
 export function CartaoVisual({
   apelido,
   instituicao,
+  cnpj8,
   cor,
   titular,
   rotuloValor,
@@ -29,16 +32,21 @@ export function CartaoVisual({
   aoClicar
 }: PropsCartaoVisual) {
   const Elemento = aoClicar ? 'button' : 'div'
+  // Emissor conhecido: o cartão ganha as cores dele; senão, a cor escolhida.
+  const marca = marcaDe(instituicao, cnpj8)
+  const estilo = marca
+    ? { '--cor': marca.fundo[0], '--fundo1': marca.fundo[0], '--fundo2': marca.fundo[1], '--texto-cartao': marca.texto, '--destaque': marca.destaque ?? 'transparent' }
+    : { '--cor': cor }
 
   return (
     <Elemento
       type={aoClicar ? 'button' : undefined}
-      className={classes(estilos.cartaoVisual, aoClicar && estilos.clicavel, selecionado && estilos.selecionado)}
-      style={{ '--cor': cor } as CSSProperties}
+      className={classes(estilos.cartaoVisual, marca && estilos.comMarca, aoClicar && estilos.clicavel, selecionado && estilos.selecionado)}
+      style={estilo as CSSProperties}
       onClick={aoClicar}
     >
       <div className={estilos.cartaoTopo}>
-        <span className={estilos.cartaoBanco}>{nomeInstituicao(instituicao) || 'Banco'}</span>
+        <span className={estilos.cartaoBanco}>{marca?.nome ?? (nomeInstituicao(instituicao) || 'Banco')}</span>
         <Wifi size={20} className={estilos.aproximacao} />
       </div>
 

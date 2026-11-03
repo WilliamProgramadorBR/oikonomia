@@ -248,6 +248,18 @@ gravação usa as mesmas regras dos formulários.
   página; em último caso, a chave de acesso informa CNPJ e mês. Compra lançada na conta ou no cartão.
 - Privacidade: com IA ligada, um resumo dos números e os documentos enviados vão para o Google.
 
+## Bancos e visual dos cartões
+
+O cadastro de cartão busca primeiro num **catálogo de 45 emissores populares**
+(`renderer/src/utilitarios/bancos.ts`): Nubank, Banco do Brasil, Mercado Pago, Caixa, Itaú, Bradesco,
+Santander, Inter, C6, PicPay, PagBank, Neon, Will, Next, BTG, XP, Sicredi, Sicoob, Banrisul, Pan, Digio,
+cartões de loja (Renner, Riachuelo, Magalu, Carrefour, Pão de Açúcar) e outros. Cada um tem apelidos
+para a busca ("ourocard", "roxinho", "mercado livre") e o CNPJ-base que o liga à taxa publicada pelo
+Banco Central. As demais instituições do BC aparecem logo abaixo, em "Outras instituições".
+
+Cada emissor tem sua **identidade visual** no cartão (gradiente, cor do texto e uma faixa de acento),
+sem logotipos. Cartões antigos, salvos com o nome jurídico, são reconhecidos pelo CNPJ.
+
 ## Cartões e taxas de juros
 
 - **Parcelas por fatura:** uma compra em N vezes gera N transações de despesa, cada uma no mês

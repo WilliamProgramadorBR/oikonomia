@@ -79,6 +79,7 @@ export function Cartoes() {
       <div className={estilos.grade}>
         {resumos.map((r) => (
           <CartaoVisual
+            cnpj8={r.cartao.cnpj8}
             key={r.cartao.id}
             apelido={r.cartao.apelido}
             instituicao={r.cartao.instituicao}
