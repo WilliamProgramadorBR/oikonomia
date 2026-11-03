@@ -15,6 +15,13 @@ export interface ContaDTO {
   referencia: { data: string; saldoCentavos: number; origem: 'informado' | 'extrato' } | null
   movimentosDesdeReferencia: number
   diasDesdeConferencia: number | null
+  // Saldo atual + contas previstas nesta conta até a data (fim do mês; ou do próximo, se este já está acabando).
+  projecao: {
+    ate: string
+    saldoCentavos: number
+    previstos: number
+    menorSaldo: { valorCentavos: number; data: string } // ponto mais baixo no caminho
+  }
 }
 
 export interface CriarContaEntrada {

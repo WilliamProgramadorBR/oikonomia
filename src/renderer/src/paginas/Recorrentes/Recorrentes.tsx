@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Banknote, Check, CreditCard, Palmtree, Plus, Repeat, X } from 'lucide-react'
 import type { CartaoDTO } from '@compartilhado/dtos/cartao'
 import type { CategoriaDTO } from '@compartilhado/dtos/categoria'
+import type { ContaDTO } from '@compartilhado/dtos/conta'
 import type { RecorrenciaDTO } from '@compartilhado/dtos/recorrencia'
 import type { TipoTransacaoDTO } from '@compartilhado/dtos/transacao'
 import { deslocarMes, mesAtual } from '@compartilhado/utilitarios/mes'
@@ -11,7 +12,7 @@ import { Botao } from '../../componentes/ui/Botao'
 import { Cartao } from '../../componentes/ui/Cartao'
 import { EstadoVazio, Esqueleto, Etiqueta, IconeCategoria } from '../../componentes/ui/Elementos'
 import { useVisao } from '../../contextos/VisaoContexto'
-import { useCartoes, useCategorias, useRecorrencias } from '../../hooks/consultas'
+import { useCartoes, useCategorias, useContas, useRecorrencias } from '../../hooks/consultas'
 import { useAcao } from '../../hooks/useAcao'
 import { recorrenciaServico } from '../../servicos/recorrenciaServico'
 import { classes } from '../../utilitarios/classes'
@@ -32,6 +33,8 @@ export function Recorrentes() {
   const { dados: recorrencias } = useRecorrencias()
   const { dados: categorias } = useCategorias()
   const { dados: cartoes } = useCartoes()
+  const { dados: contas } = useContas()
+  const contasAtivas = (contas ?? []).filter((c) => c.ativa)
   const { novaRecorrencia } = useAcoesGlobais()
 
   if (!recorrencias || !categorias || !cartoes) return <Esqueleto altura={400} />
@@ -99,6 +102,7 @@ export function Recorrentes() {
                   recorrencia={r}
                   categoria={categorias.find((c) => c.id === r.categoriaId)}
                   cartao={cartoes.find((c) => c.id === r.cartaoId)}
+                  contas={contasAtivas}
                 />
               ))}
             </ul>
@@ -133,9 +137,10 @@ interface PropsLinha {
   recorrencia: RecorrenciaDTO
   categoria?: CategoriaDTO
   cartao?: CartaoDTO
+  contas: ContaDTO[]
 }
 
-function LinhaRecorrencia({ recorrencia: r, categoria, cartao }: PropsLinha) {
+function LinhaRecorrencia({ recorrencia: r, categoria, cartao, contas }: PropsLinha) {
   const executar = useAcao()
   const [encerrando, setEncerrando] = useState(false)
   const [ferias, setFerias] = useState(false)
@@ -169,6 +174,27 @@ function LinhaRecorrencia({ recorrencia: r, categoria, cartao }: PropsLinha) {
           )}
           {encerrada && r.fim && <> · até {nomeDoMes(r.fim).toLowerCase()}</>}
         </span>
+        {!cartao && !encerrada && contas.length > 0 && (
+          <label className={estilos.contaDaRecorrente}>
+            {r.tipo === 'receita' ? 'Entra em' : 'Sai de'}
+            <select
+              value={r.contaId ?? ''}
+              onChange={(e) =>
+                executar(
+                  () => recorrenciaServico.definirConta({ id: r.id, contaId: e.target.value || null }),
+                  e.target.value ? `"${r.descricao}" ligada à conta` : `"${r.descricao}" sem conta`
+                )
+              }
+            >
+              <option value="">conta não informada</option>
+              {contas.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
       </div>
 
       {r.proxima && !encerrada && (

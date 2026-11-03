@@ -41,6 +41,7 @@ export class ListarRecorrencias {
       categoriaId: r.categoriaId,
       pessoaId: r.pessoaId,
       cartaoId: r.cartaoId,
+      contaId: r.contaId,
       inicio: r.inicio,
       fim: r.fim,
       objetivoId: r.objetivoId,

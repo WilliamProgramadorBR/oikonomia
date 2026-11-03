@@ -13,6 +13,7 @@ interface LinhaRecorrencia {
   categoria_id: string
   pessoa_id: string | null
   cartao_id: string | null
+  conta_id: string | null
   inicio: string
   fim: string | null
   objetivo_id: string | null
@@ -28,10 +29,10 @@ export class RecorrenciaRepositorioSqlite implements IRecorrenciaRepositorio {
       .prepare(
         `INSERT INTO recorrencias
            (id, descricao, tipo, valor_variavel, valor_centavos, dia_do_mes, categoria_id,
-            pessoa_id, cartao_id, inicio, fim, objetivo_id, divida_id, criado_em)
+            pessoa_id, cartao_id, conta_id, inicio, fim, objetivo_id, divida_id, criado_em)
          VALUES
            (@id, @descricao, @tipo, @valor_variavel, @valor_centavos, @dia_do_mes, @categoria_id,
-            @pessoa_id, @cartao_id, @inicio, @fim, @objetivo_id, @divida_id, @criado_em)
+            @pessoa_id, @cartao_id, @conta_id, @inicio, @fim, @objetivo_id, @divida_id, @criado_em)
          ON CONFLICT(id) DO UPDATE SET
            descricao = excluded.descricao,
            valor_variavel = excluded.valor_variavel,
@@ -40,6 +41,7 @@ export class RecorrenciaRepositorioSqlite implements IRecorrenciaRepositorio {
            categoria_id = excluded.categoria_id,
            pessoa_id = excluded.pessoa_id,
            cartao_id = excluded.cartao_id,
+           conta_id = excluded.conta_id,
            fim = excluded.fim,
            objetivo_id = excluded.objetivo_id,
            divida_id = excluded.divida_id`
@@ -54,6 +56,7 @@ export class RecorrenciaRepositorioSqlite implements IRecorrenciaRepositorio {
         categoria_id: recorrencia.categoriaId,
         pessoa_id: recorrencia.pessoaId,
         cartao_id: recorrencia.cartaoId,
+        conta_id: recorrencia.contaId,
         inicio: recorrencia.inicio,
         fim: recorrencia.fim,
         objetivo_id: recorrencia.objetivoId,
@@ -97,6 +100,7 @@ export class RecorrenciaRepositorioSqlite implements IRecorrenciaRepositorio {
       categoriaId: linha.categoria_id,
       pessoaId: linha.pessoa_id,
       cartaoId: linha.cartao_id,
+      contaId: linha.conta_id,
       inicio: linha.inicio,
       fim: linha.fim,
       objetivoId: linha.objetivo_id,

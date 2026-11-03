@@ -45,8 +45,10 @@ export class SincronizarRecorrencias {
         if (existente) {
           const mudou =
             existente.valorCentavos !== valor || existente.data.getTime() !== data.getTime()
-          if (existente.status === 'prevista' && mudou) {
+          const trocouConta = existente.status === 'prevista' && !cartao && existente.contaId !== recorrencia.contaId
+          if (existente.status === 'prevista' && (mudou || trocouConta)) {
             existente.reestimar(valor, data)
+            if (trocouConta) existente.vincularConta(recorrencia.contaId)
             await this.transacaoRepositorio.salvar(existente)
           }
           continue
@@ -62,6 +64,7 @@ export class SincronizarRecorrencias {
             pessoaId: recorrencia.pessoaId,
             categoriaId: recorrencia.categoriaId,
             cartaoId: cartao?.id ?? null,
+            contaId: cartao ? null : recorrencia.contaId,
             objetivoId: recorrencia.objetivoId,
             recorrencia: { recorrenciaId: recorrencia.id, competencia: mes }
           })

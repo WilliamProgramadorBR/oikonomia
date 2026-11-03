@@ -137,6 +137,12 @@ gravação usa as mesmas regras dos formulários.
   - limpa as descrições ("COMPRA NO DEBITO PADARIA DO ZE" → "Padaria do Ze") e sugere a categoria.
   O saldo final do extrato vira o saldo da conta. Tudo continua local e cifrado: nada vai para
   bancos ou terceiros.
+- **Contas recorrentes ligadas à conta bancária**: no cadastro ("Sai de qual conta?" / "Entra em qual
+  conta?") ou direto na lista de Contas recorrentes, para as que já existem. As previsões nascem na
+  conta escolhida, e o extrato de uma conta não confirma previsões de outra.
+- **Projeção do saldo**: cada conta mostra o saldo previsto no fim do mês (ou do próximo, quando faltam
+  menos de 7 dias) e o ponto mais baixo no caminho. Se alguma conta ficar negativa antes de entrar o
+  salário, a tela avisa o dia e o valor.
 
 ## Previsto x confirmado (contas recorrentes)
 

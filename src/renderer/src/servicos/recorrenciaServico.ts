@@ -1,5 +1,6 @@
 import type {
   CriarRecorrenciaEntrada,
+  DefinirContaRecorrenciaEntrada,
   EncerrarRecorrenciaEntrada,
   RecorrenciaDTO
 } from '@compartilhado/dtos/recorrencia'
@@ -16,5 +17,9 @@ export const recorrenciaServico = {
 
   encerrar(entrada: EncerrarRecorrenciaEntrada): Promise<void> {
     return desembrulhar(api.recorrencias.encerrar(entrada))
+  },
+
+  definirConta(entrada: DefinirContaRecorrenciaEntrada): Promise<void> {
+    return desembrulhar(api.recorrencias.definirConta(entrada))
   }
 }

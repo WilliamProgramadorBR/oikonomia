@@ -74,6 +74,7 @@ import { CriarRecorrencia } from '../aplicacao/casos-de-uso/recorrencia/CriarRec
 import { EncerrarRecorrencia } from '../aplicacao/casos-de-uso/recorrencia/EncerrarRecorrencia'
 import { ListarRecorrencias } from '../aplicacao/casos-de-uso/recorrencia/ListarRecorrencias'
 import { SincronizarRecorrencias } from '../aplicacao/casos-de-uso/recorrencia/SincronizarRecorrencias'
+import { DefinirContaRecorrencia } from '../aplicacao/casos-de-uso/recorrencia/DefinirContaRecorrencia'
 import { ConfirmarTransacao } from '../aplicacao/casos-de-uso/transacao/ConfirmarTransacao'
 import { AtualizarPessoa } from '../aplicacao/casos-de-uso/pessoa/AtualizarPessoa'
 import { CriarPessoa } from '../aplicacao/casos-de-uso/pessoa/CriarPessoa'
@@ -164,14 +165,16 @@ export function criarContainer(caminhoBanco: string, { desenvolvimento = false, 
     categoriaRepositorio,
     cartaoRepositorio,
     sincronizarRecorrencias,
-    listarRecorrencias
+    listarRecorrencias,
+    contaRepositorio
   )
   const encerrarRecorrencia = new EncerrarRecorrencia(recorrenciaRepositorio, transacaoRepositorio)
   const recorrenciaControlador = new RecorrenciaControlador(
     listarRecorrencias,
     criarRecorrencia,
     encerrarRecorrencia,
-    sincronizarRecorrencias
+    sincronizarRecorrencias,
+    new DefinirContaRecorrencia(recorrenciaRepositorio, contaRepositorio, sincronizarRecorrencias)
   )
 
   const obterPrevisao = new ObterPrevisao(transacaoRepositorio, recorrenciaRepositorio)
@@ -274,7 +277,7 @@ export function criarContainer(caminhoBanco: string, { desenvolvimento = false, 
     new CriarCompraCartao(compraRepositorio, cartaoRepositorio, pessoaRepositorio, categoriaRepositorio)
   )
   const contaControlador = new ContaControlador(
-    new ListarContas(contaRepositorio),
+    new ListarContas(contaRepositorio, transacaoRepositorio),
     new CriarConta(contaRepositorio, pessoaRepositorio),
     new ConferirSaldo(contaRepositorio),
     new ArquivarConta(contaRepositorio),

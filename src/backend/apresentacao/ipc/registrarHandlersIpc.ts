@@ -33,6 +33,7 @@ import type { SalvarPerfilEntrada } from '@compartilhado/dtos/perfil'
 import type { FiltroPrevisao } from '@compartilhado/dtos/previsao'
 import type {
   CriarRecorrenciaEntrada,
+  DefinirContaRecorrenciaEntrada,
   EncerrarRecorrenciaEntrada
 } from '@compartilhado/dtos/recorrencia'
 import type {
@@ -141,6 +142,9 @@ export function registrarHandlersIpc({
   )
   tratar(CANAIS.recorrencias.encerrar, (entrada: EncerrarRecorrenciaEntrada) =>
     recorrenciaControlador.encerrar(entrada)
+  )
+  tratar(CANAIS.recorrencias.definirConta, (entrada: DefinirContaRecorrenciaEntrada) =>
+    recorrenciaControlador.definirConta(entrada)
   )
 
   tratar(CANAIS.previsao.obter, (filtro: FiltroPrevisao) => previsaoControlador.obter(filtro))

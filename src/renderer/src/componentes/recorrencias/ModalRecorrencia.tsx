@@ -4,10 +4,11 @@ import type { CriarRecorrenciaEntrada } from '@compartilhado/dtos/recorrencia'
 import type { TipoTransacaoDTO } from '@compartilhado/dtos/transacao'
 import { deslocarMes, mesAtual } from '@compartilhado/utilitarios/mes'
 import { useVisao } from '../../contextos/VisaoContexto'
-import { useCartoes, useCategorias, usePessoas } from '../../hooks/consultas'
+import { useCartoes, useCategorias, useContas, usePessoas } from '../../hooks/consultas'
 import { useAcao } from '../../hooks/useAcao'
 import { recorrenciaServico } from '../../servicos/recorrenciaServico'
 import { classes } from '../../utilitarios/classes'
+import { contaPadrao } from '../../utilitarios/contas'
 import { nomeDoMes } from '../../utilitarios/datas'
 import { SeletorCategoria, SeletorDestino } from '../transacoes/Seletores'
 import { Alternador } from '../ui/Alternador'
@@ -29,6 +30,7 @@ export function ModalRecorrencia({ aberto, aoFechar, inicial }: PropsModalRecorr
   const { dados: pessoas } = usePessoas()
   const { dados: categorias } = useCategorias()
   const { dados: cartoes } = useCartoes()
+  const { dados: contas } = useContas()
   const executar = useAcao()
 
   const [tipo, setTipo] = useState<TipoTransacaoDTO>('despesa')
@@ -37,6 +39,7 @@ export function ModalRecorrencia({ aberto, aoFechar, inicial }: PropsModalRecorr
   const [valorCentavos, setValorCentavos] = useState(0)
   const [diaDoMes, setDiaDoMes] = useState('')
   const [cartaoId, setCartaoId] = useState<string | null>(null)
+  const [contaEscolhida, setContaEscolhida] = useState<string | null | undefined>(undefined)
   const [categoriaId, setCategoriaId] = useState('')
   const [pessoaEscolhida, setPessoaEscolhida] = useState<string | null | undefined>(undefined)
   const [inicio, setInicio] = useState(mesAtual())
@@ -50,12 +53,16 @@ export function ModalRecorrencia({ aberto, aoFechar, inicial }: PropsModalRecorr
     setValorCentavos(inicial?.valorCentavos ?? 0)
     setDiaDoMes(inicial?.diaDoMes ? String(inicial.diaDoMes) : '')
     setCartaoId(inicial?.cartaoId ?? null)
+    setContaEscolhida(inicial?.contaId ?? undefined)
     setCategoriaId(inicial?.categoriaId ?? '')
     setPessoaEscolhida(inicial?.pessoaId)
     setInicio(inicial?.inicio ?? mesAtual())
   }, [aberto, inicial])
 
   const pessoaId = pessoaEscolhida !== undefined ? pessoaEscolhida : (pessoaDaVisao ?? null)
+  // Fora do cartão, de qual conta sai (ou em qual entra): sugere a conta da pessoa.
+  const contasAtivas = (contas ?? []).filter((c) => c.ativa)
+  const contaId = cartaoId ? null : contaEscolhida !== undefined ? contaEscolhida : contaPadrao(contasAtivas, pessoaId)
 
   function trocarTipo(novo: TipoTransacaoDTO) {
     setTipo(novo)
@@ -77,6 +84,7 @@ export function ModalRecorrencia({ aberto, aoFechar, inicial }: PropsModalRecorr
           categoriaId,
           pessoaId,
           cartaoId,
+          contaId,
           inicio
         }),
       'Conta recorrente cadastrada. As previsões dos próximos meses já foram criadas.'
@@ -200,6 +208,21 @@ export function ModalRecorrencia({ aberto, aoFechar, inicial }: PropsModalRecorr
         />
 
         <SeletorDestino pessoas={pessoas ?? []} valor={pessoaId} aoAlterar={setPessoaEscolhida} />
+
+        {!cartaoId && contasAtivas.length > 0 && (
+          <CampoSelecao
+            rotulo={tipo === 'receita' ? 'Entra em qual conta?' : 'Sai de qual conta? (débito automático, boleto, Pix)'}
+            value={contaId ?? ''}
+            onChange={(e) => setContaEscolhida(e.target.value || null)}
+          >
+            <option value="">Não informar</option>
+            {contasAtivas.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nome}
+              </option>
+            ))}
+          </CampoSelecao>
+        )}
 
         <CampoSelecao rotulo="A partir de" value={inicio} onChange={(e) => setInicio(e.target.value)}>
           {MESES_INICIO.map((k) => {

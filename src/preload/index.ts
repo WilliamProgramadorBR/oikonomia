@@ -47,7 +47,8 @@ const api: ApiFinanceiro = {
   recorrencias: {
     listar: () => ipcRenderer.invoke(CANAIS.recorrencias.listar),
     criar: (entrada) => ipcRenderer.invoke(CANAIS.recorrencias.criar, entrada),
-    encerrar: (entrada) => ipcRenderer.invoke(CANAIS.recorrencias.encerrar, entrada)
+    encerrar: (entrada) => ipcRenderer.invoke(CANAIS.recorrencias.encerrar, entrada),
+    definirConta: (entrada) => ipcRenderer.invoke(CANAIS.recorrencias.definirConta, entrada)
   },
   painel: {
     obter: (filtro) => ipcRenderer.invoke(CANAIS.painel.obter, filtro)

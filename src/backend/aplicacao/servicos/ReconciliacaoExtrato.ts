@@ -111,7 +111,9 @@ export function reconciliar(linhas: LinhaExtrato[], ctx: ContextoReconciliacao):
       return linhaCom('transferencia', false, 'Transferência entre contas da família (ou resgate): o dinheiro só mudou de lugar.')
     }
 
-    const disponiveis = ctx.candidatas.filter((t) => !usadas.has(t.id) && t.tipo === tipo && !t.idExtrato)
+    const disponiveis = ctx.candidatas.filter(
+      (t) => !usadas.has(t.id) && t.tipo === tipo && !t.idExtrato && (!t.contaId || t.contaId === ctx.conta.id)
+    )
 
     // Conta recorrente prevista: valor parecido, data próxima e alguma palavra em comum (ou valor quase igual).
     const prevista = disponiveis

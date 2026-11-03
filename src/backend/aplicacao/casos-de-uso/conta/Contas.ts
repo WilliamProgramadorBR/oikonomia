@@ -37,8 +37,19 @@ async function saldoNaData(contas: IContaRepositorio, contaId: string, data: str
   return { referencia, movimento, saldo: base + movimento.entradasCentavos - movimento.saidasCentavos }
 }
 
+// Até quando projetar: fim deste mês, ou do próximo se faltam menos de 7 dias para virar.
+function horizonteProjecao(hoje: string): string {
+  const [ano, mes] = hoje.split('-').map(Number)
+  const fimDeste = new Date(Date.UTC(ano, mes, 0)).toISOString().slice(0, 10)
+  const faltam = (new Date(`${fimDeste}T00:00:00Z`).getTime() - new Date(`${hoje}T00:00:00Z`).getTime()) / DIA
+  return faltam >= 7 ? fimDeste : new Date(Date.UTC(ano, mes + 1, 0)).toISOString().slice(0, 10)
+}
+
 export class ListarContas {
-  constructor(private readonly contas: IContaRepositorio) {}
+  constructor(
+    private readonly contas: IContaRepositorio,
+    private readonly transacoes: ITransacaoRepositorio
+  ) {}
 
   async executar(): Promise<ContaDTO[]> {
     const hoje = hojeISO()
@@ -46,6 +57,18 @@ export class ListarContas {
     return Promise.all(
       lista.map(async (c) => {
         const { referencia, movimento, saldo } = await saldoNaData(this.contas, c.id, hoje)
+        // Previstas ainda em aberto nesta conta (inclusive atrasadas, que ainda não entraram no saldo).
+        const ate = horizonteProjecao(hoje)
+        const previstas = (await this.transacoes.listar({ contaId: c.id, inicio: referencia ? somarDias(referencia.data, 1) : undefined, fim: ate }))
+          .filter((t) => t.status === 'prevista')
+          .sort((a, b) => a.data.getTime() - b.data.getTime())
+        let corrente = saldo
+        let menorSaldo = { valorCentavos: saldo, data: hoje }
+        for (const t of previstas) {
+          corrente += t.tipo === 'receita' ? t.valorCentavos : -t.valorCentavos
+          const data = t.data.toISOString().slice(0, 10)
+          if (corrente < menorSaldo.valorCentavos) menorSaldo = { valorCentavos: corrente, data: data < hoje ? hoje : data }
+        }
         return {
           id: c.id,
           nome: c.nome,
@@ -59,7 +82,8 @@ export class ListarContas {
           movimentosDesdeReferencia: movimento.quantidade,
           diasDesdeConferencia: referencia
             ? Math.round((new Date(`${hoje}T00:00:00Z`).getTime() - new Date(`${referencia.data}T00:00:00Z`).getTime()) / DIA)
-            : null
+            : null,
+          projecao: { ate, saldoCentavos: corrente, previstos: previstas.length, menorSaldo }
         }
       })
     )

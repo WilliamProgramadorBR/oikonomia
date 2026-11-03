@@ -1,3 +1,4 @@
+import type { IContaRepositorio } from '../../../dominio/repositorios/IContaRepositorio'
 import type { CriarRecorrenciaEntrada, RecorrenciaDTO } from '@compartilhado/dtos/recorrencia'
 import { Recorrencia } from '../../../dominio/entidades/Recorrencia'
 import { ErroDominio, ErroNaoEncontrado } from '../../../dominio/erros/ErroDominio'
@@ -15,7 +16,8 @@ export class CriarRecorrencia {
     private readonly categoriaRepositorio: ICategoriaRepositorio,
     private readonly cartaoRepositorio: ICartaoRepositorio,
     private readonly sincronizar: SincronizarRecorrencias,
-    private readonly listar: ListarRecorrencias
+    private readonly listar: ListarRecorrencias,
+    private readonly contaRepositorio?: IContaRepositorio
   ) {}
 
   async executar(entrada: CriarRecorrenciaEntrada): Promise<RecorrenciaDTO> {
@@ -31,6 +33,9 @@ export class CriarRecorrencia {
       throw new ErroNaoEncontrado('Cartão', entrada.cartaoId)
     }
 
+    if (entrada.contaId && this.contaRepositorio && !(await this.contaRepositorio.buscarPorId(entrada.contaId))) {
+      throw new ErroNaoEncontrado('Conta', entrada.contaId)
+    }
     const recorrencia = Recorrencia.criar(entrada)
     await this.recorrenciaRepositorio.salvar(recorrencia)
     await this.sincronizar.executar()

@@ -39,7 +39,8 @@ export const CANAIS = {
   recorrencias: {
     listar: 'recorrencias:listar',
     criar: 'recorrencias:criar',
-    encerrar: 'recorrencias:encerrar'
+    encerrar: 'recorrencias:encerrar',
+    definirConta: 'recorrencias:definir-conta'
   },
   painel: {
     obter: 'painel:obter'

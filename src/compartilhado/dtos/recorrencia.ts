@@ -12,6 +12,7 @@ export interface RecorrenciaDTO {
   categoriaId: string
   pessoaId: string | null // null = da casa (todos os membros)
   cartaoId: string | null // null = boleto/débito/Pix
+  contaId: string | null // conta bancária de onde sai (ou onde entra)
   inicio: string // AAAA-MM
   fim: string | null // AAAA-MM; null = sem data para acabar
   objetivoId: string | null
@@ -28,8 +29,14 @@ export interface CriarRecorrenciaEntrada {
   categoriaId: string
   pessoaId: string | null // null = da casa (todos os membros)
   cartaoId: string | null
+  contaId?: string | null // conta bancária (débito automático, boleto, Pix)
   inicio: string
   objetivoId?: string | null // aporte programado para um objetivo
+}
+
+export interface DefinirContaRecorrenciaEntrada {
+  id: string
+  contaId: string | null
 }
 
 export interface EncerrarRecorrenciaEntrada {

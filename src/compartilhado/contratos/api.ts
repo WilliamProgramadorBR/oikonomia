@@ -76,6 +76,7 @@ import type { FiltroPrevisao, PrevisaoDTO } from '../dtos/previsao'
 import type { SaudeFinanceiraDTO } from '../dtos/saude'
 import type {
   CriarRecorrenciaEntrada,
+  DefinirContaRecorrenciaEntrada,
   EncerrarRecorrenciaEntrada,
   RecorrenciaDTO
 } from '../dtos/recorrencia'
@@ -130,6 +131,7 @@ export interface ApiFinanceiro {
     listar(): Promise<Resposta<RecorrenciaDTO[]>>
     criar(entrada: CriarRecorrenciaEntrada): Promise<Resposta<RecorrenciaDTO>>
     encerrar(entrada: EncerrarRecorrenciaEntrada): Promise<Resposta<void>>
+    definirConta(entrada: DefinirContaRecorrenciaEntrada): Promise<Resposta<void>>
   }
   painel: {
     obter(filtro: FiltroPainel): Promise<Resposta<PainelDTO>>

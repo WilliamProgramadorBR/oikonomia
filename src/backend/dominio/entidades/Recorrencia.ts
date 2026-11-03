@@ -13,6 +13,7 @@ export interface PropsRecorrencia {
   categoriaId: string
   pessoaId: string | null // null = da casa (todos os membros)
   cartaoId: string | null // cobrada no cartão de crédito
+  contaId: string | null // conta bancária de onde sai (ou onde entra) o dinheiro
   inicio: string // AAAA-MM
   fim: string | null // AAAA-MM (inclusivo)
   objetivoId: string | null // aporte programado para um objetivo
@@ -20,8 +21,9 @@ export interface PropsRecorrencia {
   criadoEm: Date
 }
 
-export type DadosNovaRecorrencia = Omit<PropsRecorrencia, 'id' | 'criadoEm' | 'fim' | 'objetivoId' | 'dividaId'> & {
+export type DadosNovaRecorrencia = Omit<PropsRecorrencia, 'id' | 'criadoEm' | 'fim' | 'objetivoId' | 'dividaId' | 'contaId'> & {
   objetivoId?: string | null
+  contaId?: string | null
   dividaId?: string | null
 }
 
@@ -46,6 +48,7 @@ export class Recorrencia {
     if (dados.cartaoId && dados.tipo !== 'despesa') {
       throw new ErroDominio('Só despesas podem ser cobradas no cartão.')
     }
+    if (dados.cartaoId && dados.contaId) throw new ErroDominio('A conta é cobrada no cartão ou numa conta bancária, não nos dois.')
     if (!MES.test(dados.inicio)) throw new ErroDominio('Mês de início inválido.')
     if (dados.objetivoId && dados.tipo !== 'guardado') {
       throw new ErroDominio('Só aportes (guardar) podem ir para um objetivo.')
@@ -56,6 +59,7 @@ export class Recorrencia {
       descricao,
       objetivoId: dados.objetivoId ?? null,
       dividaId: dados.dividaId ?? null,
+      contaId: dados.contaId ?? null,
       fim: null,
       id: crypto.randomUUID(),
       criadoEm: new Date()
@@ -70,6 +74,12 @@ export class Recorrencia {
   encerrar(ultimoMes: string): void {
     if (!MES.test(ultimoMes)) throw new ErroDominio('Mês inválido.')
     this.props = { ...this.props, fim: ultimoMes }
+  }
+
+  // Muda a conta bancária da qual a conta sai (null = não informar).
+  definirConta(contaId: string | null): void {
+    if (contaId && this.props.cartaoId) throw new ErroDominio('Esta conta é cobrada no cartão de crédito.')
+    this.props = { ...this.props, contaId }
   }
 
   ocorreEm(mes: string): boolean {
@@ -102,6 +112,9 @@ export class Recorrencia {
   }
   get cartaoId(): string | null {
     return this.props.cartaoId
+  }
+  get contaId(): string | null {
+    return this.props.contaId
   }
   get inicio(): string {
     return this.props.inicio

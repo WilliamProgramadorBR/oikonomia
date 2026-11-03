@@ -1,5 +1,5 @@
 import { useState, type CSSProperties } from 'react'
-import { Archive, CheckCheck, FileUp, Plus, Wallet } from 'lucide-react'
+import { Archive, CheckCheck, FileUp, Plus, TriangleAlert, Wallet } from 'lucide-react'
 import type { ContaDTO } from '@compartilhado/dtos/conta'
 import { ModalConferirSaldo, ModalImportarExtrato, ModalNovaConta } from '../../componentes/contas/ModaisConta'
 import { Botao } from '../../componentes/ui/Botao'
@@ -33,6 +33,8 @@ export function Contas() {
   const total = visiveis.reduce((s, c) => s + c.saldoAtualCentavos, 0)
   const disponivel = visiveis.filter((c) => c.tipo !== 'investimento').reduce((s, c) => s + c.saldoAtualCentavos, 0)
   const desatualizadas = visiveis.filter((c) => (c.diasDesdeConferencia ?? 99) > DIAS_PARA_CONFERIR)
+  const projecaoDisponivel = visiveis.filter((c) => c.tipo !== 'investimento').reduce((s, c) => s + c.projecao.saldoCentavos, 0)
+  const ficamNegativas = visiveis.filter((c) => c.projecao.menorSaldo.valorCentavos < 0)
 
   return (
     <div className={estilos.pagina}>
@@ -45,7 +47,10 @@ export function Contas() {
         <div className={estilos.kpi}>
           <span>Disponível (sem investimentos)</span>
           <strong className={classes('numero', disponivel < 0 && estilos.saiu)}>{formatarCentavos(disponivel)}</strong>
-          <small>corrente, poupança e carteira</small>
+          <small>
+            projeção em {visiveis[0] ? dataCurta(visiveis[0].projecao.ate) : '—'}:{' '}
+            <b className={classes('numero', projecaoDisponivel < 0 && estilos.saiu)}>{formatarCentavos(projecaoDisponivel)}</b>
+          </small>
         </div>
         <div className={estilos.kpi}>
           <span>Para conferir</span>
@@ -56,6 +61,16 @@ export function Contas() {
           Nova conta
         </Botao>
       </div>
+
+      {ficamNegativas.length > 0 && (
+        <p className={estilos.alertaNegativo}>
+          <TriangleAlert size={17} />
+          {ficamNegativas
+            .map((c) => `${c.nome} fica negativa em ${dataCurta(c.projecao.menorSaldo.data)} (${formatarCentavos(c.projecao.menorSaldo.valorCentavos)})`)
+            .join('; ')}
+          . Antecipe uma transferência ou mude a data de alguma conta.
+        </p>
+      )}
 
       {visiveis.length === 0 ? (
         <EstadoVazio
@@ -123,6 +138,18 @@ function CartaoConta({ conta, dono, aoConferir, aoImportar }: PropsCartaoConta) 
         <strong className={classes('numero', estilos.saldoConta, conta.saldoAtualCentavos < 0 && estilos.saiu)}>
           {formatarCentavos(conta.saldoAtualCentavos)}
         </strong>
+        <div className={classes(estilos.projecao, conta.projecao.menorSaldo.valorCentavos < 0 && estilos.projecaoNegativa)}>
+          <span>
+            Em {dataCurta(conta.projecao.ate)}
+            <small> · {conta.projecao.previstos} previsto(s)</small>
+          </span>
+          <strong className="numero">{formatarCentavos(conta.projecao.saldoCentavos)}</strong>
+          {conta.projecao.menorSaldo.valorCentavos < 0 && (
+            <em>
+              Fica negativa em {dataCurta(conta.projecao.menorSaldo.data)}: {formatarCentavos(conta.projecao.menorSaldo.valorCentavos)}
+            </em>
+          )}
+        </div>
         <span className={classes(estilos.referencia, atrasada && estilos.atrasada)}>
           {conta.referencia
             ? `Conferido em ${dataCurta(conta.referencia.data)} (${conta.referencia.origem === 'extrato' ? 'extrato' : 'informado'}) · ${conta.movimentosDesdeReferencia} lançamento(s) desde então`
