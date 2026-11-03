@@ -25,6 +25,9 @@ import {
 import { ObterPainel } from '../aplicacao/casos-de-uso/painel/ObterPainel'
 import { ObterPerfil, SalvarPerfil } from '../aplicacao/casos-de-uso/perfil/Perfil'
 import { ObterPrevisao } from '../aplicacao/casos-de-uso/previsao/ObterPrevisao'
+import { GerenciarPlanoAperto, ObterPlanoAperto, SalvarOfertaAperto } from '../aplicacao/casos-de-uso/aperto/PlanoAperto'
+import { ApertoRepositorioSqlite } from '../infraestrutura/repositorios/ApertoRepositorioSqlite'
+import { ApertoControlador } from '../apresentacao/ipc/controladores/ApertoControlador'
 import { ObterSaudeFinanceira } from '../aplicacao/casos-de-uso/saude/ObterSaudeFinanceira'
 import { NarradorNativo } from '../aplicacao/servicos/NarradorNativo'
 import { NarradorComIA } from '../aplicacao/servicos/NarradorComIA'
@@ -210,6 +213,12 @@ export function criarContainer(
 
   const obterPrevisao = new ObterPrevisao(transacaoRepositorio, recorrenciaRepositorio)
   const previsaoControlador = new PrevisaoControlador(obterPrevisao)
+  const apertoRepositorio = new ApertoRepositorioSqlite(banco, configuracoes)
+  const apertoControlador = new ApertoControlador(
+    new ObterPlanoAperto(obterPrevisao, apertoRepositorio),
+    new SalvarOfertaAperto(apertoRepositorio),
+    new GerenciarPlanoAperto(apertoRepositorio)
+  )
 
   const painelControlador = new PainelControlador(
     new ObterPainel(transacaoRepositorio, pessoaRepositorio, categoriaRepositorio)
@@ -413,6 +422,7 @@ export function criarContainer(
     taxaControlador,
     recorrenciaControlador,
     previsaoControlador,
+    apertoControlador,
     saudeControlador,
     analiseControlador,
     objetivoControlador,

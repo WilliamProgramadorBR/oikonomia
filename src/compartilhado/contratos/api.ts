@@ -80,6 +80,7 @@ import type {
 } from '../dtos/objetivo'
 import type { PerfilDTO, SalvarPerfilEntrada } from '../dtos/perfil'
 import type { FiltroPrevisao, PrevisaoDTO } from '../dtos/previsao'
+import type { OfertaApertoEntrada, PlanoApertoDTO } from '../dtos/aperto'
 import type { SaudeFinanceiraDTO } from '../dtos/saude'
 import type {
   CriarRecorrenciaEntrada,
@@ -145,6 +146,13 @@ export interface ApiFinanceiro {
   }
   previsao: {
     obter(filtro: FiltroPrevisao): Promise<Resposta<PrevisaoDTO>>
+  }
+  aperto: {
+    obter(pessoaId: string | null): Promise<Resposta<PlanoApertoDTO>>
+    salvarOferta(entrada: OfertaApertoEntrada): Promise<Resposta<void>>
+    removerOferta(id: string): Promise<Resposta<void>>
+    marcarPasso(entrada: { chave: string; feito: boolean }): Promise<Resposta<void>>
+    definirCaixaExtra(centavos: number): Promise<Resposta<void>>
   }
   saude: {
     obter(pessoaId: string | null): Promise<Resposta<SaudeFinanceiraDTO>>

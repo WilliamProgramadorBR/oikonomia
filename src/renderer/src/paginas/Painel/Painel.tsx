@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router'
 import {
   ArrowDownRight,
   ArrowUpRight,
+  LifeBuoy,
   PiggyBank,
   Plus,
   ReceiptText,
@@ -20,7 +21,7 @@ import { Botao } from '../../componentes/ui/Botao'
 import { Cartao } from '../../componentes/ui/Cartao'
 import { EstadoVazio, Esqueleto, Etiqueta } from '../../componentes/ui/Elementos'
 import { useVisao } from '../../contextos/VisaoContexto'
-import { useCategorias, usePainel, usePessoas } from '../../hooks/consultas'
+import { useCategorias, usePainel, usePessoas, usePlanoAperto } from '../../hooks/consultas'
 import { classes } from '../../utilitarios/classes'
 import { formatarCentavos, formatarPercentual } from '../../utilitarios/moeda'
 import { Kpi } from './Kpi'
@@ -36,6 +37,7 @@ export function Painel() {
   const { dados: categorias } = useCategorias()
   const abrirNovoLancamento = useNovoLancamento()
   const navegar = useNavigate()
+  const { dados: aperto } = usePlanoAperto()
 
   if (pessoas?.length === 0) {
     return (
@@ -56,6 +58,15 @@ export function Painel() {
 
   return (
     <div className={estilos.painel}>
+      {aperto && aperto.buracoCentavos > 0 && (
+        <button type="button" className={estilos.avisoAperto} onClick={() => navegar('/aperto')}>
+          <LifeBuoy size={18} />
+          <span>
+            <strong>Faltam {formatarCentavos(aperto.buracoCentavos)} este mês.</strong> Veja o plano de aperto: o que está acontecendo e a saída mais
+            barata.
+          </span>
+        </button>
+      )}
       <Indicadores painel={painel} />
 
       <ResumoSaude />

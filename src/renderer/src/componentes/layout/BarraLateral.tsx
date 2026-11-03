@@ -9,6 +9,7 @@ import {
   CreditCard,
   FileUp,
   Landmark,
+  LifeBuoy,
   LayoutDashboard,
   LogOut,
   Moon,
@@ -61,6 +62,7 @@ const GRUPOS: { titulo: string; itens: ItemMenu[] }[] = [
       { rota: '/objetivos', rotulo: 'Objetivos', icone: Target },
       { rota: '/analises', rotulo: 'Análises', icone: ChartLine },
       { rota: '/dividas', rotulo: 'Dívidas', icone: Landmark },
+      { rota: '/aperto', rotulo: 'Plano de aperto', icone: LifeBuoy },
       { rota: '/credito', rotulo: 'Simular crédito', icone: Calculator }
     ]
   },

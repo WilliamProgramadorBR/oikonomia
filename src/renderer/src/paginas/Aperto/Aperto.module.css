@@ -1,0 +1,393 @@
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.indicador {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-lg);
+  background: var(--superficie);
+  box-shadow: var(--sombra-md);
+}
+
+.indicador span {
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}
+
+.indicador strong {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.indicador small {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--texto-fraco);
+}
+
+.indicadorPerigo strong {
+  color: var(--despesa);
+}
+
+.indicadorOk strong {
+  color: var(--receita);
+}
+
+.explicacao {
+  margin: 0;
+  line-height: 1.65;
+  color: var(--texto);
+}
+
+.caixa {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.caixa > :first-child {
+  flex: 0 1 280px;
+}
+
+.vazio {
+  margin: 0;
+  color: var(--texto-suave);
+  line-height: 1.6;
+}
+
+.ofertas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.oferta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: var(--superficie-2);
+}
+
+.ofertaEscolhida {
+  border-color: var(--receita);
+  background: var(--receita-suave);
+}
+
+.ofertaFora {
+  opacity: 0.6;
+}
+
+.ofertaTopo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.ofertaTitulo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ofertaTipo {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primaria);
+}
+
+.ofertaTitulo small {
+  color: var(--texto-fraco);
+}
+
+.ofertaEtiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.icone {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-sm);
+  background: var(--superficie);
+  color: var(--texto-suave);
+  cursor: pointer;
+}
+
+.icone:hover {
+  color: var(--texto);
+}
+
+.ofertaNumeros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  font-size: 13px;
+  color: var(--texto-suave);
+}
+
+.ofertaNumeros strong {
+  color: var(--texto);
+}
+
+.avisos,
+.dicas {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.dicas li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.motivo {
+  margin: 0;
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--texto-fraco);
+}
+
+.negativo {
+  color: var(--despesa) !important;
+}
+
+.positivo {
+  color: var(--receita);
+}
+
+.duasColunas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 20px;
+}
+
+/* A barra lateral ocupa ~330px: abaixo disso, as duas colunas ficam apertadas */
+@media (max-width: 1180px) {
+  .duasColunas {
+    grid-template-columns: 1fr;
+  }
+}
+
+.passos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.passos label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.passos input {
+  margin-top: 4px;
+  accent-color: var(--primaria);
+}
+
+.passoFeito span {
+  text-decoration: line-through;
+  color: var(--texto-fraco);
+}
+
+.planoB {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--borda);
+  font-size: 13px;
+  color: var(--texto-suave);
+}
+
+.planoB ol {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.tabelaRolavel {
+  overflow-x: auto;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.tabela th {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--borda);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: right;
+  color: var(--texto-fraco);
+}
+
+.tabela td {
+  padding: 10px;
+  border-bottom: 1px solid var(--borda);
+  text-align: right;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.tabela th:first-child,
+.tabela td:first-child {
+  text-align: left;
+  white-space: normal;
+}
+
+.tabela td:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.avisoMes {
+  flex-basis: 100%;
+  font-size: 11.5px;
+  color: var(--texto-fraco);
+}
+
+.regras {
+  padding: 14px 18px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-lg);
+  background: var(--superficie);
+  font-size: 13px;
+  color: var(--texto-suave);
+}
+
+.regras summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--texto);
+  cursor: pointer;
+}
+
+.regras ul {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  line-height: 1.5;
+}
+
+/* Modal */
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tiposOferta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tipoOferta {
+  padding: 7px 12px;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--superficie);
+  font: inherit;
+  font-size: 13px;
+  color: var(--texto-suave);
+  cursor: pointer;
+}
+
+.tipoAtivo {
+  border-color: var(--primaria);
+  background: var(--primaria-suave);
+  color: var(--primaria);
+  font-weight: 600;
+}
+
+.dica {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--texto-suave);
+}
+
+.linha {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.linha3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 720px) {
+  .linha,
+  .linha3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.custo {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--raio-sm);
+  background: var(--superficie-2);
+  font-size: 13px;
+  color: var(--texto-suave);
+}
+
+.custoAlto {
+  background: var(--despesa-suave);
+  color: var(--despesa);
+}

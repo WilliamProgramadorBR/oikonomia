@@ -9,6 +9,7 @@ import { ProvedorTema } from './contextos/TemaContexto'
 import { ProvedorVisao } from './contextos/VisaoContexto'
 import { Acesso } from './paginas/Acesso/Acesso'
 import { Analises } from './paginas/Analises/Analises'
+import { Aperto } from './paginas/Aperto/Aperto'
 import { Assistente } from './paginas/Assistente/Assistente'
 import { Cartoes } from './paginas/Cartoes/Cartoes'
 import { Categorias } from './paginas/Categorias/Categorias'
@@ -73,6 +74,7 @@ function Aplicativo() {
               <Route path="/objetivos" element={<Objetivos />} />
               <Route path="/dividas" element={<Dividas />} />
               <Route path="/credito" element={<Credito />} />
+              <Route path="/aperto" element={<Aperto />} />
               <Route path="/familia" element={<Familia />} />
               <Route path="/categorias" element={<Categorias />} />
               <Route path="/assistente" element={<Assistente />} />

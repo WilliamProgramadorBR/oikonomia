@@ -32,6 +32,7 @@ import type {
 } from '@compartilhado/dtos/objetivo'
 import type { SalvarPerfilEntrada } from '@compartilhado/dtos/perfil'
 import type { FiltroPrevisao } from '@compartilhado/dtos/previsao'
+import type { OfertaApertoEntrada } from '@compartilhado/dtos/aperto'
 import type {
   CriarRecorrenciaEntrada,
   DefinirContaRecorrenciaEntrada,
@@ -83,6 +84,7 @@ export function registrarHandlersIpc({
   taxaControlador,
   recorrenciaControlador,
   previsaoControlador,
+  apertoControlador,
   saudeControlador,
   analiseControlador,
   objetivoControlador,
@@ -150,6 +152,11 @@ export function registrarHandlersIpc({
   )
 
   tratar(CANAIS.previsao.obter, (filtro: FiltroPrevisao) => previsaoControlador.obter(filtro))
+  tratar(CANAIS.aperto.obter, (pessoaId: string | null) => apertoControlador.obter(pessoaId))
+  tratar(CANAIS.aperto.salvarOferta, (entrada: OfertaApertoEntrada) => apertoControlador.salvar(entrada))
+  tratar(CANAIS.aperto.removerOferta, (id: string) => apertoControlador.remover(id))
+  tratar(CANAIS.aperto.marcarPasso, (entrada: { chave: string; feito: boolean }) => apertoControlador.marcarPasso(entrada))
+  tratar(CANAIS.aperto.definirCaixaExtra, (centavos: number) => apertoControlador.definirCaixaExtra(centavos))
   tratar(CANAIS.saude.obter, (pessoaId: string | null) => saudeControlador.obter(pessoaId))
   tratar(CANAIS.analise.obter, (filtro: FiltroAnalise) => analiseControlador.obter(filtro))
 

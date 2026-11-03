@@ -23,6 +23,7 @@ const CABECALHOS: Record<string, { titulo: string; subtitulo: string }> = {
   '/saude': { titulo: 'Saúde financeira', subtitulo: 'Quanto dá para gastar, guardar e parcelar' },
   '/objetivos': { titulo: 'Objetivos', subtitulo: 'O que a família quer alcançar e o caminho até lá' },
   '/dividas': { titulo: 'Dívidas', subtitulo: 'O que está devendo e o caminho mais barato para quitar' },
+  '/aperto': { titulo: 'Plano de aperto', subtitulo: 'Mês apertado? O que está acontecendo e a saída mais barata' },
   '/credito': { titulo: 'Simular crédito', subtitulo: 'Qual banco sai mais barato para o que você precisa' },
   '/analises': { titulo: 'Análises', subtitulo: 'Quem gasta o quê, por quê e para onde está indo' },
   '/familia': { titulo: 'Família', subtitulo: 'Quem faz parte do orçamento' },

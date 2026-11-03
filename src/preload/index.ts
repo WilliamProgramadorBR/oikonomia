@@ -56,6 +56,13 @@ const api: ApiFinanceiro = {
   previsao: {
     obter: (filtro) => ipcRenderer.invoke(CANAIS.previsao.obter, filtro)
   },
+  aperto: {
+    obter: (pessoaId) => ipcRenderer.invoke(CANAIS.aperto.obter, pessoaId),
+    salvarOferta: (entrada) => ipcRenderer.invoke(CANAIS.aperto.salvarOferta, entrada),
+    removerOferta: (id) => ipcRenderer.invoke(CANAIS.aperto.removerOferta, id),
+    marcarPasso: (entrada) => ipcRenderer.invoke(CANAIS.aperto.marcarPasso, entrada),
+    definirCaixaExtra: (centavos) => ipcRenderer.invoke(CANAIS.aperto.definirCaixaExtra, centavos)
+  },
   saude: {
     obter: (pessoaId) => ipcRenderer.invoke(CANAIS.saude.obter, pessoaId)
   },

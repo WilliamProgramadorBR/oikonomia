@@ -2,6 +2,7 @@ import type { ModalidadeCredito } from '@compartilhado/dtos/taxa'
 import type { FiltroTransacoes } from '@compartilhado/dtos/transacao'
 import { useVisao } from '../contextos/VisaoContexto'
 import { analiseServico } from '../servicos/analiseServico'
+import { apertoServico } from '../servicos/apertoServico'
 import { cartaoServico } from '../servicos/cartaoServico'
 import { contaServico } from '../servicos/contaServico'
 import { categoriaServico } from '../servicos/categoriaServico'
@@ -57,6 +58,12 @@ export function useRecorrencias() {
 export function usePrevisao() {
   const { pessoaId, mes } = useVisao()
   return useConsulta(() => previsaoServico.obter({ pessoaId, mesInicial: mes }), [pessoaId, mes])
+}
+
+// Plano de aperto: sempre do mês atual em diante, na visão (pessoa ou casa) selecionada.
+export function usePlanoAperto() {
+  const { pessoaId } = useVisao()
+  return useConsulta(() => apertoServico.obter(pessoaId), [pessoaId])
 }
 
 // Saúde financeira da visão atual (sempre avalia o próximo mês a partir de hoje).

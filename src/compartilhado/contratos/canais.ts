@@ -48,6 +48,13 @@ export const CANAIS = {
   previsao: {
     obter: 'previsao:obter'
   },
+  aperto: {
+    obter: 'aperto:obter',
+    salvarOferta: 'aperto:salvar-oferta',
+    removerOferta: 'aperto:remover-oferta',
+    marcarPasso: 'aperto:marcar-passo',
+    definirCaixaExtra: 'aperto:definir-caixa-extra'
+  },
   saude: {
     obter: 'saude:obter'
   },
