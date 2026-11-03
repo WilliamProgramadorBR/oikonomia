@@ -6,6 +6,7 @@ import type {
   EstadoOpenFinanceDTO,
   VincularContaRemotaEntrada
 } from '@compartilhado/dtos/openFinance'
+import type { IJanelaConexaoBancaria } from '../../../dominio/portas/IOpenFinance'
 import type {
   AceitarTermoOpenFinance,
   AtualizarConexao,
@@ -34,7 +35,8 @@ export class OpenFinanceControlador {
       desconectar: DesconectarBanco
       desativar: DesativarOpenFinance
       verificar: VerificarConexoes
-    }
+    },
+    private readonly janela: IJanelaConexaoBancaria
   ) {}
 
   estado(): Promise<EstadoOpenFinanceDTO> {
@@ -66,6 +68,11 @@ export class OpenFinanceControlador {
   }
   verificarConexoes(): Promise<void> {
     return this.casos.verificar.executar()
+  }
+  // A conexão acontece no navegador: o app pode desistir dela ou abrir a página de novo.
+  async conexaoEmAndamento(acao: 'cancelar' | 'reabrir'): Promise<void> {
+    if (acao === 'cancelar') this.janela.cancelar?.()
+    else if (acao === 'reabrir') this.janela.reabrir?.()
   }
   desativar(entrada: DesativarOpenFinanceEntrada): Promise<{ mensagem: string }> {
     return this.casos.desativar.executar(entrada)

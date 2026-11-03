@@ -19,5 +19,6 @@ export const openFinanceServico = {
   concluirSincronizacao: (contaId: string): Promise<void> => desembrulhar(api.openFinance.concluirSincronizacao(contaId)),
   desconectar: (itemId: string): Promise<{ apagadoNaPluggy: boolean }> => desembrulhar(api.openFinance.desconectar(itemId)),
   desativar: (entrada: DesativarOpenFinanceEntrada): Promise<{ mensagem: string }> => desembrulhar(api.openFinance.desativar(entrada)),
-  verificarConexoes: (): Promise<void> => desembrulhar(api.openFinance.verificarConexoes())
+  verificarConexoes: (): Promise<void> => desembrulhar(api.openFinance.verificarConexoes()),
+  conexaoEmAndamento: (acao: 'cancelar' | 'reabrir'): Promise<void> => desembrulhar(api.openFinance.conexaoEmAndamento(acao))
 }

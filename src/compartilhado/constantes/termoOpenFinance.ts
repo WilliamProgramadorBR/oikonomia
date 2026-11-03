@@ -1,6 +1,6 @@
 // Termo de ciência do Open Finance. Se o conteúdo mudar de forma relevante, suba a versão:
 // quem aceitou a anterior precisará ler e aceitar de novo antes de continuar usando.
-export const VERSAO_TERMO_OPEN_FINANCE = '1.1 · 03/11/2026'
+export const VERSAO_TERMO_OPEN_FINANCE = '1.2 · 03/11/2026'
 
 export interface SecaoTermo {
   titulo: string
@@ -51,8 +51,9 @@ export const TERMO_OPEN_FINANCE: SecaoTermo[] = [
   {
     titulo: '6. Sua senha do banco',
     paragrafos: [
-      'A autorização acontece no site do seu banco, aberto numa janela segura e separada: sem ligação com os dados do app, e com o endereço do site sempre visível no título para você conferir que é mesmo o banco.',
-      'O Projeto Financeiro nunca vê, recebe ou guarda a senha do seu banco. A tela de conexão da Pluggy também abre numa janela separada, sem acesso aos dados do app.'
+      'A conexão abre no seu navegador (Chrome, Edge...), numa página temporária do próprio app no seu computador (endereço 127.0.0.1), com a tela oficial da Pluggy. A autorização acontece no site do seu banco, com o endereço sempre visível na barra do navegador para você conferir que é mesmo o banco.',
+      'Essa página local só aceita acesso do seu próprio computador, usa um código secreto de uso único e se desliga ao concluir (ou em 15 minutos). Ela não tem acesso aos dados do app: só devolve a ele a identificação da conexão criada.',
+      'O Projeto Financeiro nunca vê, recebe ou guarda a senha do seu banco.'
     ]
   },
   {

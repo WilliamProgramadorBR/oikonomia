@@ -15,8 +15,7 @@ export default defineConfig({
     resolve: { alias: aliases },
     build: {
       rollupOptions: {
-        // Cada janela tem a sua ponte: a da Pluggy só devolve o resultado da conexão.
-        input: { index: resolve('src/preload/index.ts'), conexaoBancaria: resolve('src/preload/conexaoBancaria.ts') }
+        input: { index: resolve('src/preload/index.ts') }
       }
     }
   },
@@ -24,6 +23,7 @@ export default defineConfig({
     plugins: [react()],
     build: {
       rollupOptions: {
+        // A página da conexão do Open Finance é servida ao navegador do sistema pelo servidor local temporário.
         input: { index: resolve('src/renderer/index.html'), conexaoBancaria: resolve('src/renderer/conexao-bancaria.html') }
       }
     },

@@ -45,7 +45,9 @@ export interface ResultadoJanelaConexao {
   eventos: string[] // passos percorridos (para diagnóstico)
 }
 
-// Janela isolada onde o usuário escolhe o banco e autoriza (implementada pelo processo principal).
+// Onde o usuário escolhe o banco e autoriza (implementada pelo processo principal: hoje, no navegador do sistema).
 export interface IJanelaConexaoBancaria {
   abrir(connectToken: string, opcoes: { itemId?: string; incluirSandbox?: boolean }): Promise<ResultadoJanelaConexao>
+  cancelar?(): void // desiste da conexão em andamento (abrir resolve sem item)
+  reabrir?(): void // abre de novo a página da conexão em andamento (se a pessoa fechou a aba)
 }

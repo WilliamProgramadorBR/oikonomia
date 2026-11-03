@@ -95,7 +95,8 @@ export const CANAIS = {
     concluirSincronizacao: 'open-finance:concluir-sincronizacao',
     desconectar: 'open-finance:desconectar',
     desativar: 'open-finance:desativar',
-    verificarConexoes: 'open-finance:verificar-conexoes'
+    verificarConexoes: 'open-finance:verificar-conexoes',
+    conexaoEmAndamento: 'open-finance:conexao-em-andamento'
   },
   ajustes: {
     ajustarPrevista: 'ajustes:ajustar-prevista',

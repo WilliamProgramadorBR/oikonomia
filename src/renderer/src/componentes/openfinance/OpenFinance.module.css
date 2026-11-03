@@ -262,3 +262,30 @@
   font-weight: 600;
   color: var(--alerta);
 }
+
+.aguardandoNavegador {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 10px 12px;
+  border-radius: var(--raio-sm);
+  background: var(--primaria-suave);
+  font-size: 13px;
+}
+
+.acoesAguardando {
+  display: flex;
+  gap: 12px;
+}
+
+.acoesAguardando button {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--primaria);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}

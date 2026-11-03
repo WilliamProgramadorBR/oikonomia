@@ -85,10 +85,12 @@
 .duasColunas {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
   gap: 20px;
 }
 
-@media (max-width: 900px) {
+/* A barra lateral ocupa ~330px: abaixo disso, as duas colunas ficam apertadas */
+@media (max-width: 1180px) {
   .duasColunas {
     grid-template-columns: 1fr;
   }
@@ -109,7 +111,7 @@
 .sobre {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
 }
 
@@ -153,6 +155,8 @@
 
 .cripto {
   display: flex;
+  flex: 1 1 260px;
+  align-self: center;
   align-items: center;
   gap: 10px;
   padding: 10px 14px;

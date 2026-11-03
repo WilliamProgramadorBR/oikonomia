@@ -55,7 +55,7 @@ export function CartaoOpenFinance() {
 
   return (
     <Cartao
-      titulo="Open Finance (opcional)"
+      titulo="Open Finance (beta, opcional)"
       subtitulo="Saldos e extratos direto do banco, pela sua conta na Pluggy"
       acao={
         ativo ? (
@@ -105,8 +105,24 @@ export function CartaoOpenFinance() {
             </Marcador>
           </div>
 
+          {conectando && (
+            <div className={estilos.aguardandoNavegador}>
+              <span>
+                <strong>Continue no seu navegador.</strong> A tela da Pluggy abriu numa aba nova. Ao terminar, volte aqui.
+              </span>
+              <span className={estilos.acoesAguardando}>
+                <button type="button" onClick={() => void openFinanceServico.conexaoEmAndamento('reabrir')}>
+                  Abrir de novo
+                </button>
+                <button type="button" onClick={() => void openFinanceServico.conexaoEmAndamento('cancelar')}>
+                  Cancelar
+                </button>
+              </span>
+            </div>
+          )}
+
           {estado.conexoes.length === 0 ? (
-            <p className={estilos.vazio}>Nenhum banco conectado ainda. A janela da Pluggy abre separada, e a autorização é feita no site do banco, numa janela segura com o endereço no título.</p>
+            <p className={estilos.vazio}>Nenhum banco conectado ainda. A conexão abre no seu navegador, com a tela oficial da Pluggy, e a autorização é feita no site do banco, com o endereço visível na barra.</p>
           ) : (
             estado.conexoes.map((c) => <Conexao key={c.itemId} conexao={c} aoReautorizar={() => conectar(c.itemId)} />)
           )}

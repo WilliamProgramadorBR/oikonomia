@@ -194,6 +194,7 @@ export interface ApiFinanceiro {
     desconectar(itemId: string): Promise<Resposta<{ apagadoNaPluggy: boolean }>>
     desativar(entrada: DesativarOpenFinanceEntrada): Promise<Resposta<{ mensagem: string }>>
     verificarConexoes(): Promise<Resposta<void>>
+    conexaoEmAndamento(acao: 'cancelar' | 'reabrir'): Promise<Resposta<void>>
   }
   ajustes: {
     ajustarPrevista(entrada: AjustarPrevistaEntrada): Promise<Resposta<TransacaoDTO>>

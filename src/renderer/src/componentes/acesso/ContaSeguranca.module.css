@@ -1,11 +1,12 @@
 .grade {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
+  align-items: stretch; /* os dois cartões com a mesma altura */
   gap: 20px;
 }
 
-@media (max-width: 900px) {
+/* A barra lateral ocupa ~330px: abaixo disso, as duas colunas ficam apertadas */
+@media (max-width: 1180px) {
   .grade {
     grid-template-columns: 1fr;
   }

@@ -103,7 +103,8 @@ const api: ApiFinanceiro = {
     concluirSincronizacao: (contaId) => ipcRenderer.invoke(CANAIS.openFinance.concluirSincronizacao, contaId),
     desconectar: (itemId) => ipcRenderer.invoke(CANAIS.openFinance.desconectar, itemId),
     desativar: (entrada) => ipcRenderer.invoke(CANAIS.openFinance.desativar, entrada),
-    verificarConexoes: () => ipcRenderer.invoke(CANAIS.openFinance.verificarConexoes)
+    verificarConexoes: () => ipcRenderer.invoke(CANAIS.openFinance.verificarConexoes),
+    conexaoEmAndamento: (acao) => ipcRenderer.invoke(CANAIS.openFinance.conexaoEmAndamento, acao)
   },
   ajustes: {
     ajustarPrevista: (entrada) => ipcRenderer.invoke(CANAIS.ajustes.ajustarPrevista, entrada),

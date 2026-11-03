@@ -194,6 +194,7 @@ export function registrarHandlersIpc({
   tratar(CANAIS.openFinance.desconectar, (itemId: string) => openFinanceControlador.desconectar(itemId))
   tratar(CANAIS.openFinance.desativar, (entrada: DesativarOpenFinanceEntrada) => openFinanceControlador.desativar(entrada))
   tratar(CANAIS.openFinance.verificarConexoes, () => openFinanceControlador.verificarConexoes())
+  tratar(CANAIS.openFinance.conexaoEmAndamento, (acao: 'cancelar' | 'reabrir') => openFinanceControlador.conexaoEmAndamento(acao))
   tratar(CANAIS.ajustes.ajustarPrevista, (entrada: AjustarPrevistaEntrada) => ajustesControlador.ajustarPrevista(entrada))
   tratar(CANAIS.ajustes.simularFerias, (entrada: FeriasEntrada) => ajustesControlador.simularFerias(entrada))
   tratar(CANAIS.ajustes.aplicarFerias, (entrada: AplicarFeriasEntrada) => ajustesControlador.aplicarFerias(entrada))

@@ -344,7 +344,7 @@ export function criarContainer(
     desconectar: desconectarBanco,
     desativar: new DesativarOpenFinance(dependenciasOpenFinance, desconectarBanco),
     verificar: new VerificarConexoes(dependenciasOpenFinance)
-  })
+  }, dependenciasOpenFinance.janela)
 
   const simularFerias = new SimularFerias(recorrenciaRepositorio, transacaoRepositorio)
   const ajustesControlador = new AjustesControlador(
