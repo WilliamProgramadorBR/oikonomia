@@ -20,6 +20,7 @@ import type { FiltroAnalise } from '@compartilhado/dtos/analise'
 import type { MensagemChatDTO, SalvarConfiguracaoIAEntrada } from '@compartilhado/dtos/ia'
 import type { AjustarPrevistaEntrada, AplicarFeriasEntrada, FeriasEntrada } from '@compartilhado/dtos/ajustes'
 import type { PropostaLancamentoDTO } from '@compartilhado/dtos/lancamentosTexto'
+import type { ConectarBancoEntrada, CredenciaisOpenFinanceEntrada, DesativarOpenFinanceEntrada, VincularContaRemotaEntrada } from '@compartilhado/dtos/openFinance'
 import type { ConferirSaldoEntrada, CriarContaEntrada, ImportarExtratoEntrada, LerExtratoEntrada } from '@compartilhado/dtos/conta'
 import type { ArquivoEntrada, ConfirmarContrachequeEntrada } from '@compartilhado/dtos/importacao'
 import type { CriarDividaEntrada, SimularCreditoEntrada } from '@compartilhado/dtos/divida'
@@ -90,6 +91,7 @@ export function registrarHandlersIpc({
   iaControlador,
   ajustesControlador,
   contaControlador,
+  openFinanceControlador,
   importacaoControlador
 }: Container): void {
   const tratar = criarTratador(sessao, () => {
@@ -181,6 +183,17 @@ export function registrarHandlersIpc({
   tratar(CANAIS.contas.arquivar, (id: string) => contaControlador.arquivar(id))
   tratar(CANAIS.contas.lerExtrato, (entrada: LerExtratoEntrada) => contaControlador.lerExtrato(entrada))
   tratar(CANAIS.contas.importarExtrato, (entrada: ImportarExtratoEntrada) => contaControlador.importarExtrato(entrada))
+  tratar(CANAIS.openFinance.estado, () => openFinanceControlador.estado())
+  tratar(CANAIS.openFinance.aceitarTermo, (versao: string) => openFinanceControlador.aceitarTermo(versao))
+  tratar(CANAIS.openFinance.salvarCredenciais, (entrada: CredenciaisOpenFinanceEntrada) => openFinanceControlador.salvarCredenciais(entrada))
+  tratar(CANAIS.openFinance.conectar, (entrada?: ConectarBancoEntrada) => openFinanceControlador.conectar(entrada))
+  tratar(CANAIS.openFinance.atualizar, (itemId: string) => openFinanceControlador.atualizar(itemId))
+  tratar(CANAIS.openFinance.vincular, (entrada: VincularContaRemotaEntrada) => openFinanceControlador.vincular(entrada))
+  tratar(CANAIS.openFinance.sincronizar, (contaId: string) => openFinanceControlador.sincronizar(contaId))
+  tratar(CANAIS.openFinance.concluirSincronizacao, (contaId: string) => openFinanceControlador.concluirSincronizacao(contaId))
+  tratar(CANAIS.openFinance.desconectar, (itemId: string) => openFinanceControlador.desconectar(itemId))
+  tratar(CANAIS.openFinance.desativar, (entrada: DesativarOpenFinanceEntrada) => openFinanceControlador.desativar(entrada))
+  tratar(CANAIS.openFinance.verificarConexoes, () => openFinanceControlador.verificarConexoes())
   tratar(CANAIS.ajustes.ajustarPrevista, (entrada: AjustarPrevistaEntrada) => ajustesControlador.ajustarPrevista(entrada))
   tratar(CANAIS.ajustes.simularFerias, (entrada: FeriasEntrada) => ajustesControlador.simularFerias(entrada))
   tratar(CANAIS.ajustes.aplicarFerias, (entrada: AplicarFeriasEntrada) => ajustesControlador.aplicarFerias(entrada))

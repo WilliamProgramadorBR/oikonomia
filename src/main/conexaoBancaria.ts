@@ -1,0 +1,72 @@
+import { join } from 'node:path'
+import { BrowserWindow, ipcMain, shell } from 'electron'
+import type { IJanelaConexaoBancaria } from '@backend/dominio/portas/IOpenFinance'
+
+const CANAL_RESULTADO = 'conexao-bancaria:resultado'
+const ORIGENS_PLUGGY = /^https:\/\/([a-z0-9-]+\.)*pluggy\.ai(\/|$)/i
+
+// Janela isolada para o widget oficial da Pluggy:
+// - sessão própria (partition) e sandbox: o widget não enxerga cookies, armazenamento nem a ponte do app;
+// - a ponte desta janela só sabe dizer "concluiu (itemId)", "cancelou" ou "erro";
+// - a autorização no banco (OAuth do Open Finance) abre no navegador do sistema, fora do app.
+export function criarJanelaConexaoBancaria(): IJanelaConexaoBancaria {
+  return {
+    abrir: (connectToken, { itemId, incluirSandbox }) =>
+      new Promise((resolver) => {
+        const pai = BrowserWindow.getFocusedWindow() ?? BrowserWindow.getAllWindows()[0]
+        const janela = new BrowserWindow({
+          parent: pai,
+          modal: true,
+          width: 520,
+          height: 760,
+          minWidth: 420,
+          title: 'Conectar banco · Pluggy',
+          autoHideMenuBar: true,
+          show: false,
+          webPreferences: {
+            preload: join(__dirname, '../preload/conexaoBancaria.js'),
+            partition: 'conexao-bancaria',
+            contextIsolation: true,
+            sandbox: true,
+            nodeIntegration: false,
+            webSecurity: true
+          }
+        })
+        let concluido = false
+        const terminar = (resultado: string | null) => {
+          if (concluido) return
+          concluido = true
+          ipcMain.removeListener(CANAL_RESULTADO, aoReceber)
+          resolver(resultado)
+          if (!janela.isDestroyed()) janela.close()
+        }
+        const aoReceber = (evento: Electron.IpcMainEvent, dados: { itemId?: string | null; erro?: string }) => {
+          if (evento.sender !== janela.webContents) return // só aceita mensagens desta janela
+          if (dados.erro) console.warn('[open finance] widget:', dados.erro)
+          terminar(typeof dados.itemId === 'string' && /^[\w-]{8,64}$/.test(dados.itemId) ? dados.itemId : null)
+        }
+        ipcMain.on(CANAL_RESULTADO, aoReceber)
+
+        // Nada de abas/janelas novas; links da Pluggy e do banco (https) vão para o navegador do sistema.
+        janela.webContents.setWindowOpenHandler(({ url }) => {
+          if (url.startsWith('https://')) void shell.openExternal(url)
+          return { action: 'deny' }
+        })
+        janela.webContents.on('will-navigate', (evento, url) => {
+          if (!url.startsWith('file://') && !(process.env['ELECTRON_RENDERER_URL'] && url.startsWith(process.env['ELECTRON_RENDERER_URL']))) {
+            evento.preventDefault()
+            if (ORIGENS_PLUGGY.test(url) || url.startsWith('https://')) void shell.openExternal(url)
+          }
+        })
+        // Sem câmera, microfone, localização etc.
+        janela.webContents.session.setPermissionRequestHandler((_wc, _permissao, responder) => responder(false))
+
+        janela.once('ready-to-show', () => janela.show())
+        janela.on('closed', () => terminar(null))
+
+        const parametros = new URLSearchParams({ token: connectToken, ...(itemId ? { item: itemId } : {}), ...(incluirSandbox ? { sandbox: '1' } : {}) })
+        if (process.env['ELECTRON_RENDERER_URL']) void janela.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/conexao-bancaria.html#${parametros}`)
+        else void janela.loadFile(join(__dirname, '../renderer/conexao-bancaria.html'), { hash: parametros.toString() })
+      })
+  }
+}

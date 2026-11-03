@@ -1,6 +1,6 @@
 import { useState, type CSSProperties } from 'react'
-import { Archive, CheckCheck, FileUp, Plus, TriangleAlert, Wallet } from 'lucide-react'
-import type { ContaDTO } from '@compartilhado/dtos/conta'
+import { Archive, CheckCheck, FileUp, Plus, RefreshCw, TriangleAlert, Wallet, Wifi } from 'lucide-react'
+import type { ContaDTO, PreviaImportacaoDTO } from '@compartilhado/dtos/conta'
 import { ModalConferirSaldo, ModalImportarExtrato, ModalNovaConta } from '../../componentes/contas/ModaisConta'
 import { Botao } from '../../componentes/ui/Botao'
 import { Avatar, EstadoVazio, Esqueleto } from '../../componentes/ui/Elementos'
@@ -8,6 +8,9 @@ import { CASA } from '@compartilhado/constantes/casa'
 import { useVisao } from '../../contextos/VisaoContexto'
 import { useContas, usePessoas } from '../../hooks/consultas'
 import { useAcao } from '../../hooks/useAcao'
+import { useConsulta } from '../../hooks/useConsulta'
+import { useNotificar } from '../../contextos/NotificacaoContexto'
+import { openFinanceServico } from '../../servicos/openFinanceServico'
 import { contaServico } from '../../servicos/contaServico'
 import { marcaDe } from '../../utilitarios/bancos'
 import { classes } from '../../utilitarios/classes'
@@ -25,6 +28,22 @@ export function Contas() {
   const [nova, setNova] = useState(false)
   const [conferindo, setConferindo] = useState<ContaDTO | null>(null)
   const [importando, setImportando] = useState<ContaDTO | null>(null)
+  const [sincronizando, setSincronizando] = useState<{ conta: ContaDTO; previa: PreviaImportacaoDTO } | null>(null)
+  const { dados: openFinance } = useConsulta(() => openFinanceServico.estado(), [])
+  const executar = useAcao()
+  const notificar = useNotificar()
+  // Contas locais ligadas a uma conta do Open Finance (e quando foram sincronizadas).
+  const vinculadas = new Map(
+    (openFinance?.conexoes ?? []).flatMap((c) => c.contas.filter((r) => r.contaId).map((r) => [r.contaId!, { ultimaSincronizacao: r.ultimaSincronizacao, instituicao: c.instituicao }] as const))
+  )
+
+  async function sincronizar(conta: ContaDTO) {
+    try {
+      setSincronizando({ conta, previa: await openFinanceServico.sincronizar(conta.id) })
+    } catch (e) {
+      notificar('erro', (e as Error).message)
+    }
+  }
 
   if (!contas) return <Esqueleto altura={320} />
 
@@ -92,6 +111,8 @@ export function Contas() {
               dono={pessoas?.find((p) => p.id === c.pessoaId)}
               aoConferir={() => setConferindo(c)}
               aoImportar={() => setImportando(c)}
+              openFinance={vinculadas.get(c.id)}
+              aoSincronizar={() => sincronizar(c)}
             />
           ))}
         </div>
@@ -100,6 +121,14 @@ export function Contas() {
       <ModalNovaConta aberto={nova} aoFechar={() => setNova(false)} />
       <ModalConferirSaldo conta={conferindo} aoFechar={() => setConferindo(null)} />
       <ModalImportarExtrato conta={importando} aoFechar={() => setImportando(null)} />
+      <ModalImportarExtrato
+        conta={sincronizando?.conta ?? null}
+        previaInicial={sincronizando?.previa ?? null}
+        aoFechar={() => setSincronizando(null)}
+        aoImportar={async () => {
+          if (sincronizando) await executar(() => openFinanceServico.concluirSincronizacao(sincronizando.conta.id))
+        }}
+      />
     </div>
   )
 }
@@ -109,10 +138,13 @@ interface PropsCartaoConta {
   dono?: { nome: string; cor: string }
   aoConferir: () => void
   aoImportar: () => void
+  openFinance?: { instituicao: string; ultimaSincronizacao: string | null }
+  aoSincronizar: () => Promise<void>
 }
 
-function CartaoConta({ conta, dono, aoConferir, aoImportar }: PropsCartaoConta) {
+function CartaoConta({ conta, dono, aoConferir, aoImportar, openFinance, aoSincronizar }: PropsCartaoConta) {
   const executar = useAcao()
+  const [buscando, setBuscando] = useState(false)
   const marca = marcaDe(conta.instituicao, conta.cnpj8)
   const Icone = TIPOS_CONTA[conta.tipo].icone
   const atrasada = (conta.diasDesdeConferencia ?? 99) > DIAS_PARA_CONFERIR
@@ -155,7 +187,27 @@ function CartaoConta({ conta, dono, aoConferir, aoImportar }: PropsCartaoConta) 
             ? `Conferido em ${dataCurta(conta.referencia.data)} (${conta.referencia.origem === 'extrato' ? 'extrato' : 'informado'}) · ${conta.movimentosDesdeReferencia} lançamento(s) desde então`
             : 'Sem saldo conferido'}
         </span>
+        {openFinance && (
+          <span className={estilos.openFinance}>
+            <Wifi size={12} /> Open Finance ({openFinance.instituicao})
+            {openFinance.ultimaSincronizacao ? ` · sincronizada em ${dataCurta(openFinance.ultimaSincronizacao)}` : ' · ainda não sincronizada'}
+          </span>
+        )}
         <div className={estilos.acoesConta}>
+          {openFinance && (
+            <Botao
+              tamanho="p"
+              icone={RefreshCw}
+              carregando={buscando}
+              onClick={async () => {
+                setBuscando(true)
+                await aoSincronizar()
+                setBuscando(false)
+              }}
+            >
+              Sincronizar
+            </Botao>
+          )}
           <Botao tamanho="p" variante="secundario" icone={CheckCheck} onClick={aoConferir}>
             Conferir saldo
           </Botao>

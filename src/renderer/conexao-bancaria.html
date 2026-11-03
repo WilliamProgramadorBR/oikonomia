@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Só o próprio app e a Pluggy: o widget roda num iframe de connect.pluggy.ai -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.pluggy.ai; frame-src https://connect.pluggy.ai https://*.pluggy.ai; connect-src https://*.pluggy.ai; font-src 'self' data:"
+    />
+    <title>Conectar banco · Pluggy</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        background: #f3f5fa;
+        color: #1e293b;
+      }
+      .aviso {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        height: 100%;
+        padding: 24px;
+        text-align: center;
+        font-size: 14px;
+      }
+      .aviso small {
+        max-width: 360px;
+        color: #64748b;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="aviso" id="aviso">
+      <strong>Abrindo a conexão segura da Pluggy…</strong>
+      <small>A autorização acontece no ambiente do seu banco. O Projeto Financeiro nunca vê a sua senha.</small>
+    </div>
+    <script type="module" src="/src/conexao/conexao.ts"></script>
+  </body>
+</html>

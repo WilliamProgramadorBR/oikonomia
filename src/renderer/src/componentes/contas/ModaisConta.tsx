@@ -205,7 +205,14 @@ const SITUACOES: Record<SituacaoLinhaExtrato, { rotulo: string; cor: string }> =
   transferencia: { rotulo: 'Transferência', cor: 'var(--alerta)' }
 }
 
-export function ModalImportarExtrato({ conta, aoFechar }: { conta: ContaDTO | null; aoFechar: () => void }) {
+interface PropsImportarExtrato {
+  conta: ContaDTO | null
+  aoFechar: () => void
+  previaInicial?: PreviaImportacaoDTO | null // Open Finance: a prévia já vem pronta, sem arquivo
+  aoImportar?: () => Promise<void>
+}
+
+export function ModalImportarExtrato({ conta, aoFechar, previaInicial = null, aoImportar }: PropsImportarExtrato) {
   const { dados: categorias } = useCategorias()
   const notificar = useNotificar()
   const executar = useAcao()
@@ -215,9 +222,9 @@ export function ModalImportarExtrato({ conta, aoFechar }: { conta: ContaDTO | nu
   const [salvando, setSalvando] = useState(false)
 
   useEffect(() => {
-    setPrevia(null)
-    setLinhas([])
-  }, [conta])
+    setPrevia(previaInicial)
+    setLinhas(previaInicial ? [...previaInicial.linhas].sort((a, b) => b.data.localeCompare(a.data)) : [])
+  }, [conta, previaInicial])
 
   const incluidas = useMemo(() => linhas.filter((l) => l.incluir), [linhas])
   const contagem = useMemo(() => {
@@ -257,6 +264,7 @@ export function ModalImportarExtrato({ conta, aoFechar }: { conta: ContaDTO | nu
     })
     setSalvando(false)
     if (ok) {
+      await aoImportar?.()
       notificar('sucesso', mensagem)
       aoFechar()
     }
@@ -266,18 +274,20 @@ export function ModalImportarExtrato({ conta, aoFechar }: { conta: ContaDTO | nu
     <Modal
       aberto
       aoFechar={aoFechar}
-      titulo={`Importar extrato: ${conta.nome}`}
+      titulo={previaInicial ? `Sincronizar pelo Open Finance: ${conta.nome}` : `Importar extrato: ${conta.nome}`}
       descricao={
         previa
-          ? `${previa.formato.toUpperCase()} de ${dataCurta(previa.periodo.inicio)} a ${dataCurta(previa.periodo.fim)}. Revise e confirme.`
+          ? `${previa.formato === 'openfinance' ? 'Open Finance' : previa.formato.toUpperCase()} de ${dataCurta(previa.periodo.inicio)} a ${dataCurta(previa.periodo.fim)}. Revise e confirme.`
           : 'No app ou site do banco: Extrato → Exportar → OFX (melhor) ou CSV.'
       }
       rodape={
         previa ? (
           <>
-            <Botao variante="fantasma" onClick={() => setPrevia(null)}>
-              Outro arquivo
-            </Botao>
+            {!previaInicial && (
+              <Botao variante="fantasma" onClick={() => setPrevia(null)}>
+                Outro arquivo
+              </Botao>
+            )}
             <Botao icone={FileUp} carregando={salvando} disabled={incluidas.length === 0 && !previa.saldoFinal} onClick={importar}>
               {incluidas.length > 0 ? `Importar ${incluidas.length} lançamento${incluidas.length === 1 ? '' : 's'}` : 'Atualizar saldo'}
             </Botao>

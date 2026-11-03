@@ -144,6 +144,42 @@ gravação usa as mesmas regras dos formulários.
   menos de 7 dias) e o ponto mais baixo no caminho. Se alguma conta ficar negativa antes de entrar o
   salário, a tela avisa o dia e o valor.
 
+## Open Finance com a Pluggy (opcional)
+
+Saldos e extratos direto do banco, **com a sua própria conta na Pluggy**. Nada é obrigatório: sem
+isso, a importação de extrato (OFX/CSV) continua funcionando.
+
+**Como ativar** (Configurações → Open Finance):
+1. Leia o **termo de ciência** (o aceite só libera depois de rolar até o fim e marcar a declaração).
+   O app registra a versão, a data e quem aceitou; se o termo mudar, pede o aceite de novo.
+2. Crie a sua conta e uma aplicação em **dashboard.pluggy.ai** e cole o **Client ID** e o **Client
+   Secret**. O app testa com a Pluggy antes de guardar.
+3. **Conectar banco**: a Pluggy abre numa janela separada. Para experimentar sem dados reais, marque
+   "Mostrar bancos de teste (sandbox)".
+4. Em cada conta conectada, escolha **ligar a uma conta do app** ou **criar uma nova**. Depois use
+   **Sincronizar** em Contas e saldos: os lançamentos passam pela mesma revisão da importação de
+   extrato (fatura, transferências, previstos e duplicados tratados).
+
+**Modelo de segurança**
+- **Sem servidor nosso**: o processo principal do Electron cria o *connect token* e fala com a API da
+  Pluggy (`infraestrutura/externos/PluggyAgregador.ts`). O autor do app não recebe nenhum dado.
+- **Credenciais do próprio usuário**, cifradas pelo cofre do sistema (DPAPI/Keychain). Elas nunca são
+  embutidas no binário nem mostradas de volta, e o segredo só é enviado para `POST /auth` da Pluggy.
+- **Janela isolada** para o widget oficial (`pluggy-connect-sdk`): sessão própria, sandbox, CSP
+  restrita a `*.pluggy.ai`, sem permissões de dispositivo. A ponte dela só devolve "concluiu (itemId)",
+  "cancelou" ou "erro" (`src/main/conexaoBancaria.ts`, `src/preload/conexaoBancaria.ts`). A API do app
+  não existe nessa janela.
+- **Senha do banco**: o login e o consentimento do Open Finance abrem no navegador do sistema
+  (`forceOauthInBrowser`); o app nunca vê a senha.
+- **Minimização de dados**: só os produtos `ACCOUNTS` e `TRANSACTIONS`; transações pendentes ficam de
+  fora; cartões de crédito não são importados (as compras ficam em Cartões, para não contar em dobro).
+- **Sem webhooks**: eles exigiriam um servidor público. No lugar, o app consulta a situação de cada
+  conexão (no máximo a cada 30 min e antes de sincronizar) e mostra "precisa autorizar" com o botão
+  Reautorizar quando o consentimento vence.
+- **Revogação**: Desconectar apaga a conexão na Pluggy e no app. Desativar desconecta tudo, revoga o
+  aceite e (opcionalmente) apaga as credenciais. Contas e lançamentos já importados continuam até
+  você apagá-los.
+
 ## Previsto x confirmado (contas recorrentes)
 
 - Todo lançamento tem um **status**: `prevista` (estimada, gerada por conta recorrente),

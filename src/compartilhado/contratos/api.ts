@@ -1,5 +1,12 @@
 import type { AnaliseDTO, FiltroAnalise } from '../dtos/analise'
 import type {
+  ConectarBancoEntrada,
+  CredenciaisOpenFinanceEntrada,
+  DesativarOpenFinanceEntrada,
+  EstadoOpenFinanceDTO,
+  VincularContaRemotaEntrada
+} from '../dtos/openFinance'
+import type {
   ConferirSaldoEntrada,
   ContaDTO,
   CriarContaEntrada,
@@ -174,6 +181,19 @@ export interface ApiFinanceiro {
     arquivar(id: string): Promise<Resposta<void>>
     lerExtrato(entrada: LerExtratoEntrada): Promise<Resposta<PreviaImportacaoDTO>>
     importarExtrato(entrada: ImportarExtratoEntrada): Promise<Resposta<ResultadoImportacaoDTO>>
+  }
+  openFinance: {
+    estado(): Promise<Resposta<EstadoOpenFinanceDTO>>
+    aceitarTermo(versao: string): Promise<Resposta<void>>
+    salvarCredenciais(entrada: CredenciaisOpenFinanceEntrada): Promise<Resposta<void>>
+    conectar(entrada?: ConectarBancoEntrada): Promise<Resposta<boolean>>
+    atualizar(itemId: string): Promise<Resposta<void>>
+    vincular(entrada: VincularContaRemotaEntrada): Promise<Resposta<void>>
+    sincronizar(contaId: string): Promise<Resposta<PreviaImportacaoDTO>>
+    concluirSincronizacao(contaId: string): Promise<Resposta<void>>
+    desconectar(itemId: string): Promise<Resposta<{ apagadoNaPluggy: boolean }>>
+    desativar(entrada: DesativarOpenFinanceEntrada): Promise<Resposta<{ mensagem: string }>>
+    verificarConexoes(): Promise<Resposta<void>>
   }
   ajustes: {
     ajustarPrevista(entrada: AjustarPrevistaEntrada): Promise<Resposta<TransacaoDTO>>

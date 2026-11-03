@@ -92,6 +92,19 @@ const api: ApiFinanceiro = {
     lerExtrato: (entrada) => ipcRenderer.invoke(CANAIS.contas.lerExtrato, entrada),
     importarExtrato: (entrada) => ipcRenderer.invoke(CANAIS.contas.importarExtrato, entrada)
   },
+  openFinance: {
+    estado: () => ipcRenderer.invoke(CANAIS.openFinance.estado),
+    aceitarTermo: (versao) => ipcRenderer.invoke(CANAIS.openFinance.aceitarTermo, versao),
+    salvarCredenciais: (entrada) => ipcRenderer.invoke(CANAIS.openFinance.salvarCredenciais, entrada),
+    conectar: (entrada) => ipcRenderer.invoke(CANAIS.openFinance.conectar, entrada),
+    atualizar: (itemId) => ipcRenderer.invoke(CANAIS.openFinance.atualizar, itemId),
+    vincular: (entrada) => ipcRenderer.invoke(CANAIS.openFinance.vincular, entrada),
+    sincronizar: (contaId) => ipcRenderer.invoke(CANAIS.openFinance.sincronizar, contaId),
+    concluirSincronizacao: (contaId) => ipcRenderer.invoke(CANAIS.openFinance.concluirSincronizacao, contaId),
+    desconectar: (itemId) => ipcRenderer.invoke(CANAIS.openFinance.desconectar, itemId),
+    desativar: (entrada) => ipcRenderer.invoke(CANAIS.openFinance.desativar, entrada),
+    verificarConexoes: () => ipcRenderer.invoke(CANAIS.openFinance.verificarConexoes)
+  },
   ajustes: {
     ajustarPrevista: (entrada) => ipcRenderer.invoke(CANAIS.ajustes.ajustarPrevista, entrada),
     simularFerias: (entrada) => ipcRenderer.invoke(CANAIS.ajustes.simularFerias, entrada),

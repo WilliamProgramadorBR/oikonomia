@@ -65,6 +65,25 @@ import { AjustesControlador } from '../apresentacao/ipc/controladores/AjustesCon
 import { ContaControlador } from '../apresentacao/ipc/controladores/ContaControlador'
 import { ArquivarConta, ConferirSaldo, CriarConta, ImportarExtrato, LerExtrato, ListarContas } from '../aplicacao/casos-de-uso/conta/Contas'
 import { ContaRepositorioSqlite } from '../infraestrutura/repositorios/ContaRepositorioSqlite'
+import { OpenFinanceControlador } from '../apresentacao/ipc/controladores/OpenFinanceControlador'
+import {
+  AceitarTermoOpenFinance,
+  AtualizarConexao,
+  ConcluirSincronizacao,
+  ConectarBanco,
+  DesativarOpenFinance,
+  DesconectarBanco,
+  ObterEstadoOpenFinance,
+  SalvarCredenciaisOpenFinance,
+  SincronizarContaOpenFinance,
+  VerificarConexoes,
+  VincularContaRemota,
+  type DependenciasOpenFinance
+} from '../aplicacao/casos-de-uso/openfinance/OpenFinance'
+import { PreparadorPrevia } from '../aplicacao/casos-de-uso/conta/Contas'
+import { PluggyAgregador } from '../infraestrutura/externos/PluggyAgregador'
+import { ConfiguracaoOpenFinanceSegura, OpenFinanceRepositorioSqlite } from '../infraestrutura/repositorios/OpenFinanceRepositorioSqlite'
+import type { IJanelaConexaoBancaria } from '../dominio/portas/IOpenFinance'
 import { AjustarPrevista, AplicarFerias, SimularFerias } from '../aplicacao/casos-de-uso/recorrencia/AjustesDeRenda'
 import { ConfirmarLancamentos, InterpretarLancamentos } from '../aplicacao/casos-de-uso/ia/LancamentosPorTexto'
 import { GeminiProvedor } from '../infraestrutura/ia/GeminiProvedor'
@@ -114,11 +133,23 @@ import { TaxaMercadoRepositorioSqlite } from '../infraestrutura/repositorios/Tax
 import { TransacaoRepositorioSqlite } from '../infraestrutura/repositorios/TransacaoRepositorioSqlite'
 
 // Raiz de composição: o ÚNICO lugar que conhece todas as implementações concretas.
-export function criarContainer(caminhoBanco: string, { desenvolvimento = false, versao = '0.0.0' } = {}) {
+interface OpcoesContainer {
+  desenvolvimento?: boolean
+  versao?: string
+  // Janela isolada da Pluggy (fornecida pelo processo principal). Sem ela, conectar banco não está disponível.
+  janelaConexaoBancaria?: IJanelaConexaoBancaria
+  pluggyUrl?: string // só para testes
+}
+
+export function criarContainer(
+  caminhoBanco: string,
+  { desenvolvimento = false, versao = '0.0.0', janelaConexaoBancaria, pluggyUrl }: OpcoesContainer = {}
+) {
   const cofre = new CofreSistema()
   const armazenamento = new ArmazenamentoCifrado(caminhoBanco, cofre)
   const banco = armazenamento.banco
   const configuracoes = new ConfiguracoesSqlite(banco)
+  const sessao = new SessaoAtual() // quem está conectado (protege os canais IPC)
 
   const pessoaRepositorio = new PessoaRepositorioSqlite(banco)
   const categoriaRepositorio = new CategoriaRepositorioSqlite(banco)
@@ -289,6 +320,32 @@ export function criarContainer(caminhoBanco: string, { desenvolvimento = false, 
       sincronizarRecorrencias
     )
   )
+  // Open Finance (opcional): cada usuário usa as próprias credenciais da Pluggy, cifradas pelo cofre.
+  const dependenciasOpenFinance: DependenciasOpenFinance = {
+    agregador: new PluggyAgregador(pluggyUrl),
+    configuracao: new ConfiguracaoOpenFinanceSegura(configuracoes, cofre),
+    repositorio: new OpenFinanceRepositorioSqlite(banco),
+    contas: contaRepositorio,
+    pessoas: pessoaRepositorio,
+    preparador: new PreparadorPrevia(transacaoRepositorio, categoriaRepositorio, pessoaRepositorio),
+    sessao,
+    janela: janelaConexaoBancaria ?? { abrir: async () => { throw new Error('Janela de conexão indisponível.') } }
+  }
+  const desconectarBanco = new DesconectarBanco(dependenciasOpenFinance)
+  const openFinanceControlador = new OpenFinanceControlador({
+    estado: new ObterEstadoOpenFinance(dependenciasOpenFinance),
+    aceitarTermo: new AceitarTermoOpenFinance(dependenciasOpenFinance),
+    salvarCredenciais: new SalvarCredenciaisOpenFinance(dependenciasOpenFinance),
+    conectar: new ConectarBanco(dependenciasOpenFinance),
+    atualizar: new AtualizarConexao(dependenciasOpenFinance),
+    vincular: new VincularContaRemota(dependenciasOpenFinance),
+    sincronizar: new SincronizarContaOpenFinance(dependenciasOpenFinance),
+    concluir: new ConcluirSincronizacao(dependenciasOpenFinance),
+    desconectar: desconectarBanco,
+    desativar: new DesativarOpenFinance(dependenciasOpenFinance, desconectarBanco),
+    verificar: new VerificarConexoes(dependenciasOpenFinance)
+  })
+
   const simularFerias = new SimularFerias(recorrenciaRepositorio, transacaoRepositorio)
   const ajustesControlador = new AjustesControlador(
     new AjustarPrevista(transacaoRepositorio),
@@ -310,7 +367,6 @@ export function criarContainer(caminhoBanco: string, { desenvolvimento = false, 
     confirmarLancamentos
   )
   // Acesso: troque EnvioEmailPendente por um provedor real para a recuperação de senha funcionar.
-  const sessao = new SessaoAtual()
   const acesso: DependenciasAcesso = {
     usuarios: new UsuarioRepositorioSqlite(banco),
     sessoes: new SessaoRepositorioSqlite(banco),
@@ -365,6 +421,7 @@ export function criarContainer(caminhoBanco: string, { desenvolvimento = false, 
     iaControlador,
     ajustesControlador,
     contaControlador,
+    openFinanceControlador,
     importacaoControlador
   }
 }

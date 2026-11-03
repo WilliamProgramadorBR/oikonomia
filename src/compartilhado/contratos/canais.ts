@@ -84,6 +84,19 @@ export const CANAIS = {
     lerExtrato: 'contas:ler-extrato',
     importarExtrato: 'contas:importar-extrato'
   },
+  openFinance: {
+    estado: 'open-finance:estado',
+    aceitarTermo: 'open-finance:aceitar-termo',
+    salvarCredenciais: 'open-finance:salvar-credenciais',
+    conectar: 'open-finance:conectar',
+    atualizar: 'open-finance:atualizar',
+    vincular: 'open-finance:vincular',
+    sincronizar: 'open-finance:sincronizar',
+    concluirSincronizacao: 'open-finance:concluir-sincronizacao',
+    desconectar: 'open-finance:desconectar',
+    desativar: 'open-finance:desativar',
+    verificarConexoes: 'open-finance:verificar-conexoes'
+  },
   ajustes: {
     ajustarPrevista: 'ajustes:ajustar-prevista',
     simularFerias: 'ajustes:simular-ferias',

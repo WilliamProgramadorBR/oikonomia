@@ -15,7 +15,7 @@ import type { ICategoriaRepositorio } from '../../../dominio/repositorios/ICateg
 import type { IContaRepositorio } from '../../../dominio/repositorios/IContaRepositorio'
 import type { IPessoaRepositorio } from '../../../dominio/repositorios/IPessoaRepositorio'
 import type { ITransacaoRepositorio } from '../../../dominio/repositorios/ITransacaoRepositorio'
-import { decodificarArquivo, lerExtrato } from '../../../dominio/servicos/ExtratoBancario'
+import { decodificarArquivo, lerExtrato, type LinhaExtrato } from '../../../dominio/servicos/ExtratoBancario'
 import { moeda } from '../../servicos/formatacao'
 import { reconciliar } from '../../servicos/ReconciliacaoExtrato'
 import type { SincronizarRecorrencias } from '../recorrencia/SincronizarRecorrencias'
@@ -167,23 +167,41 @@ export class LerExtrato {
     if (bytes.length > TAMANHO_MAXIMO) throw new ErroDominio('Arquivo muito grande (máximo de 5 MB).')
 
     const extrato = lerExtrato(decodificarArquivo(bytes))
-    const datas = extrato.linhas.map((l) => l.data).sort()
-    const periodo = { inicio: datas[0], fim: datas[datas.length - 1] }
+    return new PreparadorPrevia(this.transacoes, this.categorias, this.pessoas).preparar(conta, extrato.linhas, extrato.saldoFinal, extrato.formato)
+  }
+}
+
+// Monta a prévia de importação (extrato ou Open Finance): cruza as linhas com o que já existe no app.
+export class PreparadorPrevia {
+  constructor(
+    private readonly transacoes: ITransacaoRepositorio,
+    private readonly categorias: ICategoriaRepositorio,
+    private readonly pessoas: IPessoaRepositorio
+  ) {}
+
+  async preparar(
+    conta: ContaBancaria,
+    linhasExtrato: LinhaExtrato[],
+    saldoFinal: PreviaImportacaoDTO['saldoFinal'],
+    formato: PreviaImportacaoDTO['formato']
+  ): Promise<PreviaImportacaoDTO> {
+    const datas = linhasExtrato.map((l) => l.data).sort()
+    const periodo = { inicio: datas[0] ?? hojeISO(), fim: datas[datas.length - 1] ?? hojeISO() }
     const [candidatas, daConta, categorias, pessoas] = await Promise.all([
       this.transacoes.listar({ inicio: somarDias(periodo.inicio, -7), fim: somarDias(periodo.fim, 7) }),
-      this.transacoes.listar({ contaId, incluirIgnoradas: true }),
+      this.transacoes.listar({ contaId: conta.id, incluirIgnoradas: true }),
       this.categorias.listar(),
       this.pessoas.listar()
     ])
 
-    const linhas = reconciliar(extrato.linhas, {
+    const linhas = reconciliar(linhasExtrato, {
       conta,
       candidatas: candidatas.filter((t) => !t.cartaoId),
       idsImportados: new Set(daConta.map((t) => t.idExtrato).filter((id): id is string => id !== null)),
       categorias,
       pessoas
     })
-    return { contaId, formato: extrato.formato, periodo, linhas, saldoFinal: extrato.saldoFinal }
+    return { contaId: conta.id, formato, periodo, linhas, saldoFinal }
   }
 }
 

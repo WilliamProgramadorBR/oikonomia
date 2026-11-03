@@ -75,7 +75,7 @@ export interface LinhaImportacaoDTO {
 
 export interface PreviaImportacaoDTO {
   contaId: string
-  formato: 'ofx' | 'csv'
+  formato: 'ofx' | 'csv' | 'openfinance'
   periodo: { inicio: string; fim: string }
   linhas: LinhaImportacaoDTO[]
   saldoFinal: { valorCentavos: number; data: string } | null

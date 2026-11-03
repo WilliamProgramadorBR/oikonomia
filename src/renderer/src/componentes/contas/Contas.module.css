@@ -419,3 +419,12 @@
   font-weight: 700;
   color: var(--texto-suave);
 }
+
+.openFinance {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primaria);
+}

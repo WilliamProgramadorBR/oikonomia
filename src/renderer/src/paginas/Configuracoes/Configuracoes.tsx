@@ -4,6 +4,7 @@ import { AUTORIA } from '@compartilhado/constantes/autoria'
 import type { EstadoAtualizacaoDTO, FaseAtualizacao } from '@compartilhado/dtos/atualizacao'
 import type { TesteIADTO } from '@compartilhado/dtos/ia'
 import { ContaSeguranca } from '../../componentes/acesso/ContaSeguranca'
+import { CartaoOpenFinance } from '../../componentes/openfinance/CartaoOpenFinance'
 import { useAcoesGlobais } from '../../componentes/layout/Layout'
 import { Alternador } from '../../componentes/ui/Alternador'
 import { Botao } from '../../componentes/ui/Botao'
@@ -150,6 +151,8 @@ export function Configuracoes() {
           </ul>
         </div>
       </Cartao>
+
+      <CartaoOpenFinance />
 
       <div className={estilos.duasColunas}>
         <Cartao titulo="Perfil financeiro" subtitulo="Ajusta metas, margens e a ordem das recomendações">

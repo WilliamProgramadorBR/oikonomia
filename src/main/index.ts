@@ -3,6 +3,7 @@ import { app, BrowserWindow, dialog } from 'electron'
 import { criarContainer, type Container } from '@backend/principal/container'
 import { registrarHandlersIpc } from '@backend/apresentacao/ipc/registrarHandlersIpc'
 import { iniciarAtualizador } from './atualizador'
+import { criarJanelaConexaoBancaria } from './conexaoBancaria'
 import { criarJanelaPrincipal } from './janela'
 
 let container: Container | null = null
@@ -20,7 +21,8 @@ app.whenReady().then(async () => {
   try {
     container = criarContainer(join(app.getPath('userData'), 'financeiro.db'), {
       desenvolvimento: !app.isPackaged,
-      versao: app.getVersion()
+      versao: app.getVersion(),
+      janelaConexaoBancaria: criarJanelaConexaoBancaria()
     })
   } catch (erro) {
     dialog.showErrorBox('Não foi possível abrir os dados', (erro as Error).message)
