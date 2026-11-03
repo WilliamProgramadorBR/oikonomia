@@ -128,11 +128,34 @@ export class ConectarBanco extends CasoOpenFinance {
   async executar({ itemId: itemIdParaAtualizar, incluirSandbox = false }: ConectarBancoEntrada = {}): Promise<boolean> {
     const credenciais = this.credenciaisLiberadas()
     const token = await this.d.agregador.criarTokenConexao(credenciais, itemIdParaAtualizar)
-    const itemId = await this.d.janela.abrir(token, { itemId: itemIdParaAtualizar, incluirSandbox })
-    if (!itemId) return false
-    await this.registrarItem(itemId)
-    return true
+    const resultado = await this.d.janela.abrir(token, { itemId: itemIdParaAtualizar, incluirSandbox })
+    if (resultado.eventos.length || resultado.erros.length) {
+      console.info('[open finance] widget:', [...resultado.eventos, ...resultado.erros.map((e) => `ERRO: ${e}`)].join(' → '))
+    }
+    if (resultado.itemId) {
+      await this.registrarItem(resultado.itemId)
+      return true
+    }
+    // A Pluggy criou a conexão mas ela falhou: guarda para mostrar o motivo e permitir reautorizar.
+    if (resultado.itemComErro) await this.registrarItem(resultado.itemComErro).catch(() => undefined)
+    if (resultado.erros.length) throw new ErroDominio(explicarErroPluggy(resultado.erros[resultado.erros.length - 1]))
+    return false
   }
+}
+
+// Traduz o erro do widget numa orientação prática.
+export function explicarErroPluggy(mensagem: string): string {
+  const m = mensagem.toLowerCase()
+  const dica = /product|produto/.test(m)
+    ? 'Algum produto pedido não está liberado no plano da sua aplicação na Pluggy.'
+    : /demo|trial|sandbox|not allowed|forbidden|permission|unauthori[sz]ed/.test(m)
+      ? 'A sua aplicação na Pluggy parece estar em modo demonstração, que costuma permitir só os bancos de teste. Teste com "Mostrar bancos de teste (sandbox)" e o Pluggy Bank, e veja o plano no painel da Pluggy para bancos reais.'
+      : /credential|senha|password|login|cpf|invalid/.test(m)
+        ? 'Confira os dados informados no banco (CPF, agência, conta) e tente de novo.'
+        : /unavailable|indispon|timeout|offline|maintenance|manuten/.test(m)
+          ? 'O banco ou a Pluggy está instável agora. Tente de novo mais tarde.'
+          : 'Se acontecer com qualquer banco, teste com o banco de teste (sandbox) e veja os limites da sua aplicação no painel da Pluggy.'
+  return `A Pluggy não concluiu a conexão: "${mensagem.slice(0, 200)}". ${dica}`
 }
 
 export class AtualizarConexao extends CasoOpenFinance {

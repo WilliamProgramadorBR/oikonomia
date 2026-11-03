@@ -1,9 +1,26 @@
 import { join } from 'node:path'
-import { BrowserWindow, ipcMain, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, shell, type Session } from 'electron'
 import type { IJanelaConexaoBancaria } from '@backend/dominio/portas/IOpenFinance'
 
 const CANAL_RESULTADO = 'conexao-bancaria:resultado'
+const CANAL_EVENTO = 'conexao-bancaria:evento'
 const ORIGENS_PLUGGY = /^https:\/\/([a-z0-9-]+\.)*pluggy\.ai(\/|$)/i
+// O widget roda num iframe de outro domínio (connect.pluggy.ai): precisa poder usar o próprio armazenamento.
+// Câmera, microfone, localização, notificações etc. continuam negados.
+const PERMISSOES_LIBERADAS = new Set(['storage-access', 'top-level-storage-access', 'clipboard-sanitized-write'])
+
+function aplicarPermissoes(sessao: Session) {
+  sessao.setPermissionRequestHandler((_wc, permissao, responder) => responder(PERMISSOES_LIBERADAS.has(permissao)))
+  sessao.setPermissionCheckHandler((_wc, permissao) => PERMISSOES_LIBERADAS.has(permissao))
+}
+
+// Em desenvolvimento, F12 abre as ferramentas de depuração (para investigar erros do widget).
+function permitirDepuracao(janela: BrowserWindow) {
+  if (app.isPackaged) return
+  janela.webContents.on('before-input-event', (_evento, entrada) => {
+    if (entrada.type === 'keyDown' && entrada.key === 'F12') janela.webContents.toggleDevTools()
+  })
+}
 
 const hostDe = (url: string) => {
   try {
@@ -39,6 +56,7 @@ function aplicarPoliticaDePopups(janela: BrowserWindow) {
     }
   })
   janela.webContents.on('did-create-window', (popup, { url: urlInicial }) => {
+    permitirDepuracao(popup)
     const atualizarTitulo = (url = popup.webContents.getURL()) => {
       const host = hostDe(url)
       if (host && !popup.isDestroyed()) popup.setTitle(`Autorização segura · ${host}`)
@@ -61,7 +79,7 @@ function aplicarPoliticaDePopups(janela: BrowserWindow) {
 // Janela isolada para o widget oficial da Pluggy:
 // - sessão própria (partition) e sandbox: o widget não enxerga cookies, armazenamento nem a ponte do app;
 // - a ponte desta janela só sabe dizer "concluiu (itemId)", "cancelou" ou "erro";
-// - a autorização no banco (OAuth do Open Finance) abre no navegador do sistema, fora do app.
+// - a autorização no banco (OAuth do Open Finance) abre num pop-up isolado, com o endereço no título.
 export function criarJanelaConexaoBancaria(): IJanelaConexaoBancaria {
   return {
     abrir: (connectToken, { itemId, incluirSandbox }) =>
@@ -86,19 +104,33 @@ export function criarJanelaConexaoBancaria(): IJanelaConexaoBancaria {
           }
         })
         let concluido = false
-        const terminar = (resultado: string | null) => {
+        const eventos: string[] = []
+        const erros: string[] = []
+        let itemComErro: string | null = null
+        const idValido = (id: unknown): id is string => typeof id === 'string' && /^[\w-]{8,64}$/.test(id)
+        const terminar = (itemConectado: string | null) => {
           if (concluido) return
           concluido = true
           ipcMain.removeListener(CANAL_RESULTADO, aoReceber)
-          resolver(resultado)
+          ipcMain.removeListener(CANAL_EVENTO, aoEvento)
+          resolver({ itemId: itemConectado, itemComErro: itemConectado ? null : itemComErro, erros, eventos })
           if (!janela.isDestroyed()) janela.close()
         }
         const aoReceber = (evento: Electron.IpcMainEvent, dados: { itemId?: string | null; erro?: string }) => {
           if (evento.sender !== janela.webContents) return // só aceita mensagens desta janela
-          if (dados.erro) console.warn('[open finance] widget:', dados.erro)
-          terminar(typeof dados.itemId === 'string' && /^[\w-]{8,64}$/.test(dados.itemId) ? dados.itemId : null)
+          if (dados.erro) erros.push(dados.erro)
+          terminar(idValido(dados.itemId) ? dados.itemId : null)
+        }
+        // Diagnóstico: passos e erros informados pelo widget (situação/código, sem dados da conta).
+        const aoEvento = (evento: Electron.IpcMainEvent, dados: { tipo: string; detalhe?: string; itemId?: string }) => {
+          if (evento.sender !== janela.webContents || eventos.length > 50) return
+          eventos.push(dados.detalhe ? `${dados.tipo} (${dados.detalhe})` : dados.tipo)
+          if (dados.tipo === 'ERRO' && dados.detalhe) erros.push(dados.detalhe)
+          if (dados.tipo === 'ERRO' && idValido(dados.itemId)) itemComErro = dados.itemId
         }
         ipcMain.on(CANAL_RESULTADO, aoReceber)
+        ipcMain.on(CANAL_EVENTO, aoEvento)
+        permitirDepuracao(janela)
 
         // A autorização do banco (OAuth do Open Finance) acontece num pop-up que o widget acompanha.
         // O pop-up é permitido, mas como janela isolada: sem ponte, mesma sessão separada, só https.
@@ -109,8 +141,7 @@ export function criarJanelaConexaoBancaria(): IJanelaConexaoBancaria {
             if (ORIGENS_PLUGGY.test(url) || url.startsWith('https://')) void shell.openExternal(url)
           }
         })
-        // Sem câmera, microfone, localização etc.
-        janela.webContents.session.setPermissionRequestHandler((_wc, _permissao, responder) => responder(false))
+        aplicarPermissoes(janela.webContents.session)
 
         janela.once('ready-to-show', () => janela.show())
         janela.on('closed', () => terminar(null))

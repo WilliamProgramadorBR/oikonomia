@@ -38,8 +38,14 @@ export interface IAgregadorOpenFinance {
   apagarItem(credenciais: CredenciaisAgregador, itemId: string): Promise<void>
 }
 
+export interface ResultadoJanelaConexao {
+  itemId: string | null // item conectado com sucesso
+  itemComErro: string | null // a Pluggy criou o item, mas a conexão falhou (aparece com o motivo)
+  erros: string[] // mensagens de erro informadas pelo widget
+  eventos: string[] // passos percorridos (para diagnóstico)
+}
+
 // Janela isolada onde o usuário escolhe o banco e autoriza (implementada pelo processo principal).
-// Resolve com o id do item conectado, ou null se a pessoa fechou sem concluir.
 export interface IJanelaConexaoBancaria {
-  abrir(connectToken: string, opcoes: { itemId?: string; incluirSandbox?: boolean }): Promise<string | null>
+  abrir(connectToken: string, opcoes: { itemId?: string; incluirSandbox?: boolean }): Promise<ResultadoJanelaConexao>
 }

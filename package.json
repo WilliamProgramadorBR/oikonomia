@@ -1,7 +1,7 @@
 {
   "name": "projeto-financeiro",
   "productName": "Projeto Financeiro",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "private": true,
   "description": "Finanças da família no seu computador: orçamento, previsão, objetivos, dívidas e assistente com IA.",
   "author": {

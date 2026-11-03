@@ -5,7 +5,19 @@ interface PonteConexao {
   concluir(itemId: string): void
   cancelar(): void
   erro(mensagem: string): void
+  registrar(tipo: string, detalhe?: string, itemId?: string): void
 }
+
+interface ItemPluggy {
+  id?: string
+  status?: string
+  executionStatus?: string
+  error?: { code?: string; message?: string } | null
+}
+
+// Resumo do item para o diagnóstico: situação e código de erro, nunca dados da conta.
+const resumir = (item?: ItemPluggy) =>
+  item ? [item.status, item.executionStatus, item.error?.code, item.error?.message].filter(Boolean).join(' / ') : undefined
 const ponte = (window as unknown as { ponteConexao: PonteConexao }).ponteConexao
 
 const parametros = new URLSearchParams(location.hash.slice(1))
@@ -28,7 +40,16 @@ if (!connectToken) {
     forceOauthInBrowser: false,
     allowFullscreen: true,
     onSuccess: ({ item }) => ponte.concluir(item.id),
-    onError: ({ message }) => console.warn('[pluggy]', message), // o widget mostra o erro; a pessoa fecha quando quiser
+    onError: ({ message, data }) => {
+      const item = data?.item as ItemPluggy | undefined
+      // O widget mostra o erro; a pessoa fecha quando quiser. O motivo volta para o app mostrar.
+      ponte.registrar('ERRO', [message, resumir(item)].filter(Boolean).join(' | '), item?.id)
+    },
+    onEvent: (evento) => {
+      const item = 'item' in evento ? (evento.item as ItemPluggy) : undefined
+      const instituicao = 'connector' in evento ? evento.connector?.name : undefined
+      ponte.registrar(evento.event, instituicao ?? resumir(item), item?.id)
+    },
     onClose: () => ponte.cancelar()
   })
   widget
