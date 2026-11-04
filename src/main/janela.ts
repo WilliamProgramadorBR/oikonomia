@@ -8,7 +8,6 @@ export function criarJanelaPrincipal(): BrowserWindow {
     minWidth: 900,
     minHeight: 600,
     show: false,
-    autoHideMenuBar: true,
     title: 'Projeto Financeiro',
     // Empacotado, o ícone vem do próprio executável; em desenvolvimento usa o da pasta resources.
     ...(app.isPackaged ? {} : { icon: join(__dirname, '../../resources/icon-256.png') }),
@@ -20,6 +19,15 @@ export function criarJanelaPrincipal(): BrowserWindow {
     }
   })
 
+  // Sem barra de menu. (O autoHideMenuBar tem um bug no Windows: ao maximizar, o conteúdo pode ficar
+  // preso no tamanho antigo, deixando uma faixa vazia embaixo.) Ao mudar o tamanho, força o redesenho.
+  janela.removeMenu()
+  const redesenhar = () => setTimeout(() => !janela.isDestroyed() && janela.webContents.invalidate(), 60)
+  janela.on('maximize', redesenhar)
+  janela.on('unmaximize', redesenhar)
+  janela.on('restore', redesenhar)
+  janela.on('enter-full-screen', redesenhar)
+  janela.on('leave-full-screen', redesenhar)
   janela.on('ready-to-show', () => janela.show())
 
   // Links externos (só https) abrem no navegador padrão, nunca dentro do app.

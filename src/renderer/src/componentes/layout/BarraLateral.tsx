@@ -10,6 +10,8 @@ import {
   FileUp,
   Landmark,
   LifeBuoy,
+  PanelLeftClose,
+  PanelLeftOpen,
   LayoutDashboard,
   LogOut,
   Moon,
@@ -76,20 +78,29 @@ const GRUPOS: { titulo: string; itens: ItemMenu[] }[] = [
   }
 ]
 
-export function BarraLateral() {
+export function BarraLateral({ recolhido, aoAlternar }: { recolhido: boolean; aoAlternar: () => void }) {
   const { tema, alternarTema } = useTema()
   const { usuario, sair } = useAutenticacao()
 
   return (
-    <aside className={estilos.lateral}>
+    <aside className={classes(estilos.lateral, recolhido && estilos.lateralRecolhida)}>
       <div className={estilos.marca}>
         <span className={estilos.marcaIcone}>
           <Wallet size={20} strokeWidth={2.2} />
         </span>
-        <div>
+        <div className={estilos.marcaTexto}>
           <strong className={estilos.marcaNome}>Projeto Financeiro</strong>
           <span className={estilos.marcaSub}>Finanças da família</span>
         </div>
+        <button
+          type="button"
+          className={estilos.recolher}
+          onClick={aoAlternar}
+          aria-label={recolhido ? 'Expandir menu' : 'Recolher menu'}
+          title={recolhido ? 'Expandir menu' : 'Recolher menu'}
+        >
+          {recolhido ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}
+        </button>
       </div>
 
       <nav className={estilos.menu}>
@@ -101,6 +112,7 @@ export function BarraLateral() {
                 key={rota}
                 to={rota}
                 end
+                title={recolhido ? rotulo : undefined}
                 className={({ isActive }) => classes(estilos.item, isActive && estilos.itemAtivo)}
               >
                 <Icone size={18} strokeWidth={2} />
@@ -111,7 +123,7 @@ export function BarraLateral() {
         ))}
       </nav>
 
-      <button className={estilos.botaoTema} onClick={alternarTema}>
+      <button className={estilos.botaoTema} onClick={alternarTema} title={recolhido ? (tema === 'claro' ? 'Tema escuro' : 'Tema claro') : undefined}>
         {tema === 'claro' ? <Moon size={17} /> : <Sun size={17} />}
         <span>{tema === 'claro' ? 'Tema escuro' : 'Tema claro'}</span>
       </button>

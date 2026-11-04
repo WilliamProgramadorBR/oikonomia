@@ -11,6 +11,19 @@ import { ModalTransacao } from '../transacoes/ModalTransacao'
 import { BarraLateral } from './BarraLateral'
 import { BarraSuperior } from './BarraSuperior'
 import estilos from './Layout.module.css'
+import { classes } from '../../utilitarios/classes'
+
+const CHAVE_MENU = 'menuRecolhido'
+// Lembra a escolha; na primeira vez, começa recolhido em telas estreitas.
+function menuRecolhidoInicial() {
+  try {
+    const salvo = localStorage.getItem(CHAVE_MENU)
+    if (salvo !== null) return salvo === '1'
+  } catch {
+    /* sem armazenamento: usa o padrão */
+  }
+  return window.innerWidth < 1200
+}
 
 const CABECALHOS: Record<string, { titulo: string; subtitulo: string }> = {
   '/': { titulo: 'Painel', subtitulo: 'Como estão as finanças neste mês' },
@@ -67,6 +80,16 @@ export const useNovoLancamento = () => useAcoesGlobais().novoLancamento
 export function Layout({ children }: { children: ReactNode }) {
   const { pathname } = useLocation()
   const [modal, setModal] = useState<ModalAberto>(null)
+  const [recolhido, setRecolhido] = useState(menuRecolhidoInicial)
+  const alternarMenu = () =>
+    setRecolhido((atual) => {
+      try {
+        localStorage.setItem(CHAVE_MENU, atual ? '0' : '1')
+      } catch {
+        /* ignora */
+      }
+      return !atual
+    })
   const fechar = () => setModal(null)
   const cabecalho = CABECALHOS[pathname] ?? CABECALHO_PADRAO
 
@@ -84,8 +107,8 @@ export function Layout({ children }: { children: ReactNode }) {
 
   return (
     <AcoesGlobaisContexto.Provider value={acoes}>
-      <div className={estilos.layout}>
-        <BarraLateral />
+      <div className={classes(estilos.layout, recolhido && estilos.layoutRecolhido)}>
+        <BarraLateral recolhido={recolhido} aoAlternar={alternarMenu} />
         <div className={estilos.principal}>
           <BarraSuperior {...cabecalho} aoNovoLancamento={acoes.novoLancamento} />
           <main className={estilos.conteudo} key={pathname}>
