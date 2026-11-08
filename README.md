@@ -15,6 +15,7 @@ Autor: **William Oliveira Dos Santos** · [meuperfil-b964d.web.app](https://meup
 | `npm run dev`       | Abre o app em modo desenvolvimento (hot reload)  |
 | `npm run typecheck` | Verifica os tipos do backend e do frontend       |
 | `npm run build`     | Typecheck + gera o bundle em `out/`              |
+| `npm test`          | Compila e executa os testes de armazenamento/IPC |
 | `npm run dist:win`  | Gera o instalador Windows em `dist/`             |
 | `npm run dist:mac`  | Gera o `.dmg` do macOS (precisa rodar em um Mac) |
 
@@ -32,11 +33,25 @@ Usamos o SQLite embutido no Node (`node:sqlite`), então não há módulo nativo
   ou outro usuário do Windows não revela nada.
 - Gravação atômica (arquivo temporário + troca) após cada operação, a cada 15 s e ao fechar; uma cópia
   cifrada da versão anterior fica em `financeiro.db.anterior`. Bancos antigos sem criptografia são
-  convertidos sozinhos na primeira abertura.
+  convertidos sozinhos na primeira abertura: o original permanece intocado até o novo arquivo ser
+  autenticado e trocado atomicamente, e nenhum backup aberto é mantido após o sucesso.
+- Se o cofre do sistema não estiver disponível, o app **não abre nem cria um SQLite em texto claro**.
+  Ele informa o problema e encerra sem alterar os dados. No Linux, o backend inseguro `basic_text`
+  também é recusado.
+- Cada operação IPC passa por uma unidade de trabalho serializada. A interface só recebe sucesso após
+  a gravação cifrada; falhas de regra, repositório ou disco restauram o último estado persistido.
 - O app roda em **instância única** (duas janelas sobre o mesmo banco sobrescreveriam os dados).
 - **Backup**: copie a pasta inteira de dados (inclui `Local State`, onde o Electron guarda a chave
   mestra protegida pelo DPAPI). Formatar o Windows ou trocar de usuário sem esse backup torna os dados
   irrecuperáveis: é o preço de a chave não sair da máquina.
+
+## Sincronização segura (em implementação)
+
+Em Configurações, o usuário já pode manter o modo exclusivamente local ou preparar um cofre de
+sincronização com uma frase secreta própria. A frase nunca é armazenada: ela deriva, com `scrypt`, a
+chave que protege uma chave aleatória de 256 bits usada nos dados sincronizados. O serviço central e a
+transmissão ainda não estão ativos; o desenho e o estado da implementação estão em
+[SINCRONIZACAO_SEGURA.md](SINCRONIZACAO_SEGURA.md).
 
 ## Ícone e instalador
 
@@ -287,11 +302,11 @@ isso, a importação de extrato (OFX/CSV) continua funcionando.
     a janela não navega para fora do app.
 - **Recuperação de senha**: código de 6 dígitos, válido por 15 min, no máximo 5 tentativas por código
   e 3 pedidos a cada 15 min; trocar a senha encerra todas as sessões da conta.
-  **O envio de e-mail ainda não está ligado**: `infraestrutura/email/EnvioEmailPendente.ts` só mostra
-  a mensagem no terminal em desenvolvimento. Para ligar, implemente `IEnvioEmail`
+  **O envio de e-mail ainda não está ligado**: `infraestrutura/email/EnvioEmailPendente.ts` informa
+  a indisponibilidade sem registrar endereço, código ou corpo. Para ligar, implemente `IEnvioEmail`
   (`dominio/portas/IEnvioEmail.ts`) com SMTP/Resend/SendGrid e troque `email:` no `container.ts`.
-- Os dados financeiros continuam no SQLite local **sem criptografia do arquivo**; o login protege o
-  uso do app, não uma cópia do arquivo do banco.
+- Os dados financeiros ficam no SQLite em memória durante a execução e no arquivo local cifrado com
+  AES-256-GCM em repouso. O login protege o uso do app; a criptografia protege a cópia em disco.
 
 ## Inteligência artificial e importação de documentos
 

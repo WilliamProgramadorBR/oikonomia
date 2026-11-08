@@ -7,6 +7,14 @@ const api: ApiFinanceiro = {
   sistema: {
     situacao: () => ipcRenderer.invoke(CANAIS.sistema.situacao)
   },
+  sincronizacao: {
+    estado: () => ipcRenderer.invoke(CANAIS.sincronizacao.estado),
+    ativar: (entrada) => ipcRenderer.invoke(CANAIS.sincronizacao.ativar, entrada),
+    desbloquear: (entrada) => ipcRenderer.invoke(CANAIS.sincronizacao.desbloquear, entrada),
+    bloquear: () => ipcRenderer.invoke(CANAIS.sincronizacao.bloquear),
+    alterarFrase: (entrada) => ipcRenderer.invoke(CANAIS.sincronizacao.alterarFrase, entrada),
+    desativar: (entrada) => ipcRenderer.invoke(CANAIS.sincronizacao.desativar, entrada)
+  },
   atualizacao: {
     obter: () => ipcRenderer.invoke(CANAIS.atualizacao.obter),
     verificar: () => ipcRenderer.invoke(CANAIS.atualizacao.verificar),

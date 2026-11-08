@@ -130,7 +130,7 @@ export class ConectarBanco extends CasoOpenFinance {
     const token = await this.d.agregador.criarTokenConexao(credenciais, itemIdParaAtualizar)
     const resultado = await this.d.janela.abrir(token, { itemId: itemIdParaAtualizar, incluirSandbox })
     if (resultado.eventos.length || resultado.erros.length) {
-      console.info('[open finance] widget:', [...resultado.eventos, ...resultado.erros.map((e) => `ERRO: ${e}`)].join(' → '))
+      console.info(`[open finance] widget encerrado (${resultado.eventos.length} eventos, ${resultado.erros.length} erros)`)
     }
     if (resultado.itemId) {
       await this.registrarItem(resultado.itemId)
@@ -261,8 +261,8 @@ export class DesconectarBanco extends CasoOpenFinance {
       try {
         await this.d.agregador.apagarItem(credenciais, itemId)
         apagadoNaPluggy = true
-      } catch (erro) {
-        console.warn('[open finance] não foi possível apagar a conexão na Pluggy:', (erro as Error).message)
+      } catch {
+        console.warn('[open finance] não foi possível apagar a conexão na Pluggy (detalhes omitidos)')
       }
     }
     await this.d.repositorio.removerConexao(itemId)

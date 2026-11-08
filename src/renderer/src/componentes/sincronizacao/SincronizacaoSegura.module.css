@@ -1,0 +1,68 @@
+.conteudo {
+  display: grid;
+  gap: 18px;
+}
+
+.resumo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: var(--raio);
+  background: var(--superficie-2);
+  color: var(--primaria);
+}
+
+.resumo div {
+  display: grid;
+  gap: 4px;
+}
+
+.resumo span,
+.alerta {
+  color: var(--texto-fraco);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.formulario,
+.formularioTres {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.formularioTres {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.linhaAcao {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 14px;
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.separador {
+  height: 1px;
+  background: var(--borda);
+}
+
+.conteudo h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 800px) {
+  .formulario,
+  .formularioTres,
+  .linhaAcao {
+    grid-template-columns: 1fr;
+  }
+}

@@ -95,12 +95,27 @@ import type {
   TransacaoDTO
 } from '../dtos/transacao'
 import type { Resposta } from './resposta'
+import type {
+  AlterarFraseSincronizacaoEntrada,
+  AtivarSincronizacaoEntrada,
+  DesativarSincronizacaoEntrada,
+  DesbloquearSincronizacaoEntrada,
+  EstadoSincronizacaoDTO
+} from '../dtos/sincronizacao'
 
 // Contrato que o frontend consome. No desktop é implementado pelo preload (IPC);
 // no mobile poderá ser implementado chamando os casos de uso diretamente.
 export interface ApiFinanceiro {
   sistema: {
     situacao(): Promise<Resposta<SituacaoSistemaDTO>>
+  }
+  sincronizacao: {
+    estado(): Promise<Resposta<EstadoSincronizacaoDTO>>
+    ativar(entrada: AtivarSincronizacaoEntrada): Promise<Resposta<EstadoSincronizacaoDTO>>
+    desbloquear(entrada: DesbloquearSincronizacaoEntrada): Promise<Resposta<EstadoSincronizacaoDTO>>
+    bloquear(): Promise<Resposta<EstadoSincronizacaoDTO>>
+    alterarFrase(entrada: AlterarFraseSincronizacaoEntrada): Promise<Resposta<EstadoSincronizacaoDTO>>
+    desativar(entrada: DesativarSincronizacaoEntrada): Promise<Resposta<EstadoSincronizacaoDTO>>
   }
   atualizacao: {
     obter(): Promise<Resposta<EstadoAtualizacaoDTO>>

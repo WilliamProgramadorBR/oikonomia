@@ -9,7 +9,10 @@ dist
 *.chave
 *.anterior
 *.gravando
+*.sem-criptografia*
+*.migrando*
 *.sqlite*
+.test-dist
 
 # Segredos e ambiente local
 .env

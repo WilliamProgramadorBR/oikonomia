@@ -1,6 +1,5 @@
 import { ipcMain } from 'electron'
 import { CANAIS } from '@compartilhado/contratos/canais'
-import { ERRO_NAO_AUTENTICADO, type Resposta } from '@compartilhado/contratos/resposta'
 import type {
   AlterarSenhaEntrada,
   CadastrarUsuarioEntrada,
@@ -43,31 +42,28 @@ import type {
   CriarTransacaoEntrada,
   FiltroTransacoes
 } from '@compartilhado/dtos/transacao'
-import { ErroDominio } from '../../dominio/erros/ErroDominio'
+import type {
+  AlterarFraseSincronizacaoEntrada,
+  AtivarSincronizacaoEntrada,
+  DesativarSincronizacaoEntrada,
+  DesbloquearSincronizacaoEntrada
+} from '@compartilhado/dtos/sincronizacao'
 import type { SessaoAtual } from '../../aplicacao/servicos/SessaoAtual'
 import type { Container } from '../../principal/container'
+import { executarHandlerIpc } from './executarHandlerIpc'
 
 // Envolve cada handler no envelope Resposta<T>, convertendo exceções em { sucesso: false }.
 // Todo canal é protegido por padrão: sem sessão, nada executa. Só o acesso é público.
-// Ao fim de cada chamada o banco é gravado (cifrado) se algo mudou.
-function criarTratador(sessao: SessaoAtual, aoConcluir: () => void) {
+// O sucesso só é devolvido depois que o banco foi gravado e confirmado pela unidade de trabalho.
+function criarTratador(sessao: SessaoAtual, armazenamento: Container['armazenamento']) {
   return function tratar<A extends unknown[], T>(
     canal: string,
     executar: (...args: A) => Promise<T>,
     { publico = false } = {}
   ): void {
-    ipcMain.handle(canal, async (_evento, ...args): Promise<Resposta<T>> => {
-      if (!publico && !sessao.autenticado) return { sucesso: false, erro: ERRO_NAO_AUTENTICADO }
-      try {
-        return { sucesso: true, dados: await executar(...(args as A)) }
-      } catch (erro) {
-        if (erro instanceof ErroDominio) return { sucesso: false, erro: erro.message }
-        console.error(`[IPC ${canal}]`, erro)
-        return { sucesso: false, erro: 'Erro inesperado. Veja o log do aplicativo.' }
-      } finally {
-        aoConcluir()
-      }
-    })
+    ipcMain.handle(canal, (_evento, ...args) =>
+      executarHandlerIpc(sessao, armazenamento, canal, executar, args as A, publico)
+    )
   }
 }
 
@@ -75,6 +71,7 @@ export function registrarHandlersIpc({
   sessao,
   armazenamento,
   situacaoSistema,
+  sincronizacaoControlador,
   autenticacaoControlador,
   pessoaControlador,
   categoriaControlador,
@@ -96,15 +93,24 @@ export function registrarHandlersIpc({
   openFinanceControlador,
   importacaoControlador
 }: Container): void {
-  const tratar = criarTratador(sessao, () => {
-    try {
-      armazenamento.persistir()
-    } catch (erro) {
-      console.error('[banco] falha ao gravar os dados:', erro)
-    }
-  })
+  const tratar = criarTratador(sessao, armazenamento)
 
   tratar(CANAIS.sistema.situacao, async () => situacaoSistema(), { publico: true })
+
+  tratar(CANAIS.sincronizacao.estado, () => sincronizacaoControlador.estado())
+  tratar(CANAIS.sincronizacao.ativar, (entrada: AtivarSincronizacaoEntrada) =>
+    sincronizacaoControlador.ativar(entrada)
+  )
+  tratar(CANAIS.sincronizacao.desbloquear, (entrada: DesbloquearSincronizacaoEntrada) =>
+    sincronizacaoControlador.desbloquear(entrada)
+  )
+  tratar(CANAIS.sincronizacao.bloquear, () => sincronizacaoControlador.bloquear())
+  tratar(CANAIS.sincronizacao.alterarFrase, (entrada: AlterarFraseSincronizacaoEntrada) =>
+    sincronizacaoControlador.alterarFrase(entrada)
+  )
+  tratar(CANAIS.sincronizacao.desativar, (entrada: DesativarSincronizacaoEntrada) =>
+    sincronizacaoControlador.desativar(entrada)
+  )
 
   const publico = { publico: true }
   tratar(CANAIS.autenticacao.estado, () => autenticacaoControlador.estado(), publico)

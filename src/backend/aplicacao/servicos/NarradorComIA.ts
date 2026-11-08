@@ -94,8 +94,8 @@ export class NarradorComIA implements INarradorFinanceiro {
       }
       this.cache.set(assinatura, { narrativa, expira: Date.now() + VALIDADE_CACHE_MS })
       return narrativa
-    } catch (erro) {
-      console.warn('[IA] textos nativos no lugar da IA:', (erro as Error).message)
+    } catch {
+      console.warn('[IA] textos nativos usados após falha do provedor (detalhes omitidos)')
       return nativa
     }
   }

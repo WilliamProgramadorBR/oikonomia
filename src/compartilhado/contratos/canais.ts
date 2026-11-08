@@ -3,6 +3,14 @@ export const CANAIS = {
   sistema: {
     situacao: 'sistema:situacao'
   },
+  sincronizacao: {
+    estado: 'sincronizacao:estado',
+    ativar: 'sincronizacao:ativar',
+    desbloquear: 'sincronizacao:desbloquear',
+    bloquear: 'sincronizacao:bloquear',
+    alterarFrase: 'sincronizacao:alterar-frase',
+    desativar: 'sincronizacao:desativar'
+  },
   atualizacao: {
     obter: 'atualizacao:obter',
     verificar: 'atualizacao:verificar',

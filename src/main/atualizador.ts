@@ -11,7 +11,7 @@ const ATRASO_PRIMEIRA_VERIFICACAO = 10_000
 
 // Atualização automática pelas Releases do GitHub (configuradas em `publish` no electron-builder.yml).
 // Baixa em segundo plano, avisa a tela e instala ao fechar o app ou quando o usuário pedir.
-export function iniciarAtualizador(antesDeInstalar: () => void): void {
+export function iniciarAtualizador(antesDeInstalar: () => Promise<void>): void {
   let estado: EstadoAtualizacaoDTO = {
     fase: app.isPackaged ? 'atualizado' : 'inativo',
     versaoAtual: app.getVersion(),
@@ -31,9 +31,13 @@ export function iniciarAtualizador(antesDeInstalar: () => void): void {
     if (app.isPackaged && !['baixando', 'pronta'].includes(estado.fase)) await verificar()
     return responder(estado)
   })
-  ipcMain.handle(CANAIS.atualizacao.instalar, () => {
+  ipcMain.handle(CANAIS.atualizacao.instalar, async () => {
     if (estado.fase !== 'pronta') return { sucesso: false, erro: 'Nenhuma atualização pronta para instalar.' }
-    antesDeInstalar() // grava o banco cifrado antes de fechar
+    try {
+      await antesDeInstalar() // aguarda operações em andamento e grava o banco cifrado antes de fechar
+    } catch {
+      return { sucesso: false, erro: 'Não foi possível salvar os dados com segurança antes da atualização.' }
+    }
     setImmediate(() => autoUpdater.quitAndInstall(true, true))
     return responder(estado)
   })

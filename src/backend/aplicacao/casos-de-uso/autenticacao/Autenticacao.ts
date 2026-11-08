@@ -226,8 +226,8 @@ export class SolicitarRecuperacaoSenha extends CasoDeUsoAcesso {
         assunto: `${codigo} é o seu código do Projeto Financeiro`,
         texto: `Olá, ${usuario.nome}!\n\nSeu código para redefinir a senha é: ${codigo}\n\nEle vale por 15 minutos. Se não foi você que pediu, ignore este e-mail: sua senha continua a mesma.`
       })
-    } catch (erro) {
-      console.error('[recuperação] falha ao enviar e-mail:', erro)
+    } catch {
+      console.error('[recuperação] falha ao enviar e-mail (detalhes omitidos)')
       throw new ErroDominio('Não foi possível enviar o e-mail agora. Tente novamente em alguns minutos.')
     }
     return { mensagem: MENSAGEM_RECUPERACAO }

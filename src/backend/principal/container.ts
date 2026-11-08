@@ -134,6 +134,10 @@ import { PessoaRepositorioSqlite } from '../infraestrutura/repositorios/PessoaRe
 import { RecorrenciaRepositorioSqlite } from '../infraestrutura/repositorios/RecorrenciaRepositorioSqlite'
 import { TaxaMercadoRepositorioSqlite } from '../infraestrutura/repositorios/TaxaMercadoRepositorioSqlite'
 import { TransacaoRepositorioSqlite } from '../infraestrutura/repositorios/TransacaoRepositorioSqlite'
+import { GerenciarSincronizacao } from '../aplicacao/casos-de-uso/sincronizacao/GerenciarSincronizacao'
+import { SincronizacaoControlador } from '../apresentacao/ipc/controladores/SincronizacaoControlador'
+import { SincronizacaoRepositorioSqlite } from '../infraestrutura/repositorios/SincronizacaoRepositorioSqlite'
+import { CriptografiaSincronizacaoNode } from '../infraestrutura/seguranca/CriptografiaSincronizacaoNode'
 
 // Raiz de composição: o ÚNICO lugar que conhece todas as implementações concretas.
 interface OpcoesContainer {
@@ -153,6 +157,12 @@ export function criarContainer(
   const banco = armazenamento.banco
   const configuracoes = new ConfiguracoesSqlite(banco)
   const sessao = new SessaoAtual() // quem está conectado (protege os canais IPC)
+  const sincronizacaoControlador = new SincronizacaoControlador(
+    new GerenciarSincronizacao(
+      new SincronizacaoRepositorioSqlite(banco),
+      new CriptografiaSincronizacaoNode()
+    )
+  )
 
   const pessoaRepositorio = new PessoaRepositorioSqlite(banco)
   const categoriaRepositorio = new CategoriaRepositorioSqlite(banco)
@@ -413,6 +423,7 @@ export function criarContainer(
     armazenamento,
     sessao,
     situacaoSistema: (): SituacaoSistemaDTO => ({ versao, dadosCifrados: armazenamento.cifrado }),
+    sincronizacaoControlador,
     autenticacaoControlador,
     pessoaControlador,
     categoriaControlador,
