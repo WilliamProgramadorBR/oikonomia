@@ -19,6 +19,7 @@ import { Credito } from './paginas/Credito/Credito'
 import { Dividas } from './paginas/Dividas/Dividas'
 import { Familia } from './paginas/Familia/Familia'
 import { Importar } from './paginas/Importar/Importar'
+import { IconGallery } from './paginas/Icones/IconGallery'
 import { Lancamentos } from './paginas/Lancamentos/Lancamentos'
 import { Objetivos } from './paginas/Objetivos/Objetivos'
 import { Painel } from './paginas/Painel/Painel'
@@ -80,6 +81,7 @@ function Aplicativo() {
               <Route path="/assistente" element={<Assistente />} />
               <Route path="/importar" element={<Importar />} />
               <Route path="/configuracoes" element={<Configuracoes />} />
+              {import.meta.env.DEV && <Route path="/biblioteca-icones" element={<IconGallery />} />}
             </Routes>
           </Layout>
         </HashRouter>

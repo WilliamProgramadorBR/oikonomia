@@ -43,7 +43,8 @@ const CABECALHOS: Record<string, { titulo: string; subtitulo: string }> = {
   '/categorias': { titulo: 'Categorias', subtitulo: 'Como os lançamentos são organizados' },
   '/assistente': { titulo: 'Assistente IA', subtitulo: 'Pergunte o que quiser sobre as finanças da família' },
   '/importar': { titulo: 'Importar documentos', subtitulo: 'Contracheques e notas fiscais viram lançamentos' },
-  '/configuracoes': { titulo: 'Configurações', subtitulo: 'Conta, segurança, inteligência artificial e dados externos' }
+  '/configuracoes': { titulo: 'Configurações', subtitulo: 'Conta, segurança, inteligência artificial e dados externos' },
+  '/biblioteca-icones': { titulo: 'Biblioteca visual', subtitulo: 'Ícones autorais e fundamentos da identidade Oikonomia' }
 }
 
 const CABECALHO_PADRAO = { titulo: 'Projeto Financeiro', subtitulo: '' }

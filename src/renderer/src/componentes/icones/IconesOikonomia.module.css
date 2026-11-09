@@ -1,0 +1,46 @@
+.icone {
+  display: inline-block;
+  flex: 0 0 auto;
+  overflow: visible;
+  color: inherit;
+  vertical-align: middle;
+}
+
+.estrutura,
+.acento,
+.detalhe {
+  vector-effect: non-scaling-stroke;
+}
+
+.estrutura {
+  stroke: currentColor;
+}
+
+.acento {
+  stroke: var(--icone-acento, var(--receita, #10b981));
+}
+
+.detalhe {
+  fill: var(--icone-principal, var(--primaria, #6366f1));
+  stroke: none;
+  opacity: 0.13;
+}
+
+.icone[data-variant='mono'] .acento {
+  stroke: currentColor;
+}
+
+.icone[data-variant='mono'] .detalhe {
+  fill: currentColor;
+  opacity: 0.08;
+}
+
+.icone[data-variant='accent'] .detalhe {
+  opacity: 0.2;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .icone {
+    transition: color var(--transicao, 160ms ease), transform var(--transicao, 160ms ease);
+  }
+}

@@ -1,31 +1,34 @@
 import { NavLink } from 'react-router'
 import {
-  Activity,
-  ArrowLeftRight,
-  Banknote,
   Calculator,
-  CalendarClock,
-  ChartLine,
-  CreditCard,
   FileUp,
-  Landmark,
-  LifeBuoy,
   PanelLeftClose,
   PanelLeftOpen,
-  LayoutDashboard,
   LogOut,
   Moon,
   Percent,
-  Repeat,
   Settings,
   Shapes,
-  Sparkles,
   Sun,
-  Target,
   Users,
   Wallet,
   type LucideIcon
 } from 'lucide-react'
+import {
+  IconeAnalises,
+  IconeAssistente,
+  IconeCartoes,
+  IconeContas,
+  IconeDividas,
+  IconeLancamentos,
+  IconeObjetivos,
+  IconePainel,
+  IconeAperto,
+  IconePrevisao,
+  IconeRecorrencias,
+  IconeSaude,
+  type ComponenteIconeOikonomia
+} from '../icones'
 import { useAutenticacao } from '../../contextos/AutenticacaoContexto'
 import { useTema } from '../../contextos/TemaContexto'
 import { classes } from '../../utilitarios/classes'
@@ -34,19 +37,19 @@ import estilos from './Layout.module.css'
 interface ItemMenu {
   rota: string
   rotulo: string
-  icone: LucideIcon
+  icone: LucideIcon | ComponenteIconeOikonomia
 }
 
 const GRUPOS: { titulo: string; itens: ItemMenu[] }[] = [
   {
     titulo: 'Visão geral',
     itens: [
-      { rota: '/', rotulo: 'Painel', icone: LayoutDashboard },
-      { rota: '/lancamentos', rotulo: 'Lançamentos', icone: ArrowLeftRight },
-      { rota: '/contas', rotulo: 'Contas e saldos', icone: Banknote },
-      { rota: '/recorrentes', rotulo: 'Contas recorrentes', icone: Repeat },
-      { rota: '/cartoes', rotulo: 'Cartões', icone: CreditCard },
-      { rota: '/previsao', rotulo: 'Previsão', icone: CalendarClock }
+      { rota: '/', rotulo: 'Painel', icone: IconePainel },
+      { rota: '/lancamentos', rotulo: 'Lançamentos', icone: IconeLancamentos },
+      { rota: '/contas', rotulo: 'Contas e saldos', icone: IconeContas },
+      { rota: '/recorrentes', rotulo: 'Contas recorrentes', icone: IconeRecorrencias },
+      { rota: '/cartoes', rotulo: 'Cartões', icone: IconeCartoes },
+      { rota: '/previsao', rotulo: 'Previsão', icone: IconePrevisao }
     ]
   },
   {
@@ -60,20 +63,23 @@ const GRUPOS: { titulo: string; itens: ItemMenu[] }[] = [
     titulo: 'Planejamento',
     itens: [
       { rota: '/taxas', rotulo: 'Taxas de juros', icone: Percent },
-      { rota: '/saude', rotulo: 'Saúde financeira', icone: Activity },
-      { rota: '/objetivos', rotulo: 'Objetivos', icone: Target },
-      { rota: '/analises', rotulo: 'Análises', icone: ChartLine },
-      { rota: '/dividas', rotulo: 'Dívidas', icone: Landmark },
-      { rota: '/aperto', rotulo: 'Plano de aperto', icone: LifeBuoy },
+      { rota: '/saude', rotulo: 'Saúde financeira', icone: IconeSaude },
+      { rota: '/objetivos', rotulo: 'Objetivos', icone: IconeObjetivos },
+      { rota: '/analises', rotulo: 'Análises', icone: IconeAnalises },
+      { rota: '/dividas', rotulo: 'Dívidas', icone: IconeDividas },
+      { rota: '/aperto', rotulo: 'Plano de aperto', icone: IconeAperto },
       { rota: '/credito', rotulo: 'Simular crédito', icone: Calculator }
     ]
   },
   {
     titulo: 'Inteligência',
     itens: [
-      { rota: '/assistente', rotulo: 'Assistente IA', icone: Sparkles },
+      { rota: '/assistente', rotulo: 'Assistente IA', icone: IconeAssistente },
       { rota: '/importar', rotulo: 'Importar documentos', icone: FileUp },
-      { rota: '/configuracoes', rotulo: 'Configurações', icone: Settings }
+      { rota: '/configuracoes', rotulo: 'Configurações', icone: Settings },
+      ...(import.meta.env.DEV
+        ? [{ rota: '/biblioteca-icones', rotulo: 'Vitrine de ícones', icone: Shapes }]
+        : [])
     ]
   }
 ]
