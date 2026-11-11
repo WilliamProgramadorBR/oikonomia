@@ -58,10 +58,12 @@ export const CartaoMapeador = {
       taxaMensal: compra.taxaMensal,
       dataCompra: dataISO(compra.dataCompra),
       primeiraFatura: ordenadas[0] ? dataISO(ordenadas[0].data).slice(0, 7) : '',
-      parcelasPagas: ordenadas.filter((p) => dataISO(p.data) < hoje).length,
+      // Compras cadastradas já em andamento só têm as parcelas que faltavam.
+      parcelasPagas: compra.quantidadeParcelas - ordenadas.length + ordenadas.filter((p) => dataISO(p.data) < hoje).length,
       categoriaId: compra.categoriaId,
       pessoaId: compra.pessoaId,
-      estabelecimento: compra.estabelecimento
+      estabelecimento: compra.estabelecimento,
+      natureza: compra.natureza
     }
   }
 }

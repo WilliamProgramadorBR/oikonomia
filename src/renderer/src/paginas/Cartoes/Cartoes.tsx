@@ -230,6 +230,7 @@ function LinhaCompra({ compra, categoria }: { compra: CompraCartaoDTO; categoria
       <div className={estilos.compraTexto}>
         <div className={estilos.compraTitulo}>
           <strong>{compra.descricao}</strong>
+          {compra.natureza === 'parcelamento_fatura' && <Etiqueta cor="var(--alerta)">fatura parcelada</Etiqueta>}
           {compra.taxaMensal > 0 && <Etiqueta cor="var(--despesa)">juros {formatarTaxa(compra.taxaMensal)}</Etiqueta>}
         </div>
         <span>

@@ -192,7 +192,7 @@ export class ObterPlanoDividas {
     }
 
     // Compras parceladas COM juros no cartão também são dívida.
-    for (const compra of compras.filter((c) => c.taxaMensal > 0)) {
+    for (const compra of compras.filter((c) => c.taxaMensal > 0 || c.natureza === 'parcelamento_fatura')) {
       const futuras = cobrancasFuturas.filter((t) => t.parcela?.compraId === compra.id)
       if (futuras.length === 0) continue
       const parcela = futuras[0].valorCentavos
@@ -201,7 +201,7 @@ export class ObterPlanoDividas {
       lista.push({
         id: compra.id,
         origem: 'cartao',
-        nome: `${compra.descricao} (parcelado no cartão)`,
+        nome: compra.natureza === 'parcelamento_fatura' ? `${compra.descricao} (fatura parcelada)` : `${compra.descricao} (parcelado no cartão)`,
         tipo: 'outro',
         credor: cartoes.find((c) => c.id === compra.cartaoId)?.apelido ?? 'Cartão',
         taxaMensal: compra.taxaMensal,

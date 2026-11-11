@@ -27,6 +27,9 @@ export interface CriarCartaoEntrada {
   taxaContratoMensal: number | null
 }
 
+// 'compra' = compra comum; 'parcelamento_fatura' = fatura parcelada no banco (dívida do cartão, com juros).
+export type NaturezaCompra = 'compra' | 'parcelamento_fatura'
+
 export interface CompraCartaoDTO {
   id: string
   cartaoId: string
@@ -42,6 +45,14 @@ export interface CompraCartaoDTO {
   categoriaId: string
   pessoaId: string | null // null = da casa (todos os membros)
   estabelecimento: string | null
+  natureza: NaturezaCompra
+}
+
+// Compra que já estava em andamento antes de usar o app: só as parcelas que faltam entram nas faturas.
+export interface CompraEmAndamento {
+  parcelasRestantes: number
+  valorParcelaCentavos: number
+  proximaFatura: string // AAAA-MM da fatura em que vence a próxima parcela
 }
 
 export interface CriarCompraCartaoEntrada {
@@ -54,6 +65,8 @@ export interface CriarCompraCartaoEntrada {
   categoriaId: string
   pessoaId: string | null // null = da casa (todos os membros)
   estabelecimento?: string
+  natureza?: NaturezaCompra
+  emAndamento?: CompraEmAndamento | null
 }
 
 export interface FaturaMensal {

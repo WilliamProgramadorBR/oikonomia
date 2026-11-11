@@ -32,6 +32,21 @@ export function calcularParcelamento(
   return { parcelas, totalCentavos, jurosCentavos: totalCentavos - valorCentavos }
 }
 
+// Taxa mensal (percentual) embutida em `quantidade` parcelas de `parcelaCentavos` para pagar `valorCentavos`.
+// Usada quando o banco informa só a parcela (ex.: parcelamento da fatura). 0 se não há juros.
+export function taxaImplicita(valorCentavos: number, parcelaCentavos: number, quantidade: number): number {
+  if (valorCentavos <= 0 || quantidade <= 0 || parcelaCentavos * quantidade <= valorCentavos) return 0
+  const valorPresente = (i: number) => (parcelaCentavos * (1 - Math.pow(1 + i, -quantidade))) / i
+  let baixo = 1e-9
+  let alto = 1
+  for (let k = 0; k < 100; k++) {
+    const meio = (baixo + alto) / 2
+    if (valorPresente(meio) > valorCentavos) baixo = meio
+    else alto = meio
+  }
+  return Math.round(((baixo + alto) / 2) * 10000) / 100
+}
+
 // Mês (AAAA-MM) da fatura em que cai a 1ª parcela, identificado pelo mês do VENCIMENTO.
 // Compras a partir do dia de fechamento vão para a fatura seguinte.
 export function mesDaPrimeiraFatura(

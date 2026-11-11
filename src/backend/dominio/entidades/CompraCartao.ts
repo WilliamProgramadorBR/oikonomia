@@ -1,3 +1,4 @@
+import type { NaturezaCompra } from '@compartilhado/dtos/cartao'
 import { ErroDominio } from '../erros/ErroDominio'
 
 export const MAXIMO_PARCELAS = 48
@@ -13,10 +14,11 @@ export interface PropsCompraCartao {
   categoriaId: string
   pessoaId: string | null // null = da casa (todos os membros)
   estabelecimento: string | null
+  natureza: NaturezaCompra // 'parcelamento_fatura' = dívida do cartão (fatura parcelada)
   criadoEm: Date
 }
 
-export type DadosNovaCompraCartao = Omit<PropsCompraCartao, 'id' | 'criadoEm'>
+export type DadosNovaCompraCartao = Omit<PropsCompraCartao, 'id' | 'criadoEm' | 'natureza'> & { natureza?: NaturezaCompra }
 
 // A compra em si. As parcelas viram transações (uma por fatura), geradas no caso de uso.
 export class CompraCartao {
@@ -48,6 +50,7 @@ export class CompraCartao {
       // Compra à vista nunca tem juros
       taxaMensal: dados.quantidadeParcelas === 1 ? 0 : dados.taxaMensal,
       estabelecimento: dados.estabelecimento?.trim() || null,
+      natureza: dados.natureza === 'parcelamento_fatura' ? 'parcelamento_fatura' : 'compra',
       id: crypto.randomUUID(),
       criadoEm: new Date()
     })
@@ -86,6 +89,9 @@ export class CompraCartao {
   }
   get estabelecimento(): string | null {
     return this.props.estabelecimento
+  }
+  get natureza(): NaturezaCompra {
+    return this.props.natureza
   }
   get criadoEm(): Date {
     return this.props.criadoEm

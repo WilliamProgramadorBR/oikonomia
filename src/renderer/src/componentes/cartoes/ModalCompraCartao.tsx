@@ -1,12 +1,13 @@
 import { useEffect, useState, type CSSProperties, type FormEvent } from 'react'
 import { useNavigate } from 'react-router'
-import { CreditCard, Percent, Store, TriangleAlert } from 'lucide-react'
+import { CreditCard, Hash, Percent, Store, TriangleAlert } from 'lucide-react'
 import {
   calcularParcelamento,
   dataDeVencimento,
-  mesDaPrimeiraFatura
+  mesDaPrimeiraFatura,
+  taxaImplicita
 } from '@compartilhado/financeiro/parcelamento'
-import { hojeISO } from '@compartilhado/utilitarios/mes'
+import { deslocarMes, hojeISO } from '@compartilhado/utilitarios/mes'
 import { useCategorias, usePessoas, useResumoCartoes } from '../../hooks/consultas'
 import { useAcao } from '../../hooks/useAcao'
 import { cartaoServico } from '../../servicos/cartaoServico'
@@ -23,6 +24,11 @@ import estilos from './Cartoes.module.css'
 
 const OPCOES_PARCELAS = Array.from({ length: 24 }, (_, i) => i + 1)
 const paraNumero = (texto: string) => Number(texto.replace(',', '.'))
+
+// nova = compra feita agora; andamento = compra antiga com parcelas a vencer; fatura = fatura parcelada no banco.
+type Modo = 'nova' | 'andamento' | 'fatura'
+// Categoria sugerida para a fatura parcelada, em ordem de preferência.
+const CATEGORIAS_DIVIDA = [/juro|tarifa|encargo/i, /cart[aã]o/i, /d[ií]vida|empr[eé]stimo/i]
 
 interface PropsModalCompraCartao {
   aberto: boolean
@@ -48,6 +54,11 @@ export function ModalCompraCartao({ aberto, aoFechar, cartaoInicial }: PropsModa
   const [dataCompra, setDataCompra] = useState(hojeISO())
   const [estabelecimento, setEstabelecimento] = useState('')
   const [salvando, setSalvando] = useState(false)
+  const [modo, setModo] = useState<Modo>('nova')
+  const [totalParcelas, setTotalParcelas] = useState('')
+  const [restantes, setRestantes] = useState('')
+  const [valorParcela, setValorParcela] = useState(0)
+  const [proximaFatura, setProximaFatura] = useState('')
 
   useEffect(() => {
     if (!aberto) return
@@ -61,6 +72,11 @@ export function ModalCompraCartao({ aberto, aoFechar, cartaoInicial }: PropsModa
     setPessoaEscolhida(undefined)
     setDataCompra(hojeISO())
     setEstabelecimento('')
+    setModo('nova')
+    setTotalParcelas('')
+    setRestantes('')
+    setValorParcela(0)
+    setProximaFatura('')
   }, [aberto, cartaoInicial])
 
   const resumo = resumos?.find((r) => r.cartao.id === cartaoId) ?? resumos?.[0]
@@ -80,6 +96,27 @@ export function ModalCompraCartao({ aberto, aoFechar, cartaoInicial }: PropsModa
     : null
   const disponivelDepois = resumo && previa ? resumo.limiteDisponivelCentavos - previa.totalCentavos : null
 
+  // Compra em andamento / fatura parcelada: só o que falta pagar entra nas faturas.
+  const emAndamento = modo !== 'nova'
+  const proximaFaturaPadrao = cartao ? mesDaPrimeiraFatura(hojeISO(), cartao.diaFechamento, cartao.diaVencimento) : ''
+  const mesesFatura = proximaFaturaPadrao ? [-1, 0, 1, 2].map((d) => deslocarMes(proximaFaturaPadrao, d)) : []
+  const faturaEscolhida = proximaFatura || proximaFaturaPadrao
+  const nTotal = Number(totalParcelas)
+  const nRestantes = Number(restantes)
+  const andamentoValido = nTotal >= 1 && nRestantes >= 1 && nRestantes <= nTotal && valorParcela > 0
+  const taxaAndamento = andamentoValido && valorCentavos > 0 ? taxaImplicita(valorCentavos, valorParcela, nTotal) : 0
+  const jurosAndamento = andamentoValido && valorCentavos > 0 ? valorParcela * nTotal - valorCentavos : 0
+
+  function trocarModo(novo: Modo) {
+    setModo(novo)
+    if (novo === 'fatura') {
+      if (!descricao) setDescricao(`Parcelamento da fatura${cartao ? ` ${cartao.apelido}` : ''}`)
+      const despesas = (categorias ?? []).filter((c) => c.tipo === 'despesa')
+      const sugerida = CATEGORIAS_DIVIDA.map((padrao) => despesas.find((c) => padrao.test(c.nome))).find(Boolean)
+      if (!categoriaId && sugerida) setCategoriaId(sugerida.id)
+    }
+  }
+
   async function salvar(evento: FormEvent) {
     evento.preventDefault()
     if (!cartao) return
@@ -90,14 +127,24 @@ export function ModalCompraCartao({ aberto, aoFechar, cartaoInicial }: PropsModa
           cartaoId: cartao.id,
           descricao,
           valorCentavos,
-          quantidadeParcelas: parcelas,
-          taxaMensal: taxa,
-          dataCompra,
+          quantidadeParcelas: emAndamento ? nTotal : parcelas,
+          taxaMensal: emAndamento ? 0 : taxa,
+          dataCompra: emAndamento ? '' : dataCompra,
           categoriaId,
           pessoaId,
-          estabelecimento
+          estabelecimento,
+          natureza: modo === 'fatura' ? 'parcelamento_fatura' : 'compra',
+          emAndamento: emAndamento
+            ? { parcelasRestantes: nRestantes, valorParcelaCentavos: valorParcela, proximaFatura: faturaEscolhida }
+            : null
         }),
-      parcelas > 1 ? `Compra em ${parcelas}x registrada` : 'Compra registrada'
+      modo === 'fatura'
+        ? 'Parcelamento da fatura registrado. Ele aparece também em Dívidas.'
+        : modo === 'andamento'
+          ? `Compra registrada: ${nRestantes} parcela(s) a vencer.`
+          : parcelas > 1
+            ? `Compra em ${parcelas}x registrada`
+            : 'Compra registrada'
     )
     setSalvando(false)
     if (ok) aoFechar()
@@ -130,19 +177,34 @@ export function ModalCompraCartao({ aberto, aoFechar, cartaoInicial }: PropsModa
       aberto={aberto}
       aoFechar={aoFechar}
       titulo="Compra no cartão"
-      descricao="As parcelas entram automaticamente nas faturas dos próximos meses."
+      descricao={
+        modo === 'nova'
+          ? 'As parcelas entram automaticamente nas faturas dos próximos meses.'
+          : 'Para o que você já tinha antes de usar o app: só as parcelas que faltam entram nas próximas faturas.'
+      }
       rodape={
         <>
           <Botao variante="fantasma" onClick={aoFechar}>
             Cancelar
           </Botao>
           <Botao type="submit" form="formulario-compra" carregando={salvando}>
-            Registrar compra
+            {modo === 'fatura' ? 'Registrar parcelamento' : 'Registrar compra'}
           </Botao>
         </>
       }
     >
       <form id="formulario-compra" className={estilos.formulario} onSubmit={salvar}>
+        <Alternador
+          largo
+          valor={modo}
+          aoAlterar={trocarModo}
+          opcoes={[
+            { valor: 'nova', rotulo: 'Compra nova' },
+            { valor: 'andamento', rotulo: 'Já em andamento' },
+            { valor: 'fatura', rotulo: 'Fatura parcelada' }
+          ]}
+        />
+
         <div className={estilos.escolhaCartoes}>
           {resumos?.map(({ cartao: c }) => (
             <button
@@ -158,7 +220,22 @@ export function ModalCompraCartao({ aberto, aoFechar, cartaoInicial }: PropsModa
           ))}
         </div>
 
-        <CampoMoeda destaque autoFocus centavos={valorCentavos} aoAlterar={setValorCentavos} />
+        {emAndamento ? (
+          <div>
+            <CampoMoeda
+              rotulo={modo === 'fatura' ? 'Valor da fatura que foi parcelada' : 'Valor original da compra (opcional)'}
+              centavos={valorCentavos}
+              aoAlterar={setValorCentavos}
+            />
+            <p className={estilos.dica}>
+              {modo === 'fatura'
+                ? 'Com o valor da fatura e as parcelas, o app calcula os juros do parcelamento.'
+                : 'Se a compra teve juros, informe o valor à vista: o app calcula a taxa. Em branco, considera sem juros.'}
+            </p>
+          </div>
+        ) : (
+          <CampoMoeda destaque autoFocus centavos={valorCentavos} aoAlterar={setValorCentavos} />
+        )}
 
         <Campo
           rotulo="Descrição"
@@ -167,6 +244,60 @@ export function ModalCompraCartao({ aberto, aoFechar, cartaoInicial }: PropsModa
           onChange={(e) => setDescricao(e.target.value)}
         />
 
+        {emAndamento && (
+          <>
+            <div className={estilos.linha}>
+              <Campo rotulo="Total de parcelas" icone={Hash} type="number" min={1} max={48} placeholder="Ex.: 10" value={totalParcelas} onChange={(e) => setTotalParcelas(e.target.value)} />
+              <Campo rotulo="Parcelas que faltam" icone={Hash} type="number" min={1} max={48} placeholder="Ex.: 6" value={restantes} onChange={(e) => setRestantes(e.target.value)} />
+            </div>
+            <div className={estilos.linha}>
+              <CampoMoeda rotulo="Valor da parcela" centavos={valorParcela} aoAlterar={setValorParcela} />
+              <CampoSelecao rotulo="Próxima parcela na fatura de" value={faturaEscolhida} onChange={(e) => setProximaFatura(e.target.value)}>
+                {mesesFatura.map((m) => (
+                  <option key={m} value={m}>
+                    {nomeDoMes(m)}
+                  </option>
+                ))}
+              </CampoSelecao>
+            </div>
+            {andamentoValido && (
+              <div className={classes(estilos.previa, jurosAndamento > 0 && estilos.previaJuros)}>
+                <div className={estilos.previaPrincipal}>
+                  <span>
+                    Faltam {nRestantes}x de <strong className="numero">{formatarCentavos(valorParcela)}</strong>
+                  </span>
+                  <small>
+                    Da fatura de {nomeDoMes(faturaEscolhida).toLowerCase()} até a de{' '}
+                    {nomeDoMes(deslocarMes(faturaEscolhida, nRestantes - 1)).toLowerCase()}
+                  </small>
+                </div>
+                <dl className={estilos.previaDetalhes}>
+                  <div>
+                    <dt>Falta pagar</dt>
+                    <dd className="numero">{formatarCentavos(valorParcela * nRestantes)}</dd>
+                  </div>
+                  {valorCentavos > 0 && (
+                    <div>
+                      <dt>Juros no total</dt>
+                      <dd className={classes('numero', jurosAndamento > 0 && estilos.textoDespesa)}>
+                        {formatarCentavos(Math.max(0, jurosAndamento))}
+                        {taxaAndamento > 0 && ` (${formatarTaxa(taxaAndamento)})`}
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+                {valorCentavos > valorParcela * nTotal && (
+                  <p className={estilos.alerta}>
+                    <TriangleAlert size={15} /> O valor original é maior que a soma das parcelas: confira os números.
+                  </p>
+                )}
+              </div>
+            )}
+          </>
+        )}
+
+        {!emAndamento && (
+          <>
         <div className={estilos.linha}>
           <CampoSelecao
             rotulo="Parcelas"
@@ -259,6 +390,9 @@ export function ModalCompraCartao({ aberto, aoFechar, cartaoInicial }: PropsModa
           </div>
         )}
 
+          </>
+        )}
+
         <SeletorCategoria
           categorias={(categorias ?? []).filter((c) => c.tipo === 'despesa')}
           valor={categoriaId}
@@ -268,12 +402,14 @@ export function ModalCompraCartao({ aberto, aoFechar, cartaoInicial }: PropsModa
         <SeletorDestino pessoas={pessoas ?? []} valor={pessoaId} aoAlterar={setPessoaEscolhida} />
 
         <div className={estilos.linha}>
-          <Campo
-            rotulo="Data da compra"
-            type="date"
-            value={dataCompra}
-            onChange={(e) => setDataCompra(e.target.value)}
-          />
+          {!emAndamento && (
+            <Campo
+              rotulo="Data da compra"
+              type="date"
+              value={dataCompra}
+              onChange={(e) => setDataCompra(e.target.value)}
+            />
+          )}
           <Campo
             rotulo="Onde (opcional)"
             icone={Store}

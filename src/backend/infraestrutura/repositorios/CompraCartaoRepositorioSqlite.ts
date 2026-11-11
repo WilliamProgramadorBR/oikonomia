@@ -1,3 +1,4 @@
+import type { NaturezaCompra } from '@compartilhado/dtos/cartao'
 import { CompraCartao } from '../../dominio/entidades/CompraCartao'
 import type { Transacao } from '../../dominio/entidades/Transacao'
 import type { ICompraCartaoRepositorio } from '../../dominio/repositorios/ICompraCartaoRepositorio'
@@ -16,6 +17,7 @@ interface LinhaCompra {
   categoria_id: string
   pessoa_id: string | null
   estabelecimento: string | null
+  natureza: NaturezaCompra
   criado_em: string
 }
 
@@ -31,10 +33,10 @@ export class CompraCartaoRepositorioSqlite implements ICompraCartaoRepositorio {
         .prepare(
           `INSERT INTO compras_cartao
              (id, cartao_id, descricao, valor_centavos, quantidade_parcelas, taxa_mensal,
-              data_compra, categoria_id, pessoa_id, estabelecimento, criado_em)
+              data_compra, categoria_id, pessoa_id, estabelecimento, natureza, criado_em)
            VALUES
              (@id, @cartao_id, @descricao, @valor_centavos, @quantidade_parcelas, @taxa_mensal,
-              @data_compra, @categoria_id, @pessoa_id, @estabelecimento, @criado_em)`
+              @data_compra, @categoria_id, @pessoa_id, @estabelecimento, @natureza, @criado_em)`
         )
         .run({
           id: compra.id,
@@ -47,6 +49,7 @@ export class CompraCartaoRepositorioSqlite implements ICompraCartaoRepositorio {
           categoria_id: compra.categoriaId,
           pessoa_id: compra.pessoaId,
           estabelecimento: compra.estabelecimento,
+          natureza: compra.natureza,
           criado_em: compra.criadoEm.toISOString()
         })
       for (const parcela of parcelas) this.transacoes.salvarSincrono(parcela)
@@ -92,6 +95,7 @@ export class CompraCartaoRepositorioSqlite implements ICompraCartaoRepositorio {
       categoriaId: linha.categoria_id,
       pessoaId: linha.pessoa_id,
       estabelecimento: linha.estabelecimento,
+      natureza: linha.natureza ?? 'compra',
       criadoEm: new Date(linha.criado_em)
     })
   }
