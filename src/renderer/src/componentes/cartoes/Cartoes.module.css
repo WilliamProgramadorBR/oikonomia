@@ -194,6 +194,37 @@
   color: var(--texto-suave);
 }
 
+/* Aviso no modo "Já em andamento": fatura fechada não detalhada */
+.avisoFatura {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--alerta);
+  border-radius: var(--raio-sm);
+  background: var(--alerta-suave);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--texto);
+}
+
+.avisoFatura svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--alerta);
+}
+
+.avisoFatura button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--primaria);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 /* Busca de instituição */
 .campoInstituicao {
   position: relative;

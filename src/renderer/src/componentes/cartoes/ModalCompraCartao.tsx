@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties, type FormEvent } from 'react'
 import { useNavigate } from 'react-router'
-import { CreditCard, Hash, Percent, Store, TriangleAlert } from 'lucide-react'
+import { CreditCard, Hash, Info, Percent, Store, TriangleAlert } from 'lucide-react'
 import {
   calcularParcelamento,
   dataDeVencimento,
@@ -204,6 +204,26 @@ export function ModalCompraCartao({ aberto, aoFechar, cartaoInicial }: PropsModa
             { valor: 'fatura', rotulo: 'Fatura parcelada' }
           ]}
         />
+
+        {modo === 'andamento' && (
+          <div className={estilos.avisoFatura}>
+            <Info size={16} />
+            <span>
+              <strong>Fatura já fechada que você não detalhou?</strong> Registre aqui como 1 parcela, na fatura em que ela
+              vence: assim o valor entra no mês certo.{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  setTotalParcelas('1')
+                  setRestantes('1')
+                  if (!descricao) setDescricao(`Fatura${cartao ? ` ${cartao.apelido}` : ''}`)
+                }}
+              >
+                Preencher como fatura fechada
+              </button>
+            </span>
+          </div>
+        )}
 
         <div className={estilos.escolhaCartoes}>
           {resumos?.map(({ cartao: c }) => (
